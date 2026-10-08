@@ -7,6 +7,7 @@ import Contacto from './pages/Contacto.jsx';
 import MapaTuristico from './pages/MapaTuristico.jsx';
 import Experiencias from './pages/Experiencias.jsx';
 import Voces from './pages/Voces.jsx';
+import Entrar from './pages/Entrar.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import './App.css';
 
@@ -17,6 +18,7 @@ const TABS = [
   { id: 'mapa', label: 'Mapa', Page: MapaTuristico },
   { id: 'experiencias', label: 'Experiencias', Page: Experiencias },
   { id: 'voces', label: 'Voces', Page: Voces },
+  { id: 'entrar', label: 'Entrar', Page: Entrar },
   { id: 'contacto', label: 'Contacto', Page: Contacto },
 ];
 
