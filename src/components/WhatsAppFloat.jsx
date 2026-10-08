@@ -3,7 +3,7 @@ import './WhatsAppFloat.css';
 
 const PHONE = '573196822133';
 const MESSAGE =
-  'Hola! Somos el proyecto comunitario Caminos de Fogon, gracias por visitarnos, en que te podriamos ayudar?';
+  'Hola! Somos el proyecto comunitario Caminos de Fogon y Palabra, Mujeres que guían el territorio, gracias por visitarnos, en que te podemos ayudar?';
 
 export default function WhatsAppFloat() {
   const href = `https://wa.me/${PHONE}?text=${encodeURIComponent(MESSAGE)}`;

@@ -27,6 +27,8 @@ function routeFromHash() {
 
 function App() {
   const [route, setRoute] = useState(routeFromHash);
+  // Menú retráctil: abierto por defecto en escritorio, cerrado en móvil
+  const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 721px)').matches);
   const tabsRef = useRef(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
 
@@ -41,18 +43,23 @@ function App() {
 
   // Pestaña animada: píldora deslizante bajo la pestaña activa
   useEffect(() => {
-    const update = () => {
+    const update = (scroll) => {
       const el = tabsRef.current?.querySelector(`[data-route="${route}"]`);
-      if (el) setIndicator({ left: el.offsetLeft, width: el.offsetWidth, visible: true });
+      if (!el) return;
+      setIndicator({ left: el.offsetLeft, width: el.offsetWidth, visible: true });
+      // En móvil la barra es deslizable: centra la pestaña activa
+      if (scroll) el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
     };
-    update();
-    const t = setTimeout(update, 120);
-    window.addEventListener('resize', update);
-    window.addEventListener('load', update);
+    update(true);
+    const t = setTimeout(() => update(false), 120);
+    const onResize = () => update(false);
+    const onLoad = () => update(false);
+    window.addEventListener('resize', onResize);
+    window.addEventListener('load', onLoad);
     return () => {
       clearTimeout(t);
-      window.removeEventListener('resize', update);
-      window.removeEventListener('load', update);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('load', onLoad);
     };
   }, [route]);
 
@@ -66,7 +73,7 @@ function App() {
           <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
           Caminos de Fogón y Palabra
         </a>
-        <div className="tabs" ref={tabsRef}>
+        <div className={`tabs${menuOpen ? '' : ' closed'}`} ref={tabsRef}>
           <span
             className="tabs-indicator"
             style={{
@@ -86,6 +93,15 @@ function App() {
             </a>
           ))}
         </div>
+        <button
+          type="button"
+          className={`menu-toggle${menuOpen ? ' open' : ''}`}
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-expanded={menuOpen}
+          aria-label={menuOpen ? 'Ocultar menú' : 'Mostrar menú'}
+        >
+          <span className="burger" aria-hidden="true" />
+        </button>
       </nav>
 
       <main key={route} className="page-enter">
@@ -93,7 +109,7 @@ function App() {
       </main>
 
       <footer className="footer">
-        <span>Caminos de Fogón y Palabra · React + Vite</span>
+        <span>Caminos de Fogón y Palabra · <a href="https://deploydevs.vercel.app/" target="_blank" rel="noopener noreferrer">Agencia Deploy</a></span>
       </footer>
       <WhatsAppFloat />
     </>

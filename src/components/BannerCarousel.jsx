@@ -2,9 +2,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import bannerImg from '../assets/banner.jpg';
 import './BannerCarousel.css';
 
-// Carrusel del home: 1 banner real + 6 placeholders (uno por menú).
+// Carrusel del home: 1 banner real + 6 placeholders (uno por menú) + video.
 // Cuando subas las imágenes, reemplaza cada entrada `placeholder`
 // por `{ type: 'image', src: tuImagen, alt: '...', link: '#/seccion' }`.
+// Cuando tengas el video, reemplaza el bloque `video` por un <video> real.
 const SLIDES = [
   {
     key: 'portada',
@@ -19,6 +20,7 @@ const SLIDES = [
   { key: 'experiencias', type: 'placeholder', label: 'Experiencias', link: '#/experiencias', gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)' },
   { key: 'voces', type: 'placeholder', label: 'Voces del Fogón', link: '#/voces', gradient: 'linear-gradient(135deg, #3b0764, #a21caf)' },
   { key: 'contacto', type: 'placeholder', label: 'Contacto / reserva', link: '#/contacto', gradient: 'linear-gradient(135deg, #064e3b, #16a34a)' },
+  { key: 'video', type: 'video', label: 'Video de bienvenida' },
 ];
 
 const AUTOPLAY_MS = 6000;
@@ -36,10 +38,11 @@ export default function BannerCarousel() {
   const prev = useCallback(() => setIndex((i) => (i - 1 + SLIDES.length) % SLIDES.length), []);
 
   useEffect(() => {
-    if (paused) return;
+    // El autoplay se detiene en el slide de video para no cortarlo
+    if (paused || SLIDES[index].type === 'video') return;
     const t = setInterval(next, AUTOPLAY_MS);
     return () => clearInterval(t);
-  }, [paused, next]);
+  }, [paused, next, index]);
 
   const onTouchStart = (e) => {
     touchX.current = e.touches[0].clientX;
@@ -61,12 +64,28 @@ export default function BannerCarousel() {
       onTouchEnd={onTouchEnd}
     >
       <div className="carousel-track" style={{ transform: `translateX(-${index * 100}%)` }}>
-        {SLIDES.map((s) =>
-          s.type === 'image' ? (
-            <div className="slide" key={s.key}>
-              <img src={s.src} alt={s.alt} className="slide-img" draggable={false} />
-            </div>
-          ) : (
+        {SLIDES.map((s) => {
+          if (s.type === 'image') {
+            return (
+              <div className="slide" key={s.key}>
+                <img src={s.src} alt={s.alt} className="slide-img" draggable={false} />
+              </div>
+            );
+          }
+          if (s.type === 'video') {
+            // Placeholder: cuando tengas el video, reemplázalo por:
+            // <video className="slide-video" src={tuVideo} controls preload="metadata" playsInline />
+            return (
+              <div className="slide" key={s.key}>
+                <div className="slide-video-ph" role="img" aria-label="Espacio reservado para el video de bienvenida">
+                  <span className="video-play-btn" aria-hidden="true">▶</span>
+                  <span className="ph-label">Video de bienvenida</span>
+                  <span className="ph-kicker">Espacio reservado · aquí irá el video</span>
+                </div>
+              </div>
+            );
+          }
+          return (
             <a className="slide" key={s.key} href={s.link} aria-label={`Ir a ${s.label}`}>
               <div className="slide-placeholder" style={{ background: s.gradient }}>
                 <span className="ph-kicker">Espacio reservado · sube tu banner</span>
@@ -74,8 +93,8 @@ export default function BannerCarousel() {
                 <span className="ph-cta">Explorar →</span>
               </div>
             </a>
-          )
-        )}
+          );
+        })}
       </div>
       <button type="button" className="carousel-arrow prev" onClick={prev} aria-label="Banner anterior">‹</button>
       <button type="button" className="carousel-arrow next" onClick={next} aria-label="Banner siguiente">›</button>
