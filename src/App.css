@@ -1,0 +1,55 @@
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; background: #0b132b; color: #e5e7eb; }
+
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 20px; background: rgba(5,10,23,0.92);
+  border-bottom: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px);
+}
+.topnav .brand { color: #fff; font-weight: 800; text-decoration: none; }
+.topnav .links { display: flex; gap: 12px; flex-wrap: wrap; }
+.topnav .links a { color: #9fd8ff; text-decoration: none; font-size: 0.85rem; }
+.topnav .links a:hover { color: #fff; }
+
+.hero-section {
+  padding: 90px 5%; text-align: center;
+  background: radial-gradient(circle at 20% 20%, #123, transparent), linear-gradient(180deg, #0b132b, #050a17);
+}
+.hero-section h1 { font-size: 3rem; margin: 0 0 10px; color: #fff; }
+.hero-section .subtitle { color: #9fd8ff; font-size: 1.2rem; margin-bottom: 30px; }
+.cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+.btn {
+  display: inline-block; padding: 12px 20px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.25); color: #fff; text-decoration: none;
+  background: rgba(255,255,255,0.06); cursor: pointer;
+}
+.btn.primary { background: #00aadd; border-color: #00aadd; font-weight: 700; }
+
+.page-section { padding: 60px 5%; border-top: 1px solid rgba(255,255,255,0.08); max-width: 1200px; margin: 0 auto; }
+.page-section h2 { color: #fff; font-size: 2rem; }
+.bullet { line-height: 2; color: #cbd5e1; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
+.card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 12px; }
+
+.mapa-section { max-width: none; }
+.avance-banner {
+  background: #fff7d6; color: #5a4300; border: 2px dashed #d9a400;
+  padding: 16px 18px; border-radius: 12px; margin: 18px 0 22px; line-height: 1.6;
+}
+.mapa-clon-wrapper {
+  border: 3px solid #00aadd; border-radius: 14px; overflow: hidden;
+  box-shadow: 0 0 40px rgba(0,170,221,0.35);
+}
+.todo-refinar { margin-top: 20px; background: rgba(255,255,255,0.04); padding: 18px; border-radius: 12px; }
+.todo-refinar h4 { margin: 0 0 8px; color: #00ccff; }
+
+.footer { padding: 30px; text-align: center; color: #64748b; border-top: 1px solid rgba(255,255,255,0.08); }
+
+@media (max-width: 720px) {
+  .hero-section h1 { font-size: 2rem; }
+  .topnav { flex-direction: column; gap: 10px; }
+}
