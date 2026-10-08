@@ -7,16 +7,17 @@ import Contacto from './pages/Contacto.jsx';
 import MapaTuristico from './pages/MapaTuristico.jsx';
 import Experiencias from './pages/Experiencias.jsx';
 import Voces from './pages/Voces.jsx';
+import WhatsAppFloat from './components/WhatsAppFloat.jsx';
 import './App.css';
 
 const TABS = [
   { id: 'inicio', label: 'Inicio', Page: Inicio },
   { id: 'proyecto', label: 'Proyecto', Page: Proyecto },
   { id: 'mujeres', label: 'Mujeres', Page: Mujeres },
-  { id: 'contacto', label: 'Contacto', Page: Contacto },
   { id: 'mapa', label: 'Mapa', Page: MapaTuristico },
   { id: 'experiencias', label: 'Experiencias', Page: Experiencias },
   { id: 'voces', label: 'Voces', Page: Voces },
+  { id: 'contacto', label: 'Contacto', Page: Contacto },
 ];
 
 function routeFromHash() {
@@ -94,6 +95,7 @@ function App() {
       <footer className="footer">
         <span>Caminos de Fogón y Palabra · React + Vite</span>
       </footer>
+      <WhatsAppFloat />
     </>
   );
 }
