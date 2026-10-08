@@ -111,23 +111,6 @@ export default function CicloConsolidado() {
 
   return (
     <div className="sim5-clon">
-      <div className="sim5-header glass-panel">
-        <span className="sim5-kicker">Misión 5 · Lineamiento 5: Sistemicidad · Bloque: agua — CLON BASE SIN REFINAR</span>
-        <h3>Ciclo del Agua Consolidado</h3>
-        <p>Simulación sistémica completa que integra evaporación, condensación, precipitación y escorrentía en un solo modelo dinámico.</p>
-      </div>
-
-      <div className="activity-content">
-        <h2>📋 Actividad: Análisis Sistémico del Ciclo</h2>
-        <p>Observa el ciclo del agua no como procesos aislados, sino como un <strong>sistema interconectado</strong> donde cada variable afecta el equilibrio global.</p>
-        <div className="activity-steps">
-          <div className="step"><span className="step-num">1</span><p><strong>Evaporación:</strong> Sube la radiación y temperatura. Observa cómo las partículas de vapor ascienden desde el océano hacia la atmósfera.</p></div>
-          <div className="step"><span className="step-num">2</span><p><strong>Transporte:</strong> Usa la brújula para dirigir el viento hacia la montaña (Este). Observa el movimiento de las nubes.</p></div>
-          <div className="step"><span className="step-num">3</span><p><strong>Precipitación:</strong> Deja que las nubes se carguen (Condensación &gt; 80%). Observa cómo la lluvia descarga el agua sobre el continente.</p></div>
-          <div className="step"><span className="step-num">4</span><p><strong>Retorno:</strong> Observa la escorrentía fluyendo por los ríos de regreso al mar, cerrando el ciclo perpetuo.</p></div>
-        </div>
-      </div>
-
       <div className="sim-container">
         <div className="sim-main">
           <div className="sim-area relative realistic-bg">

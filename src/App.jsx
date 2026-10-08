@@ -61,25 +61,11 @@ function App() {
         <button className="btn primary" type="button">Reservar experiencia (próximamente)</button>
       </section>
 
-      {/* 5. MAPA INTERACTIVO — CLON MISIÓN 5 */}
+      {/* 5. MAPA TURÍSTICO */}
       <section id="mapa" className="page-section mapa-section">
-        <h2>🗺️ 5. Mapa interactivo</h2>
-        <div className="avance-banner">
-          <strong>🚧 AVANCE DE DESARROLLO:</strong> a continuación se inserta <strong>tal cual y como está diseñada</strong> la
-          animación del <strong>ciclo del agua — Misión 5 Ciclo Consolidado</strong> de <code>watercycle</code>,
-          como <strong>base adelantada</strong> para seguir refinando hacia el mapa del corredor oriental
-          (puntos por emprendimiento, categorías 🟢🟵🟠🟣🟡, fichas, cómo llegar).
-        </div>
+        <h2>🗺️ 5. Mapa Turístico</h2>
         <div className="mapa-clon-wrapper">
           <CicloConsolidado />
-        </div>
-        <div className="todo-refinar">
-          <h4>Para refinar después (no en este avance):</h4>
-          <ul>
-            <li>Reemplazar fondo océano-montaña por mapa del corredor oriental.</li>
-            <li>Cada emprendimiento como punto: nombre, ubicación, qué ofrece, quién lidera, tiempo, fotos, video, contacto.</li>
-            <li>Categorías: 🟢 Gastronomía · 🔵 Turismo comunitario · 🟠 Experiencias culturales · 🟣 Naturaleza · 🟡 Artesanías.</li>
-          </ul>
         </div>
       </section>
 
@@ -102,7 +88,7 @@ function App() {
       </section>
 
       <footer className="footer">
-        <span>Caminos de Fogón y Palabra · Avance: clon Misión 5 en sección 5 · React + Vite</span>
+        <span>Caminos de Fogón y Palabra · React + Vite</span>
       </footer>
     </>
   );

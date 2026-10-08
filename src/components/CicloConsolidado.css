@@ -5,42 +5,6 @@
    ═══════════════════════════════════════════════════════ */
 
 .sim5-clon { background: #050a17; color: #fff; }
-.sim5-header { padding: 22px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-.sim5-kicker {
-  display: inline-block; font-size: 0.72rem; letter-spacing: 1px;
-  color: #00c8ff; background: rgba(0,200,255,0.1);
-  border: 1px solid rgba(0,200,255,0.35); padding: 6px 12px; border-radius: 20px;
-  margin-bottom: 12px; text-transform: uppercase;
-}
-.sim5-header h3 { margin: 0 0 8px; font-size: 1.6rem; }
-.sim5-header p { margin: 0; color: #ccc; }
-
-/* ───── Shared tab content styles ───── */
-.activity-content, .eval-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-}
-.activity-content h2, .eval-content h2 {
-  font-size: 1.5rem; color: #fff; margin: 0 0 15px;
-}
-.activity-content p, .eval-content p {
-  color: #ccc; line-height: 1.7; font-size: 1rem;
-}
-.activity-steps {
-  margin-top: 25px; display: flex; flex-direction: column; gap: 15px;
-}
-.step {
-  display: flex; align-items: flex-start; gap: 16px; padding: 20px;
-  border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-}
-.step-num {
-  min-width: 36px; height: 36px; border-radius: 50%;
-  background: linear-gradient(135deg, #005588, #00aadd);
-  color: #fff; display: flex; align-items: center; justify-content: center;
-  font-weight: 700; font-size: 0.9rem;
-}
-.step p { margin: 0; color: #d1d5db; font-size: 0.95rem; }
 
 /* ───── Simulation Layout ───── */
 .sim-container {
