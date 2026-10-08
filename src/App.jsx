@@ -1,11 +1,16 @@
 import CicloConsolidado from './components/CicloConsolidado.jsx';
+import logoImg from './assets/logo.png';
+import bannerImg from './assets/banner.jpg';
 import './App.css';
 
 function App() {
   return (
     <>
       <nav className="topnav">
-        <a href="#inicio" className="brand">🔥 Caminos de Fogón y Palabra</a>
+        <a href="#inicio" className="brand">
+          <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
+          Caminos de Fogón y Palabra
+        </a>
         <div className="links">
           <a href="#inicio">1. Inicio</a>
           <a href="#proyecto">2. Proyecto</a>
@@ -19,7 +24,12 @@ function App() {
 
       {/* 1. INICIO */}
       <section id="inicio" className="hero-section">
-        <h1>Caminos de Fogón y Palabra</h1>
+        <h1 className="sr-only">Caminos de Fogón y Palabra</h1>
+        <img
+          src={bannerImg}
+          alt="Caminos de Fogón y Palabra — Saberes, historias y tradición"
+          className="banner-img"
+        />
         <p className="subtitle">Mujeres que guían el territorio — Corredor oriental de Pasto</p>
         <div className="cta-row">
           <a href="#mapa" className="btn primary">Conoce las rutas</a>
