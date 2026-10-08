@@ -15,9 +15,8 @@ import './CicloConsolidado.css';
 // Se porta 1:1 a React para tener base adelantada en la
 // sección 5. Mapa Interactivo. Pendiente refinar a mapa
 // turístico del corredor oriental.
+// NOTA: audio eliminado (sin lluvia ni pájaros), solo visual.
 // ═══════════════════════════════════════════════════════
-
-const BIRDS_URL = `${import.meta.env.BASE_URL}assets/birds.mp3`;
 
 export default function CicloConsolidado() {
   const { variables: vars, rates, updateVariable } = useWaterCycle();
@@ -33,128 +32,14 @@ export default function CicloConsolidado() {
   const lightningTimer = useRef(null);
   const lightningEvery = useRef(0);
 
-  // ── Audio refs (clon del TS original) ──
-  const audioCtx = useRef(null);
-  const rainGainLight = useRef(null);
-  const rainGainHeavy = useRef(null);
-  const rainNoiseLight = useRef(null);
-  const rainNoiseHeavy = useRef(null);
-  const audioInitialized = useRef(false);
-  const birdAudio = useRef(null);
-  const birdsActive = useRef(false);
-  const userHasInteracted = useRef(false);
-
+  // Limpieza del temporizador de rayos al desmontar (sin audio)
   useEffect(() => {
-    birdAudio.current = new Audio(BIRDS_URL);
-    birdAudio.current.loop = true;
-    birdAudio.current.volume = 0.15;
-
-    const onInteract = () => {
-      userHasInteracted.current = true;
-      if (audioCtx.current && audioCtx.current.state === 'suspended') {
-        audioCtx.current.resume();
-      }
-    };
-    document.addEventListener('click', onInteract);
-    document.addEventListener('touchstart', onInteract);
-    document.addEventListener('keydown', onInteract);
-
     return () => {
-      document.removeEventListener('click', onInteract);
-      document.removeEventListener('touchstart', onInteract);
-      document.removeEventListener('keydown', onInteract);
-      try { rainNoiseLight.current?.stop(); } catch { /* noop */ }
-      try { rainNoiseHeavy.current?.stop(); } catch { /* noop */ }
-      try { birdAudio.current?.pause(); } catch { /* noop */ }
-      if (audioCtx.current) audioCtx.current.close().catch(() => {});
       if (lightningTimer.current) clearInterval(lightningTimer.current);
     };
   }, []);
 
-  function ensureAudioCtx() {
-    if (!audioCtx.current) {
-      const AC = window.AudioContext || window.webkitAudioContext;
-      audioCtx.current = new AC();
-    }
-    return audioCtx.current;
-  }
-
-  function initAudio() {
-    if (audioInitialized.current) return;
-    const ctx = ensureAudioCtx();
-    const bufferSize = ctx.sampleRate * 2;
-
-    const lightBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const lightData = lightBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) lightData[i] = (Math.random() * 2 - 1) * 0.3;
-
-    const heavyBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const heavyData = heavyBuffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) heavyData[i] = (Math.random() * 2 - 1) * 0.6;
-
-    rainNoiseLight.current = ctx.createBufferSource();
-    rainNoiseLight.current.buffer = lightBuffer;
-    rainNoiseLight.current.loop = true;
-    const filterLight = ctx.createBiquadFilter();
-    filterLight.type = 'bandpass';
-    filterLight.frequency.value = 3000;
-    filterLight.Q.value = 0.5;
-    rainGainLight.current = ctx.createGain();
-    rainGainLight.current.gain.value = 0;
-    rainNoiseLight.current.connect(filterLight);
-    filterLight.connect(rainGainLight.current);
-    rainGainLight.current.connect(ctx.destination);
-    rainNoiseLight.current.start();
-
-    rainNoiseHeavy.current = ctx.createBufferSource();
-    rainNoiseHeavy.current.buffer = heavyBuffer;
-    rainNoiseHeavy.current.loop = true;
-    const filterHeavy = ctx.createBiquadFilter();
-    filterHeavy.type = 'lowpass';
-    filterHeavy.frequency.value = 1500;
-    filterHeavy.Q.value = 0.3;
-    rainGainHeavy.current = ctx.createGain();
-    rainGainHeavy.current.gain.value = 0;
-    rainNoiseHeavy.current.connect(filterHeavy);
-    filterHeavy.connect(rainGainHeavy.current);
-    rainGainHeavy.current.connect(ctx.destination);
-    rainNoiseHeavy.current.start();
-
-    audioInitialized.current = true;
-  }
-
-  function updateRainSound(precipitationRate) {
-    if (precipitationRate > 0 && !audioInitialized.current) initAudio();
-    if (!audioCtx.current || !rainGainLight.current || !rainGainHeavy.current) return;
-    const now = audioCtx.current.currentTime;
-    const fadeTime = 0.5;
-    if (precipitationRate <= 0) {
-      rainGainLight.current.gain.linearRampToValueAtTime(0, now + fadeTime);
-      rainGainHeavy.current.gain.linearRampToValueAtTime(0, now + fadeTime);
-    } else if (precipitationRate <= 50) {
-      const vol = (precipitationRate / 50) * 0.35;
-      rainGainLight.current.gain.linearRampToValueAtTime(vol, now + fadeTime);
-      rainGainHeavy.current.gain.linearRampToValueAtTime(0, now + fadeTime);
-    } else {
-      const heavyVol = ((precipitationRate - 50) / 50) * 0.6;
-      rainGainLight.current.gain.linearRampToValueAtTime(0.2, now + fadeTime);
-      rainGainHeavy.current.gain.linearRampToValueAtTime(heavyVol, now + fadeTime);
-    }
-  }
-
-  function updateBirdSound(precipitationRate, condensationRate) {
-    const shouldSing = precipitationRate <= 0 && condensationRate < 30;
-    if (shouldSing && !birdsActive.current) {
-      if (!userHasInteracted.current) return;
-      birdAudio.current.play().catch(() => {});
-      birdsActive.current = true;
-    } else if (!shouldSing && birdsActive.current) {
-      birdAudio.current.pause();
-      birdsActive.current = false;
-    }
-  }
-
-  // ── Partículas + rayos + sonido: clon de ngOnInit subscribe ──
+  // ── Partículas + rayos: clon de ngOnInit subscribe (sin sonido) ──
   useEffect(() => {
     if (
       Math.abs(lastPrecip.current - rates.precipitationRate) > 8 ||
@@ -214,10 +99,6 @@ export default function CicloConsolidado() {
       lightningTimer.current = null;
       setLightningFlash(false);
     }
-
-    updateRainSound(rates.precipitationRate);
-    updateBirdSound(rates.precipitationRate, rates.condensationRate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rates]);
 
   const onVarChange = (e, key) => {
@@ -391,54 +272,6 @@ export default function CicloConsolidado() {
           </div>
         </div>
 
-        <footer className="educational-guide">
-          <div className="guide-content glass-panel">
-            <h2 className="text-neon-blue">Manual de Operación Meteorológica: Entorno Virtual de Aprendizaje EVA</h2>
-            <section>
-              <h3 className="text-neon-purple mt-4">1. La Vista Geográfica: Perspectiva Aérea Isométrica</h3>
-              <p>El simulador utiliza una <strong>cámara de drone en ángulo de 45°</strong> (proyección isométrica) para ofrecer una comprensión espacial completa.</p>
-              <ul>
-                <li><strong>Oeste (Izquierda):</strong> Ubicación del océano. Es la zona donde se origina la evaporación.</li>
-                <li><strong>Este (Derecha):</strong> Cordillera montañosa. Actúa como barrera física (orográfica).</li>
-                <li><strong>Profundidad:</strong> Los elementos al <em>Norte</em> se ven más alejados y pequeños, al <em>Sur</em> en primer plano.</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="text-neon-purple mt-4">2. Funcionamiento de los Selectores (Variables de Entrada)</h3>
-              <ul>
-                <li><strong>Temperatura (°C):</strong> Aumenta la energía para la evaporación.</li>
-                <li><strong>Radiación Solar (%):</strong> Potencia con la que el sol calienta el agua oceánica.</li>
-                <li><strong>Velocidad del Viento (km/h):</strong> Acelera transporte de humedad y evaporación.</li>
-                <li><strong>Presión Atmosférica (hPa):</strong> Baja presión facilita nubes y lluvia; alta presión despeja.</li>
-                <li><strong>Humedad Ambiental (%):</strong> Si es muy alta, bloquea la evaporación.</li>
-                <li><strong>Brújula:</strong> Vientos hacia el Este (Montaña) generan más lluvia terrestre.</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="text-neon-purple mt-4">3. Interpretación de Estados y Porcentajes (HUDs)</h3>
-              <ul>
-                <li><strong>Evaporación:</strong> Qué tan rápido asciende el agua del mar.</li>
-                <li><strong>Condensación:</strong> Acumulador. Más de 50% nubes densas y grises.</li>
-                <li><strong>Precipitación:</strong> Al llover vacía la nube.</li>
-                <li><strong>Escorrentía:</strong> Agua corriendo por los ríos hacia el mar.</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="text-neon-purple mt-4">4. Guía de Efectos Visuales</h3>
-              <ul>
-                <li><strong>Anillo Elíptico de Flujo:</strong> Fluye según el viento.</li>
-                <li><strong>Burbujas Ascendentes:</strong> Tasa de evaporación en el océano.</li>
-                <li><strong>Cortina de Lluvia:</strong> Densidad según precipitación.</li>
-                <li><strong>Nubes Dinámicas:</strong> Opacidad y tamaño proporcionales a condensación.</li>
-                <li><strong>Brújula Interactiva:</strong> La aguja roja indica el desplazamiento de nubes.</li>
-              </ul>
-            </section>
-            <section>
-              <h3 className="text-neon-purple mt-4">5. Dinámica de Sistemas: El Ciclo Autónomo</h3>
-              <p>Si dejas de mover los controles, el simulador seguirá funcionando como un verdadero <strong>ecosistema vivo y autorregulado</strong>.</p>
-            </section>
-          </div>
-        </footer>
       </div>
     </div>
   );
