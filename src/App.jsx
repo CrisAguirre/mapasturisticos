@@ -111,7 +111,8 @@ function App() {
       </main>
 
       <footer className="footer">
-        <span>Caminos de Fogón y Palabra · <a href="https://deploydevs.vercel.app/" target="_blank" rel="noopener noreferrer">Agencia Deploy</a></span>
+        <span>Caminos de Fogón y Palabra · Fundación QUIERO DESARROLLO HUMANO</span>
+        <span className="footer-dev">Desarrollado con ❤️ por <a href="https://deploydevs.vercel.app/" target="_blank" rel="noopener noreferrer">Agencia Deploy</a></span>
       </footer>
       <WhatsAppFloat />
     </>
