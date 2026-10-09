@@ -43,6 +43,7 @@ export default function Entrar() {
         }),
       });
       localStorage.setItem(TOKEN_KEY, data.token);
+      window.dispatchEvent(new Event('cfp-auth'));
       setSession(data.user);
       setNotice({ type: 'ok', text: `Bienvenida, ${data.user.name}. Sesión iniciada.` });
     } catch (err) {
@@ -54,6 +55,7 @@ export default function Entrar() {
 
   const onLogout = () => {
     localStorage.removeItem(TOKEN_KEY);
+    window.dispatchEvent(new Event('cfp-auth'));
     setSession(null);
     setNotice(null);
   };

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa';
 import logoImg from './assets/logo2.png';
+import { API_URL } from './config/api.js';
 import Inicio from './pages/Inicio.jsx';
 import Proyecto from './pages/Proyecto.jsx';
 import Mujeres from './pages/Mujeres.jsx';
@@ -34,6 +35,34 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 721px)').matches);
   const tabsRef = useRef(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
+  const [user, setUser] = useState(null);
+
+  // Sesión: Entrar avisa con el evento 'cfp-auth' al ingresar/salir
+  useEffect(() => {
+    const refresh = () => {
+      const token = localStorage.getItem('cfp_token');
+      if (!token) {
+        setUser(null);
+        return;
+      }
+      fetch(`${API_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((r) => (r.ok ? r.json() : Promise.reject(new Error('401'))))
+        .then((d) => setUser(d.user))
+        .catch(() => {
+          localStorage.removeItem('cfp_token');
+          setUser(null);
+        });
+    };
+    refresh();
+    window.addEventListener('cfp-auth', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('cfp-auth', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
 
   useEffect(() => {
     const onChange = () => {
@@ -97,10 +126,10 @@ function App() {
                 key={t.id}
                 data-route={t.id}
                 href={`#/${t.id}`}
-                className={`tab${t.id === route ? ' active' : ''}`}
-              >
-                {t.label}
-              </a>
+              className={`tab${t.id === route ? ' active' : ''}`}
+            >
+              {t.id === 'entrar' && user ? 'Cuenta' : t.label}
+            </a>
             ))}
           </div>
           <a
