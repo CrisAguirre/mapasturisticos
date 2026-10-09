@@ -10,6 +10,7 @@ import {
   FaUtensils,
 } from 'react-icons/fa';
 import TextCarousel from '../components/TextCarousel.jsx';
+import GallerySlider from '../components/GallerySlider.jsx';
 import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
 
 const PROPOSITOS = [
@@ -157,6 +158,18 @@ const HISTORIA = [
   },
 ];
 
+// Galería del header: fotos optimizadas en assets/media/2proyecto-web.
+// Se ordenan en secuencia natural (foto 1, 2, … 15.3) y se amplían solas
+// agregando archivos a esa carpeta.
+const photoModules = import.meta.glob('../assets/media/2proyecto-web/*.jpg', {
+  eager: true,
+  query: '?url',
+  import: 'default',
+});
+const PHOTOS = Object.keys(photoModules)
+  .sort((a, b) => a.localeCompare(b, 'es', { numeric: true }))
+  .map((path, i) => ({ src: photoModules[path], alt: `Encuentros, talleres y recorridos del proceso · foto ${i + 1}` }));
+
 export default function Proyecto() {
   return (
     <section className="page-section proyecto">
@@ -174,6 +187,8 @@ export default function Proyecto() {
           y se fortalece cuando caminamos juntas.
         </p>
       </Reveal>
+
+      <GallerySlider images={PHOTOS} interval={5000} label="Galería de fotos del proyecto" />
 
       <div className="stat-strip" aria-label="El proyecto en cifras">
         <div className="stat"><span className="stat-num">15</span><span className="stat-label">mujeres</span></div>

@@ -1,0 +1,141 @@
+.gal {
+  position: relative;
+  margin-top: 24px;
+}
+
+.gal-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  aspect-ratio: 16 / 9;
+}
+
+.gal-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gal-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.gal-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gal-img.kb {
+  animation: kenburns 6.5s ease-out forwards;
+}
+
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.09); }
+}
+
+.gal-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 44px 22px 16px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+}
+
+.gal-kicker {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #ffd479;
+}
+
+.gal-title {
+  margin: 4px 0 0;
+  color: #fff;
+  font-size: clamp(0.9rem, 1.8vw, 1.05rem);
+  font-weight: 600;
+}
+
+.gal-count {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.gal-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: left;
+  background: linear-gradient(90deg, #00c8ff, #f0abfc);
+  animation-name: galbar;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes galbar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.gal-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition: background 0.25s ease, transform 0.25s ease;
+  z-index: 2;
+}
+
+.gal-arrow:hover {
+  background: rgba(124, 58, 237, 0.65);
+  transform: translateY(-50%) scale(1.06);
+}
+
+.gal-arrow.prev { left: 14px; }
+.gal-arrow.next { right: 14px; }
+
+@media (max-width: 720px) {
+  .gal-viewport { aspect-ratio: 4 / 3; border-radius: 16px; }
+  .gal-arrow { width: 38px; height: 38px; }
+  .gal-arrow.prev { left: 8px; }
+  .gal-arrow.next { right: 8px; }
+  .gal-caption { padding: 36px 14px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gal-track { transition: none; }
+  .gal-img.kb { animation: none; }
+  .gal-progress { display: none; }
+}
