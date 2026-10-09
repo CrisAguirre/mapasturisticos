@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa';
-import logoImg from './assets/logo.png';
+import logoImg from './assets/logo2.png';
 import Inicio from './pages/Inicio.jsx';
 import Proyecto from './pages/Proyecto.jsx';
 import Mujeres from './pages/Mujeres.jsx';
@@ -74,7 +74,10 @@ function App() {
       <nav className="topnav">
         <a href="#/inicio" className="brand">
           <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
-          Caminos de Fogón y Palabra
+          <span className="brand-text">
+            <span className="brand-line1">Caminos de Fogón y Palabra</span>
+            <span className="brand-line2">Mujeres que Guían el Territorio</span>
+          </span>
         </a>
         <div className={`tabs${menuOpen ? '' : ' closed'}`} ref={tabsRef}>
           <span

@@ -12,7 +12,30 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
 }
 .topnav .brand { color: #fff; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 12px; }
-/* Logo nuevo: formato horizontal / no cuadrado. Se adapta por alto, ancho automático. */
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+}
+.brand-line1 {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: #fff;
+  white-space: nowrap;
+}
+.brand-line2 {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  color: #ffd479;
+  white-space: nowrap;
+}
+
+@media (min-width: 1400px) {
+  .brand-line1 { font-size: 1.05rem; }
+  .brand-line2 { font-size: 0.8rem; }
+}
 .brand-logo {
   height: 64px;
   width: auto;
@@ -192,8 +215,9 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 
 @media (max-width: 720px) {
   .topnav { flex-direction: row; align-items: center; }
-  .topnav .brand { flex: 1 1 auto; order: 0; font-size: 0.85rem; min-width: 0; }
-  .brand-logo { height: 38px; max-width: 170px; }
+  .topnav .brand { flex: 1 1 auto; order: 0; min-width: 0; }
+  .brand-text { display: none; }
+  .brand-logo { height: 44px; max-width: min(52vw, 220px); }
   .nav-actions { order: 1; gap: 8px; }
   .menu-toggle { order: 1; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
