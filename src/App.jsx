@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { FaInstagram } from 'react-icons/fa';
 import logoImg from './assets/logo.png';
 import Inicio from './pages/Inicio.jsx';
 import Proyecto from './pages/Proyecto.jsx';
@@ -95,15 +96,27 @@ function App() {
             </a>
           ))}
         </div>
-        <button
-          type="button"
-          className={`menu-toggle${menuOpen ? ' open' : ''}`}
-          onClick={() => setMenuOpen((o) => !o)}
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? 'Ocultar menú' : 'Mostrar menú'}
-        >
-          <span className="burger" aria-hidden="true" />
-        </button>
+        <div className="nav-actions">
+          <a
+            href="https://www.instagram.com/caminosdefogonypalabra/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-btn"
+            aria-label="Instagram Caminos de Fogón y Palabra"
+          >
+            <FaInstagram aria-hidden="true" />
+            <span className="social-label">Instagram</span>
+          </a>
+          <button
+            type="button"
+            className={`menu-toggle${menuOpen ? ' open' : ''}`}
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Ocultar menú' : 'Mostrar menú'}
+          >
+            <span className="burger" aria-hidden="true" />
+          </button>
+        </div>
       </nav>
 
       <main key={route} className="page-enter">
@@ -112,6 +125,11 @@ function App() {
 
       <footer className="footer">
         <span>Caminos de Fogón y Palabra · Fundación QUIERO DESARROLLO HUMANO</span>
+        <span className="footer-social">
+          <a href="https://www.instagram.com/caminosdefogonypalabra/" target="_blank" rel="noopener noreferrer">
+            <FaInstagram aria-hidden="true" /> @caminosdefogonypalabra
+          </a>
+        </span>
         <span className="footer-dev">Desarrollado con ❤️ por <a href="https://deploydevs.vercel.app/" target="_blank" rel="noopener noreferrer">Agencia Deploy</a></span>
       </footer>
       <WhatsAppFloat />

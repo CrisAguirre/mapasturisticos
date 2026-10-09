@@ -53,6 +53,18 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
 }
 
+/* ── Acciones del head (social + switch) ── */
+.nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.social-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  color: #9fd8ff; text-decoration: none; font-size: 0.85rem; font-weight: 700;
+  padding: 8px 14px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.06);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.social-btn svg { font-size: 1.05rem; }
+.social-btn:hover { background: rgba(0,170,221,0.3); border-color: rgba(0,200,255,0.6); color: #fff; }
+
 /* ── Botón switch del menú (hamburguesa → X) ── */
 .menu-toggle {
   flex-shrink: 0;
@@ -126,7 +138,9 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   border: 3px solid #00aadd; border-radius: 14px; overflow: hidden;
   box-shadow: 0 0 40px rgba(0,170,221,0.35);
 }
-.footer { padding: 30px; text-align: center; color: #64748b; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 6px; }
+.footer { padding: 30px; text-align: center; color: #64748b; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; gap: 6px; align-items: center; }
+.footer-social a { display: inline-flex; align-items: center; gap: 7px; font-size: 0.9rem; }
+.footer-social svg { font-size: 1.1rem; }
 .footer-dev { font-size: 0.85rem; }
 .footer a { color: #9fd8ff; text-decoration: none; font-weight: 700; }
 .footer a:hover { color: #fff; text-decoration: underline; }
@@ -180,6 +194,9 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   .topnav { flex-direction: row; align-items: center; }
   .topnav .brand { flex: 1 1 auto; order: 0; font-size: 0.85rem; min-width: 0; }
   .brand-logo { height: 38px; max-width: 170px; }
+  .nav-actions { order: 1; gap: 8px; }
+  .social-btn { padding: 8px 10px; }
+  .social-btn .social-label { display: none; }
   .menu-toggle { order: 1; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
      partan en varias filas y desfasan la píldora animada */
