@@ -105,7 +105,6 @@ function App() {
             aria-label="Instagram Caminos de Fogón y Palabra"
           >
             <FaInstagram aria-hidden="true" />
-            <span className="social-label">Instagram</span>
           </a>
           <button
             type="button"
@@ -126,8 +125,8 @@ function App() {
       <footer className="footer">
         <span>Caminos de Fogón y Palabra · Fundación QUIERO DESARROLLO HUMANO</span>
         <span className="footer-social">
-          <a href="https://www.instagram.com/caminosdefogonypalabra/" target="_blank" rel="noopener noreferrer">
-            <FaInstagram aria-hidden="true" /> @caminosdefogonypalabra
+          <a href="https://www.instagram.com/caminosdefogonypalabra/" target="_blank" rel="noopener noreferrer" aria-label="Instagram Caminos de Fogón y Palabra">
+            <FaInstagram aria-hidden="true" />
           </a>
         </span>
         <span className="footer-dev">Desarrollado con ❤️ por <a href="https://deploydevs.vercel.app/" target="_blank" rel="noopener noreferrer">Agencia Deploy</a></span>

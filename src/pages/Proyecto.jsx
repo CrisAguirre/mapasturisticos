@@ -10,6 +10,7 @@ import {
   FaUtensils,
 } from 'react-icons/fa';
 import TextCarousel from '../components/TextCarousel.jsx';
+import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
 
 const PROPOSITOS = [
   {
@@ -160,14 +161,31 @@ export default function Proyecto() {
   return (
     <section className="page-section proyecto">
       <p className="eyebrow">2 · El proyecto</p>
-      <h2>Caminos de Fogón y Palabra: Mujeres que Guían el Territorio</h2>
-      <p className="lead">
-        Un territorio que se cuenta desde sus mujeres, se comparte desde sus saberes
-        y se fortalece cuando caminamos juntas.
-      </p>
+      <SplitText
+        as="h2"
+        splitBy="chars"
+        stagger={18}
+        text="Caminos de Fogón y Palabra: Mujeres que Guían el Territorio"
+        className="hero-title"
+      />
+      <Reveal delay={120}>
+        <p className="lead">
+          Un territorio que se cuenta desde sus mujeres, se comparte desde sus saberes
+          y se fortalece cuando caminamos juntas.
+        </p>
+      </Reveal>
 
-      <h3>Una iniciativa que nace de las mujeres y camina con el territorio</h3>
-      <p>
+      <div className="stat-strip" aria-label="El proyecto en cifras">
+        <div className="stat"><span className="stat-num">15</span><span className="stat-label">mujeres</span></div>
+        <div className="stat"><span className="stat-num">9</span><span className="stat-label">encuentros y talleres</span></div>
+        <div className="stat"><span className="stat-num">5</span><span className="stat-label">ejes de aprendizaje</span></div>
+        <div className="stat"><span className="stat-num">1</span><span className="stat-label">territorio</span></div>
+      </div>
+
+      <Reveal>
+        <h3>Una iniciativa que nace de las mujeres y camina con el territorio</h3>
+      </Reveal>
+      <p className="drop">
         En el corredor oriental de Pasto, entre montañas, caminos rurales, cocinas
         tradicionales y emprendimientos que guardan historias, existe una riqueza que
         merece ser reconocida y compartida: los saberes de las mujeres, la memoria de
@@ -204,14 +222,20 @@ export default function Proyecto() {
         con orgullo, respeto y autenticidad.
       </p>
 
-      <h3>¿Qué busca Caminos de Fogón y Palabra?</h3>
+      <Reveal>
+        <h3>¿Qué busca Caminos de Fogón y Palabra?</h3>
+      </Reveal>
       <p>
         El proyecto articula diferentes propósitos que se complementan y dan sentido al
         proceso comunitario. Desliza y descubre cada uno:
       </p>
-      <TextCarousel slides={PROPOSITOS} interval={5500} label="Propósitos del proyecto" />
+      <Reveal>
+        <TextCarousel slides={PROPOSITOS} interval={5500} label="Propósitos del proyecto" />
+      </Reveal>
 
-      <h3>¿Por qué las mujeres?</h3>
+      <Reveal>
+        <h3>¿Por qué las mujeres?</h3>
+      </Reveal>
       <p>
         Porque las mujeres son portadoras de conocimientos, memorias y prácticas que forman
         parte de la identidad de sus comunidades. En sus cocinas, huertas, emprendimientos
@@ -239,14 +263,20 @@ export default function Proyecto() {
         comunidad.
       </p>
 
-      <h3>El fogón y la palabra: el corazón de nuestra identidad</h3>
+      <Reveal>
+        <h3>El fogón y la palabra: el corazón de nuestra identidad</h3>
+      </Reveal>
       <p>
         Dos símbolos, una misma esencia: reconocer lo que las mujeres saben, fortalecer lo
         que hacen y abrir caminos para que sus historias encuentren nuevas voces.
       </p>
-      <TextCarousel slides={FOGON_PALABRA} interval={7000} label="El fogón y la palabra" />
+      <Reveal>
+        <TextCarousel slides={FOGON_PALABRA} interval={7000} label="El fogón y la palabra" />
+      </Reveal>
 
-      <h3>El corredor oriental de Pasto: un territorio por descubrir</h3>
+      <Reveal>
+        <h3>El corredor oriental de Pasto: un territorio por descubrir</h3>
+      </Reveal>
       <p>
         El corredor oriental de Pasto es un territorio de paisajes andinos, comunidades
         rurales, tradiciones gastronómicas y emprendimientos que expresan la creatividad y
@@ -270,7 +300,9 @@ export default function Proyecto() {
         únicamente en sus paisajes, sino también en las personas que le dan vida.
       </p>
 
-      <h3>¿Cómo se desarrolló el proceso?</h3>
+      <Reveal>
+        <h3>¿Cómo se desarrolló el proceso?</h3>
+      </Reveal>
       <p>
         Caminos de Fogón y Palabra se construyó mediante una metodología participativa que
         reconoce a las mujeres como protagonistas de su aprendizaje. Los encuentros,
@@ -294,14 +326,20 @@ export default function Proyecto() {
         territorio.
       </p>
 
-      <h3>La historia de nuestro camino: encuentros, talleres y recorridos</h3>
+      <Reveal>
+        <h3>La historia de nuestro camino: encuentros, talleres y recorridos</h3>
+      </Reveal>
       <p>
         Cada actividad representa un paso en la construcción de Caminos de Fogón y Palabra.
         Recorre los 9 momentos que tejieron este proceso:
       </p>
-      <TextCarousel slides={HISTORIA} interval={6000} label="Historia del camino" />
+      <Reveal>
+        <TextCarousel slides={HISTORIA} interval={6000} label="Historia del camino" />
+      </Reveal>
 
-      <h3>¿Qué hemos comenzado a construir?</h3>
+      <Reveal>
+        <h3>¿Qué hemos comenzado a construir?</h3>
+      </Reveal>
       <p>
         Más allá de cada taller, el proceso ha permitido avanzar en algo esencial: reconocer
         que las iniciativas de las mujeres pueden fortalecerse cuando dejan de verse como
@@ -331,7 +369,9 @@ export default function Proyecto() {
         bienestar de las comunidades.
       </p>
 
-      <h3>Una red que crece con cada encuentro</h3>
+      <Reveal>
+        <h3>Una red que crece con cada encuentro</h3>
+      </Reveal>
       <p>
         La fuerza de Caminos de Fogón y Palabra está en los vínculos que se construyen. Cada
         conversación permite reconocer otras experiencias; cada actividad abre posibilidades
@@ -353,34 +393,48 @@ export default function Proyecto() {
         una tarea compartida.
       </p>
 
-      <div className="card invitar">
-        <h4>Una invitación a caminar con nosotras</h4>
-        <p>
-          Caminos de Fogón y Palabra es una iniciativa que se construye desde la comunidad y
-          mira hacia el futuro sin desprenderse de sus raíces. Su historia vive en las
-          mujeres que participan, en los emprendimientos que se fortalecen, en los saberes
-          que se comparten y en las relaciones que comienzan a tejerse.
-        </p>
-        <p>
-          Si llegaste hasta aquí, te invitamos a conocer esos caminos, descubrir las
-          historias de sus protagonistas y acercarte a un territorio que tiene mucho por
-          contar.
-        </p>
-        <p>
-          Quizás tu próxima visita sea una oportunidad para sentarte alrededor de un fogón,
-          conocer una receta, escuchar una historia y descubrir que detrás de cada
-          emprendimiento hay una mujer con saberes, sueños y mucho por compartir.
-        </p>
-        <p>
-          <strong>Caminos de Fogón y Palabra: mujeres que reconocen el valor de sus saberes,
-          fortalecen sus iniciativas y tejen juntas nuevas posibilidades para su territorio.</strong>
-        </p>
-        <p className="credito">
-          Una iniciativa de la Fundación Quiero Desarrollo Humano, desarrollada en el marco
-          del Banco de Iniciativas para las Comunidades 2025, del Ministerio del Interior,
-          con el acompañamiento de FINDETER.
-        </p>
-      </div>
+      <Reveal>
+        <Spotlight className="card invitar invite-anim">
+          <span className="blob b1" aria-hidden="true" />
+          <span className="blob b2" aria-hidden="true" />
+          <SplitText
+            as="h4"
+            splitBy="words"
+            stagger={60}
+            text="Una invitación a caminar con nosotras"
+            className="invite-title"
+          />
+          <p>
+            Caminos de Fogón y Palabra es una iniciativa que se construye desde la comunidad y
+            mira hacia el futuro sin desprenderse de sus raíces. Su historia vive en las
+            mujeres que participan, en los emprendimientos que se fortalecen, en los saberes
+            que se comparten y en las relaciones que comienzan a tejerse.
+          </p>
+          <p>
+            Si llegaste hasta aquí, te invitamos a conocer esos caminos, descubrir las
+            historias de sus protagonistas y acercarte a un territorio que tiene mucho por
+            contar.
+          </p>
+          <p>
+            Quizás tu próxima visita sea una oportunidad para sentarte alrededor de un fogón,
+            conocer una receta, escuchar una historia y descubrir que detrás de cada
+            emprendimiento hay una mujer con saberes, sueños y mucho por compartir.
+          </p>
+          <p>
+            <strong className="shimmer-text">Caminos de Fogón y Palabra: mujeres que reconocen el valor de sus saberes,
+            fortalecen sus iniciativas y tejen juntas nuevas posibilidades para su territorio.</strong>
+          </p>
+          <div className="invite-ctas">
+            <a className="btn primary" href="#/mapa">Explorar el mapa</a>
+            <a className="btn" href="#/contacto">Contacto / reserva</a>
+          </div>
+          <p className="credito">
+            Una iniciativa de la Fundación Quiero Desarrollo Humano, desarrollada en el marco
+            del Banco de Iniciativas para las Comunidades 2025, del Ministerio del Interior,
+            con el acompañamiento de FINDETER.
+          </p>
+        </Spotlight>
+      </Reveal>
     </section>
   );
 }
