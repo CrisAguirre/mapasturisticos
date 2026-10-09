@@ -57,13 +57,14 @@ export function SplitText({
   return (
     <Tag ref={ref} className={`split${className ? ` ${className}` : ''}`} aria-label={text}>
       {parts.map((p, i) => (
-        <span
-          key={i}
-          aria-hidden="true"
-          className={`split-part${inView ? ' is-visible' : ''}`}
-          style={{ transitionDelay: `${delay + i * stagger}ms` }}
-        >
-{splitBy === 'chars' ? (p === ' ' ? ' ' : p) : `${p} `}
+        <span key={i} aria-hidden="true">
+          <span
+            className={`split-part${inView ? ' is-visible' : ''}`}
+            style={{ transitionDelay: `${delay + i * stagger}ms` }}
+          >
+            {splitBy === 'chars' && p === ' ' ? ' ' : p}
+          </span>
+          {splitBy === 'words' && i < parts.length - 1 ? ' ' : null}
         </span>
       ))}
     </Tag>
