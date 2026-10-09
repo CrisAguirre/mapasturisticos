@@ -81,14 +81,17 @@ function App() {
         </a>
         <div className="tabs-wrap">
           <div className={`tabs${menuOpen ? '' : ' closed'}`} ref={tabsRef}>
-            <span
-              className="tabs-indicator"
-              style={{
-                opacity: indicator.visible ? 1 : 0,
-                width: `${indicator.width}px`,
-                transform: `translateX(${indicator.left}px)`,
-              }}
-            />
+          <span
+            className="tabs-indicator"
+            style={{
+              opacity: indicator.visible ? 1 : 0,
+              width: `${indicator.width}px`,
+              transform: `translateX(${indicator.left}px)`,
+            }}
+          >
+            {/* Efecto jelly: se re-monta en cada ruta y rebota como gelatina */}
+            <span className="tabs-jelly" key={route} aria-hidden="true" />
+          </span>
             {TABS.map((t) => (
               <a
                 key={t.id}

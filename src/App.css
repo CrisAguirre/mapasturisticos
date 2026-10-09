@@ -74,11 +74,30 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 .tab.active { color: #fff; }
 .tabs-indicator {
   position: absolute; top: 0; left: 0; height: 100%;
-  border-radius: 999px; z-index: 0;
+  z-index: 0;
+  transition: transform 0.45s cubic-bezier(0.34, 1.45, 0.64, 1), width 0.45s cubic-bezier(0.34, 1.45, 0.64, 1), opacity 0.25s ease;
+}
+/* ── Jelly Radio: la píldora rebota como gelatina al cambiar de pestaña ── */
+.tabs-jelly {
+  display: block; width: 100%; height: 100%;
+  border-radius: 999px;
   background: rgba(0,170,221,0.22);
   border: 1px solid rgba(0,200,255,0.55);
   box-shadow: 0 0 14px rgba(0,200,255,0.25);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), width 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+  transform-origin: center;
+  animation: jelly 0.55s ease;
+}
+@keyframes jelly {
+  0% { transform: scale(1, 1); }
+  30% { transform: scale(1.28, 0.72); }
+  50% { transform: scale(0.82, 1.18); }
+  65% { transform: scale(1.08, 0.92); }
+  80% { transform: scale(0.96, 1.04); }
+  100% { transform: scale(1, 1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tabs-indicator { transition: none; }
+  .tabs-jelly { animation: none; }
 }
 
 /* ── Acciones del head (social + switch) ── */
