@@ -46,7 +46,12 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   display: block;
 }
 
-/* ── Pestañas animadas (retráctiles) ── */
+/* ── Pestañas animadas (retráctiles) + social pegado ── */
+.tabs-wrap {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1 1 auto; justify-content: flex-end;
+  order: 1; min-width: 0;
+}
 .tabs {
   position: relative; display: flex; gap: 4px; flex-wrap: wrap;
   flex: 1 1 auto; justify-content: flex-end; order: 1;
@@ -217,6 +222,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 @media (max-width: 720px) {
   .topnav { flex-direction: row; align-items: center; }
   .topnav .brand { flex: 1 1 auto; order: 1; min-width: 0; justify-content: center; }
+  .tabs-wrap { display: contents; }
   .nav-social { order: 0; }
   .brand-text { display: none; }
   .brand-logo { height: 44px; max-width: min(52vw, 220px); }

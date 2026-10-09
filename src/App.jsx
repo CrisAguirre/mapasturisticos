@@ -72,15 +72,6 @@ function App() {
   return (
     <>
       <nav className="topnav">
-        <a
-          href="https://www.instagram.com/caminosdefogonypalabra/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="social-btn nav-social"
-          aria-label="Instagram Caminos de Fogón y Palabra"
-        >
-          <FaInstagram aria-hidden="true" />
-        </a>
         <a href="#/inicio" className="brand">
           <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
           <span className="brand-text">
@@ -88,25 +79,36 @@ function App() {
             <span className="brand-line2">Mujeres que Guían el Territorio</span>
           </span>
         </a>
-        <div className={`tabs${menuOpen ? '' : ' closed'}`} ref={tabsRef}>
-          <span
-            className="tabs-indicator"
-            style={{
-              opacity: indicator.visible ? 1 : 0,
-              width: `${indicator.width}px`,
-              transform: `translateX(${indicator.left}px)`,
-            }}
-          />
-          {TABS.map((t) => (
-            <a
-              key={t.id}
-              data-route={t.id}
-              href={`#/${t.id}`}
-              className={`tab${t.id === route ? ' active' : ''}`}
-            >
-              {t.label}
-            </a>
-          ))}
+        <div className="tabs-wrap">
+          <div className={`tabs${menuOpen ? '' : ' closed'}`} ref={tabsRef}>
+            <span
+              className="tabs-indicator"
+              style={{
+                opacity: indicator.visible ? 1 : 0,
+                width: `${indicator.width}px`,
+                transform: `translateX(${indicator.left}px)`,
+              }}
+            />
+            {TABS.map((t) => (
+              <a
+                key={t.id}
+                data-route={t.id}
+                href={`#/${t.id}`}
+                className={`tab${t.id === route ? ' active' : ''}`}
+              >
+                {t.label}
+              </a>
+            ))}
+          </div>
+          <a
+            href="https://www.instagram.com/caminosdefogonypalabra/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-btn nav-social"
+            aria-label="Instagram Caminos de Fogón y Palabra"
+          >
+            <FaInstagram aria-hidden="true" />
+          </a>
         </div>
         <div className="nav-actions">
           <button
