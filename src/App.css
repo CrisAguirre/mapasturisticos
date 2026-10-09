@@ -11,8 +11,17 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   backdrop-filter: blur(14px) saturate(1.4);
   -webkit-backdrop-filter: blur(14px) saturate(1.4);
 }
-.topnav .brand { color: #fff; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-.brand-logo { width: 38px; height: 38px; object-fit: contain; border-radius: 9px; background: rgba(255,255,255,0.06); }
+.topnav .brand { color: #fff; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 12px; }
+/* Logo nuevo: formato horizontal / no cuadrado. Se adapta por alto, ancho automático. */
+.brand-logo {
+  height: 46px;
+  width: auto;
+  max-width: 230px;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent;
+  display: block;
+}
 
 /* ── Pestañas animadas (retráctiles) ── */
 .tabs {
@@ -94,6 +103,23 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
 .card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 12px; }
+.card h4 { margin: 0 0 8px; color: #fff; }
+.card p { margin: 8px 0; color: #cbd5e1; line-height: 1.6; }
+
+/* ── Proyecto (Punto Dos) ── */
+.proyecto h3 { color: #ffd479; margin: 38px 0 10px; font-size: 1.35rem; }
+.proyecto p { color: #cbd5e1; line-height: 1.7; }
+.proyecto .eyebrow {
+  display: inline-block; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: #9fd8ff;
+  background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.35);
+  padding: 4px 12px; border-radius: 999px; margin: 0 0 10px;
+}
+.proyecto .lead { font-size: 1.15rem; color: #fff; }
+.proyecto ol.bullet { padding-left: 20px; }
+.proyecto ol.bullet li { margin-bottom: 10px; }
+.proyecto .invitar { margin-top: 36px; border-color: rgba(255,212,121,0.4); background: rgba(255,180,0,0.07); }
+.proyecto .credito { font-size: 0.85rem; color: #9fb3c8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; }
 
 .mapa-section { max-width: none; }
 .mapa-clon-wrapper {
@@ -114,7 +140,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   border-radius: 16px; padding: 34px 30px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.45);
 }
-.login-logo { width: 72px; height: 72px; object-fit: contain; border-radius: 16px; margin-bottom: 10px; }
+.login-logo { width: min(250px, 85%); height: auto; max-height: 190px; object-fit: contain; border-radius: 0; background: transparent; margin-bottom: 10px; }
 .login-card h2 { margin: 0 0 6px; }
 .login-sub { color: #9fb3c8; font-size: 0.9rem; margin: 0 0 22px; }
 .mock-tag {
@@ -152,7 +178,8 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 
 @media (max-width: 720px) {
   .topnav { flex-direction: row; align-items: center; }
-  .topnav .brand { flex: 1 1 auto; order: 0; font-size: 0.9rem; }
+  .topnav .brand { flex: 1 1 auto; order: 0; font-size: 0.85rem; min-width: 0; }
+  .brand-logo { height: 38px; max-width: 170px; }
   .menu-toggle { order: 1; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
      partan en varias filas y desfasan la píldora animada */
