@@ -1,3 +1,161 @@
+import {
+  FaComments,
+  FaFemale,
+  FaFire,
+  FaHeart,
+  FaLightbulb,
+  FaMapMarkedAlt,
+  FaStore,
+  FaUsers,
+  FaUtensils,
+} from 'react-icons/fa';
+import TextCarousel from '../components/TextCarousel.jsx';
+
+const PROPOSITOS = [
+  {
+    key: 'economias',
+    icon: FaStore,
+    kicker: 'Propósito 1 de 6',
+    title: 'Fortalecer las economías populares',
+    text: 'Reconocer el valor de los emprendimientos de las mujeres, sus productos, servicios y conocimientos, promoviendo oportunidades de colaboración y crecimiento económico.',
+    gradient: 'linear-gradient(135deg, #0b3d2e, #16a34a)',
+  },
+  {
+    key: 'liderazgo',
+    icon: FaFemale,
+    kicker: 'Propósito 2 de 6',
+    title: 'Liderazgo y autonomía de las mujeres',
+    text: 'Fortalecer su participación, su capacidad para tomar decisiones y su reconocimiento como protagonistas del desarrollo comunitario.',
+    gradient: 'linear-gradient(135deg, #5b21b6, #db2777)',
+  },
+  {
+    key: 'saberes',
+    icon: FaUtensils,
+    kicker: 'Propósito 3 de 6',
+    title: 'Preservar saberes y sabores',
+    text: 'Valorar la cocina tradicional, las recetas familiares, los ingredientes locales, la memoria oral y las prácticas culturales transmitidas entre generaciones.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+  },
+  {
+    key: 'turismo',
+    icon: FaMapMarkedAlt,
+    kicker: 'Propósito 4 de 6',
+    title: 'Impulsar el turismo comunitario',
+    text: 'Identificar las posibilidades de conexión entre emprendimientos, paisajes, gastronomía, cultura y naturaleza, como base para construir una futura ruta turística desde la comunidad.',
+    gradient: 'linear-gradient(135deg, #0c4a6e, #0891b2)',
+  },
+  {
+    key: 'derechos',
+    icon: FaHeart,
+    kicker: 'Propósito 5 de 6',
+    title: 'Derechos humanos y prevención de violencias',
+    text: 'Generar espacios de reflexión sobre la autonomía, las relaciones respetuosas, la prevención de la discriminación y el reconocimiento de los derechos de las mujeres, incluidas las situaciones de violencia económica y patrimonial.',
+    gradient: 'linear-gradient(135deg, #831843, #e11d48)',
+  },
+  {
+    key: 'redes',
+    icon: FaUsers,
+    kicker: 'Propósito 6 de 6',
+    title: 'Tejer redes de apoyo y colaboración',
+    text: 'Fortalecer los vínculos entre las participantes para que el crecimiento de cada iniciativa pueda encontrar oportunidades en el trabajo conjunto.',
+    gradient: 'linear-gradient(135deg, #064e3b, #0d9488)',
+  },
+];
+
+const FOGON_PALABRA = [
+  {
+    key: 'fogon',
+    icon: FaFire,
+    kicker: 'El fogón · encuentro y cuidado',
+    title: 'El fogón: donde la memoria se convierte en alimento',
+    text: 'Es el lugar donde los ingredientes de la tierra se transforman en recetas, donde las familias comparten sus historias y los conocimientos pasan de una generación a otra. Cada preparación guarda una memoria: una receta nos recuerda a nuestras abuelas, una celebración familiar, una costumbre que continúa viva.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #f59e0b)',
+  },
+  {
+    key: 'palabra',
+    icon: FaComments,
+    kicker: 'La palabra · memoria y escucha',
+    title: 'La palabra: donde las historias encuentran su voz',
+    text: 'Es memoria, escucha y participación: contar lo vivido, reconocer otras experiencias, expresar necesidades y construir acuerdos. En los círculos de palabra las participantes comparten conocimientos, reflexionan sobre sus derechos y crean nuevas formas de colaboración.',
+    gradient: 'linear-gradient(135deg, #1e1b4b, #7c3aed)',
+  },
+];
+
+const HISTORIA = [
+  {
+    key: 'paso-1',
+    icon: FaUsers,
+    kicker: 'Paso 1 de 9 · Encuentro',
+    title: 'Encuentro comunitario No. 1',
+    text: 'Apertura y construcción colectiva del proceso. Compartimos expectativas y construimos acuerdos: las bases de la participación, la confianza y el compromiso de las mujeres con la iniciativa.',
+    gradient: 'linear-gradient(135deg, #064e3b, #16a34a)',
+  },
+  {
+    key: 'paso-2',
+    icon: FaLightbulb,
+    kicker: 'Paso 2 de 9 · Taller',
+    title: 'Taller conjunto No. 1',
+    text: 'Derechos de las mujeres, liderazgo y turismo comunitario. Reflexionamos sobre el papel de las mujeres en experiencias turísticas respetuosas, inclusivas y conectadas con la vida comunitaria.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+  },
+  {
+    key: 'paso-3',
+    icon: FaMapMarkedAlt,
+    kicker: 'Paso 3 de 9 · Recorrido',
+    title: 'Recorrido participativo No. 1',
+    text: 'Reconocimiento territorial y memoria comunitaria. Caminamos paisajes, historias y lugares significativos para identificar la identidad que puede compartirse con quienes nos visitan.',
+    gradient: 'linear-gradient(135deg, #0c4a6e, #0891b2)',
+  },
+  {
+    key: 'paso-4',
+    icon: FaUsers,
+    kicker: 'Paso 4 de 9 · Encuentro',
+    title: 'Encuentro comunitario No. 2',
+    text: 'Círculo de palabra sobre cocina tradicional y saberes campesinos. La cocina se volvió escucha: recetas e historias familiares que mantienen viva la identidad gastronómica del territorio.',
+    gradient: 'linear-gradient(135deg, #064e3b, #16a34a)',
+  },
+  {
+    key: 'paso-5',
+    icon: FaLightbulb,
+    kicker: 'Paso 5 de 9 · Taller',
+    title: 'Taller conjunto No. 2',
+    text: 'Atención al visitante, economía popular y prevención de violencias. Hospitalidad con dignidad: espacios seguros, respetuosos y libres de discriminación para todas las personas.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+  },
+  {
+    key: 'paso-6',
+    icon: FaLightbulb,
+    kicker: 'Paso 6 de 9 · Taller',
+    title: 'Taller conjunto No. 3',
+    text: 'Comunicación comunitaria, interpretación territorial y comercialización local. Cómo contar las historias del territorio y compartir con nuevos públicos lo que nace en las comunidades.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+  },
+  {
+    key: 'paso-7',
+    icon: FaMapMarkedAlt,
+    kicker: 'Paso 7 de 9 · Recorrido',
+    title: 'Recorrido participativo No. 2',
+    text: 'Identificación de emprendimientos y potencial turístico. Cada iniciativa aporta una historia, un saber o un producto que puede complementar futuras experiencias de turismo comunitario.',
+    gradient: 'linear-gradient(135deg, #0c4a6e, #0891b2)',
+  },
+  {
+    key: 'paso-8',
+    icon: FaUsers,
+    kicker: 'Paso 8 de 9 · Encuentro',
+    title: 'Encuentro comunitario No. 3',
+    text: 'Círculo de palabra sobre comunicación y narrativas del territorio. Las mujeres reflexionaron sobre visibilizar sus iniciativas y fortalecer el sentido de pertenencia.',
+    gradient: 'linear-gradient(135deg, #064e3b, #16a34a)',
+  },
+  {
+    key: 'paso-9',
+    icon: FaLightbulb,
+    kicker: 'Paso 9 de 9 · Taller',
+    title: 'Taller conjunto No. 4',
+    text: 'Diseño de rutas turísticas, gobernanza y sostenibilidad comunitaria. Trabajar en red, construir acuerdos y proyectar experiencias que valoren la cultura, la gastronomía y el patrimonio local.',
+    gradient: 'linear-gradient(135deg, #7c2d12, #ea580c)',
+  },
+];
+
 export default function Proyecto() {
   return (
     <section className="page-section proyecto">
@@ -49,34 +207,9 @@ export default function Proyecto() {
       <h3>¿Qué busca Caminos de Fogón y Palabra?</h3>
       <p>
         El proyecto articula diferentes propósitos que se complementan y dan sentido al
-        proceso comunitario.
+        proceso comunitario. Desliza y descubre cada uno:
       </p>
-      <div className="cards">
-        <div className="card">
-          <h4>Fortalecer las economías populares</h4>
-          <p>Reconocer el valor de los emprendimientos de las mujeres, sus productos, servicios y conocimientos, promoviendo oportunidades de colaboración y crecimiento económico.</p>
-        </div>
-        <div className="card">
-          <h4>Liderazgo y autonomía de las mujeres</h4>
-          <p>Fortalecer su participación, su capacidad para tomar decisiones y su reconocimiento como protagonistas del desarrollo comunitario.</p>
-        </div>
-        <div className="card">
-          <h4>Preservar saberes y sabores</h4>
-          <p>Valorar la cocina tradicional, las recetas familiares, los ingredientes locales, la memoria oral y las prácticas culturales transmitidas entre generaciones.</p>
-        </div>
-        <div className="card">
-          <h4>Impulsar el turismo comunitario</h4>
-          <p>Identificar las posibilidades de conexión entre emprendimientos, paisajes, gastronomía, cultura y naturaleza, como base para construir una futura ruta turística desde la comunidad.</p>
-        </div>
-        <div className="card">
-          <h4>Derechos humanos y prevención de violencias</h4>
-          <p>Generar espacios de reflexión sobre la autonomía, las relaciones respetuosas, la prevención de la discriminación y el reconocimiento de los derechos de las mujeres, incluidas las situaciones de violencia económica y patrimonial.</p>
-        </div>
-        <div className="card">
-          <h4>Tejer redes de apoyo y colaboración</h4>
-          <p>Fortalecer los vínculos entre las participantes para que el crecimiento de cada iniciativa pueda encontrar oportunidades en el trabajo conjunto.</p>
-        </div>
-      </div>
+      <TextCarousel slides={PROPOSITOS} interval={5500} label="Propósitos del proyecto" />
 
       <h3>¿Por qué las mujeres?</h3>
       <p>
@@ -107,46 +240,11 @@ export default function Proyecto() {
       </p>
 
       <h3>El fogón y la palabra: el corazón de nuestra identidad</h3>
-      <div className="cards">
-        <div className="card">
-          <h4>El fogón: donde la memoria se convierte en alimento</h4>
-          <p>
-            El fogón representa el encuentro, el cuidado y los saberes que alimentan la
-            vida. Es el lugar donde los ingredientes de la tierra se transforman en
-            recetas, donde las familias comparten sus historias y donde los conocimientos
-            pasan de una generación a otra.
-          </p>
-          <p>
-            Cada preparación guarda una memoria. Una receta puede recordarnos a nuestras
-            abuelas, una celebración familiar o una costumbre que continúa viva a pesar
-            del paso del tiempo.
-          </p>
-          <p>
-            En Caminos de Fogón y Palabra, el fogón simboliza la riqueza de la cocina
-            tradicional y la posibilidad de convertir esos saberes en experiencias que
-            permitan reconocer y compartir la identidad gastronómica del corredor oriental
-            de Pasto.
-          </p>
-        </div>
-        <div className="card">
-          <h4>La palabra: donde las historias encuentran su voz</h4>
-          <p>
-            La palabra es memoria, escucha y participación. Es la posibilidad de contar lo
-            vivido, reconocer otras experiencias, expresar necesidades y construir
-            acuerdos.
-          </p>
-          <p>
-            A través de los círculos de palabra y los encuentros comunitarios, las
-            participantes encuentran espacios para compartir sus conocimientos, reflexionar
-            sobre sus derechos y construir nuevas formas de colaboración.
-          </p>
-          <p>
-            El fogón nos reúne; la palabra nos permite escucharnos. Juntos representan la
-            esencia de esta iniciativa: reconocer lo que las mujeres saben, fortalecer lo
-            que hacen y abrir caminos para que sus historias encuentren nuevas voces.
-          </p>
-        </div>
-      </div>
+      <p>
+        Dos símbolos, una misma esencia: reconocer lo que las mujeres saben, fortalecer lo
+        que hacen y abrir caminos para que sus historias encuentren nuevas voces.
+      </p>
+      <TextCarousel slides={FOGON_PALABRA} interval={7000} label="El fogón y la palabra" />
 
       <h3>El corredor oriental de Pasto: un territorio por descubrir</h3>
       <p>
@@ -199,57 +297,9 @@ export default function Proyecto() {
       <h3>La historia de nuestro camino: encuentros, talleres y recorridos</h3>
       <p>
         Cada actividad representa un paso en la construcción de Caminos de Fogón y Palabra.
-        A través de estos espacios, el proyecto avanzó en el reconocimiento de los
-        saberes, el fortalecimiento de las capacidades y la exploración de posibilidades
-        para el turismo comunitario.
+        Recorre los 9 momentos que tejieron este proceso:
       </p>
-      <div className="cards">
-        <div className="card">
-          <h4>1. Encuentro comunitario No. 1</h4>
-          <p><strong>Apertura y construcción colectiva del proceso</strong></p>
-          <p>Nos reunimos para dar inicio a este camino, compartir expectativas y construir acuerdos que orientaran el trabajo colectivo. Este primer espacio permitió sentar las bases de la participación, la confianza y el compromiso de las mujeres con la iniciativa.</p>
-        </div>
-        <div className="card">
-          <h4>2. Taller conjunto No. 1</h4>
-          <p><strong>Derechos de las mujeres, liderazgo y turismo comunitario</strong></p>
-          <p>Un espacio para reconocer los derechos de las mujeres, fortalecer su liderazgo y reflexionar sobre el papel que desempeñan en la construcción de experiencias turísticas respetuosas, inclusivas y conectadas con la vida comunitaria.</p>
-        </div>
-        <div className="card">
-          <h4>3. Recorrido participativo No. 1</h4>
-          <p><strong>Reconocimiento territorial y memoria comunitaria</strong></p>
-          <p>Caminamos el territorio para reconocer sus paisajes, historias, prácticas culturales y lugares significativos. Este recorrido permitió acercarse a la memoria de las comunidades e identificar elementos que hacen parte de su identidad y que pueden compartirse con quienes las visitan.</p>
-        </div>
-        <div className="card">
-          <h4>4. Encuentro comunitario No. 2</h4>
-          <p><strong>Círculo de palabra sobre cocina tradicional y saberes campesinos</strong></p>
-          <p>Alrededor de la memoria y los sabores, compartimos experiencias, recetas e historias familiares que mantienen viva la identidad gastronómica del territorio. La cocina se convirtió en un espacio para escuchar, aprender y reconocer el valor de los saberes transmitidos entre generaciones.</p>
-        </div>
-        <div className="card">
-          <h4>5. Taller conjunto No. 2</h4>
-          <p><strong>Atención al visitante, economía popular y prevención de violencias</strong></p>
-          <p>Reflexionamos sobre la hospitalidad, el fortalecimiento de los emprendimientos y la importancia de construir espacios seguros, respetuosos y libres de discriminación. Recibir a quienes nos visitan también significa cuidar la dignidad, los derechos y el bienestar de todas las personas.</p>
-        </div>
-        <div className="card">
-          <h4>6. Taller conjunto No. 3</h4>
-          <p><strong>Comunicación comunitaria, interpretación territorial y comercialización local</strong></p>
-          <p>Exploramos maneras de contar las historias del territorio, comunicar el valor de los emprendimientos y compartir con nuevos públicos los conocimientos, productos y experiencias que nacen en las comunidades.</p>
-        </div>
-        <div className="card">
-          <h4>7. Recorrido participativo No. 2</h4>
-          <p><strong>Identificación de emprendimientos y potencial turístico</strong></p>
-          <p>Reconocimos las iniciativas que dan vida al corredor oriental de Pasto y las posibilidades de conectarlas. Cada emprendimiento aporta una historia, un saber o un producto que puede complementar futuras experiencias de turismo comunitario.</p>
-        </div>
-        <div className="card">
-          <h4>8. Encuentro comunitario No. 3</h4>
-          <p><strong>Círculo de palabra sobre comunicación y narrativas del territorio</strong></p>
-          <p>Abrimos un espacio para reconocer la importancia de las voces propias y de las historias que merecen ser contadas. Las mujeres reflexionaron sobre cómo comunicar sus experiencias, visibilizar sus iniciativas y fortalecer el sentido de pertenencia por su territorio.</p>
-        </div>
-        <div className="card">
-          <h4>9. Taller conjunto No. 4</h4>
-          <p><strong>Diseño de rutas turísticas, gobernanza y sostenibilidad comunitaria</strong></p>
-          <p>Dimos pasos hacia la articulación de las iniciativas en una futura ruta turística comunitaria. El diálogo se centró en cómo trabajar en red, construir acuerdos, compartir responsabilidades y proyectar experiencias que valoren la cultura, la gastronomía y el patrimonio local.</p>
-        </div>
-      </div>
+      <TextCarousel slides={HISTORIA} interval={6000} label="Historia del camino" />
 
       <h3>¿Qué hemos comenzado a construir?</h3>
       <p>

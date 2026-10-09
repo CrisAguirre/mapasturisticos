@@ -14,9 +14,9 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 .topnav .brand { color: #fff; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 12px; }
 /* Logo nuevo: formato horizontal / no cuadrado. Se adapta por alto, ancho automático. */
 .brand-logo {
-  height: 46px;
+  height: 64px;
   width: auto;
-  max-width: 230px;
+  max-width: 320px;
   object-fit: contain;
   border-radius: 0;
   background: transparent;
