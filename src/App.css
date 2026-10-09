@@ -49,7 +49,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 /* ── Pestañas animadas (retráctiles) ── */
 .tabs {
   position: relative; display: flex; gap: 4px; flex-wrap: wrap;
-  flex: 1 1 auto; justify-content: flex-end;
+  flex: 1 1 auto; justify-content: flex-end; order: 1;
   max-width: 1400px; max-height: 200px; overflow: hidden; visibility: visible;
   transition: max-width 0.45s ease, max-height 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s;
 }
@@ -77,7 +77,8 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 }
 
 /* ── Acciones del head (social + switch) ── */
-.nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; order: 3; }
+.nav-social { order: 2; }
 .social-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 40px; height: 40px; border-radius: 50%;
@@ -215,15 +216,16 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 
 @media (max-width: 720px) {
   .topnav { flex-direction: row; align-items: center; }
-  .topnav .brand { flex: 1 1 auto; order: 0; min-width: 0; }
+  .topnav .brand { flex: 1 1 auto; order: 1; min-width: 0; justify-content: center; }
+  .nav-social { order: 0; }
   .brand-text { display: none; }
   .brand-logo { height: 44px; max-width: min(52vw, 220px); }
-  .nav-actions { order: 1; gap: 8px; }
+  .nav-actions { order: 2; gap: 8px; }
   .menu-toggle { order: 1; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
      partan en varias filas y desfasan la píldora animada */
   .tabs {
-    order: 2;
+    order: 3;
     flex: 1 1 100%;
     justify-content: flex-start;
     flex-wrap: nowrap;

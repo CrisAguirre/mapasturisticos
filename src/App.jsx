@@ -72,6 +72,15 @@ function App() {
   return (
     <>
       <nav className="topnav">
+        <a
+          href="https://www.instagram.com/caminosdefogonypalabra/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="social-btn nav-social"
+          aria-label="Instagram Caminos de Fogón y Palabra"
+        >
+          <FaInstagram aria-hidden="true" />
+        </a>
         <a href="#/inicio" className="brand">
           <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
           <span className="brand-text">
@@ -100,15 +109,6 @@ function App() {
           ))}
         </div>
         <div className="nav-actions">
-          <a
-            href="https://www.instagram.com/caminosdefogonypalabra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-btn"
-            aria-label="Instagram Caminos de Fogón y Palabra"
-          >
-            <FaInstagram aria-hidden="true" />
-          </a>
           <button
             type="button"
             className={`menu-toggle${menuOpen ? ' open' : ''}`}
