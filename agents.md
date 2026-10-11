@@ -26,13 +26,18 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 
 - Node v22, Vite 8, React 19, `react-icons` 5, `leaflet` (mapa real OSM en
   `MapaCorredor.jsx`, sin `react-leaflet`; toggle claro/OSM ↔ satélite/Esri,
-  trazado fiel en `src/config/ruta.json` (OSRM foot, 388 pts, no cerrar loop),
+  SATELITAL por defecto; trazado fiel en `src/config/ruta.json` (OSRM foot,
+  388 pts, no cerrar loop); controles zoom abajo-der + escala, minZoom 11,
+  límites Nariño con rebote, botones ⤢ encuadre y 📍 mi ubicación;
   3 flechas rAF 1→6 + nubes adorno con interruptor (procedurales con semilla
   de la vista centro+zoom, 3–4 nubes de 3–5 lóbulos, sin saltos: regeneran en
   moveend; viento real Open-Meteo sobre Cabrera, deriva + insignia + sombra a
-  sotavento; se escalan con el zoom),
-  `react-router` NO (navegación por
+  sotavento; se escalan con el zoom), `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
+- **Tema día/noche**: `data-theme` en `<html>` (`oscuro` por defecto = imagen
+  actual), variables en `App.css` + bloque `html[data-theme="claro"]` consolidado
+  (lo de fotos/gradientes/mapa se deja igual); toggle ☀️/🌙 en `.nav-actions`
+  con `localStorage['cfp_tema']`; `color-scheme` en `index.css`.
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
   Auditoría diseño: `npx impeccable detect src/` (código) y contra dev
   (`http://127.0.0.1:5173/`, no `localhost`, el browser del detector no lo resuelve).

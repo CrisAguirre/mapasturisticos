@@ -119,11 +119,14 @@ export default function MapaCorredor() {
   const capaRef = useRef(null);
   const lineaRef = useRef(null);
   const flechasRef = useRef([]);
+  const rutaBoundsRef = useRef(null);
+  const ubiRef = useRef(null);
   const rafRef = useRef(0);
   const [puntoId, setPuntoId] = useState(1);
   const [tema, setTema] = useState('satelital');
   const [mapaListo, setMapaListo] = useState(false);
   const [zoom, setZoom] = useState(14);
+  const [geoMsg, setGeoMsg] = useState(null);
   // Viento actual de la zona (Open-Meteo, gratis sin clave). x/y = vector
   // pantalla hacia donde SE MUEVEN las nubes. Fallback: alisios del este.
   const [viento, setViento] = useState({ dir: 'E', x: 1, y: 0, kmh: null });
@@ -134,7 +137,17 @@ export default function MapaCorredor() {
   // Mapa real una sola vez: capa base + ruta + 6 marcadores + 3 flechas
   useEffect(() => {
     if (mapRef.current || !mapEl.current) return;
-    const map = L.map(mapEl.current, { scrollWheelZoom: false }).setView([1.2098, -77.2103], 14);
+    const map = L.map(mapEl.current, {
+      scrollWheelZoom: false,
+      zoomControl: false,
+      minZoom: 11,
+      maxZoom: 19,
+      // La vista no se escapa de Nariño: rebota suave al borde
+      maxBounds: L.latLngBounds([0.95, -77.55], [1.45, -76.95]),
+      maxBoundsViscosity: 0.8,
+    }).setView([1.2098, -77.2103], 14);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.control.scale({ position: 'bottomleft', imperial: false }).addTo(map);
     // Satelital por defecto (pedido de la usuaria); el toggle cambia a claro.
     capaRef.current = L.tileLayer(CAPAS.satelital.url, {
       maxZoom: CAPAS.satelital.maxZoom,
@@ -168,7 +181,27 @@ export default function MapaCorredor() {
       return { m, frac: f };
     });
 
-    map.fitBounds(L.latLngBounds(TRAZO.pts).pad(0.18));
+    rutaBoundsRef.current = L.latLngBounds(TRAZO.pts).pad(0.18);
+    map.fitBounds(rutaBoundsRef.current);
+    // Punto azul de ubicación (geolocalización del visitante)
+    map.on('locationfound', (e) => {
+      if (ubiRef.current) {
+        ubiRef.current.marca.setLatLng(e.latlng);
+        ubiRef.current.circulo.setLatLng(e.latlng).setRadius(e.accuracy);
+      } else {
+        const marca = L.circleMarker(e.latlng, {
+          radius: 8, color: '#fff', weight: 3, fillColor: '#00aadd', fillOpacity: 1,
+        }).addTo(map);
+        const circulo = L.circle(e.latlng, {
+          radius: e.accuracy, color: '#00aadd', weight: 1, opacity: 0.5, fillOpacity: 0.12,
+        }).addTo(map);
+        ubiRef.current = { marca, circulo };
+      }
+      setGeoMsg(null);
+    });
+    map.on('locationerror', () => {
+      setGeoMsg('No se pudo obtener tu ubicación.');
+    });
     // Cielo sembrado por la vista + zoom para las nubes (sin saltos aleatorios)
     const sembrar = () => {
       const c = map.getCenter();
@@ -267,6 +300,25 @@ export default function MapaCorredor() {
     if (m && mapRef.current) mapRef.current.flyTo(m.getLatLng(), 16, { duration: 0.8 });
   };
 
+  // Vuelve al encuadre del recorrido completo
+  const encuadrarRuta = () => {
+    if (mapRef.current && rutaBoundsRef.current) {
+      mapRef.current.flyToBounds(rutaBoundsRef.current, { duration: 0.8 });
+    }
+  };
+
+  // Punto azul: ubica al visitante que camina la ruta
+  const irAMiUbicacion = () => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (!('geolocation' in navigator)) {
+      setGeoMsg('Tu dispositivo no ofrece ubicación.');
+      return;
+    }
+    setGeoMsg('Buscando tu ubicación…');
+    map.locate({ setView: true, maxZoom: 16, timeout: 10000 });
+  };
+
   return (
     <div className="mc-clon">
       <div className="mc-head">
@@ -298,11 +350,16 @@ export default function MapaCorredor() {
           </button>
           <span className="mc-meta">6 paradas · a pie · ~7 km</span>
         </div>
+        {geoMsg && <p className="mc-geo" role="status">{geoMsg}</p>}
       </div>
 
       <div className={`mc-main tema-${tema}`}>
         <div className="mc-visual">
           <div ref={mapEl} className="mc-map" role="application" aria-label="Mapa del recorrido con 6 paradas" />
+          <div className="mc-tools" role="group" aria-label="Controles del mapa">
+            <button type="button" onClick={encuadrarRuta} title="Ver recorrido completo" aria-label="Ver recorrido completo">⤢</button>
+            <button type="button" onClick={irAMiUbicacion} title="Dónde estoy" aria-label="Mostrar mi ubicación">📍</button>
+          </div>
           {nubesOn && (
             <div
               className="mc-nubes"
