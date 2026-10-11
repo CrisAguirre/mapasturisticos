@@ -60,8 +60,8 @@
   pointer-events: none;
 }
 @keyframes mc-deriva {
-  from { transform: translate(calc(var(--dx, 1) * -32px), calc(var(--dy, 0) * -32px)); }
-  to { transform: translate(calc(var(--dx, 1) * 32px), calc(var(--dy, 0) * 32px)); }
+  from { transform: translate(calc(var(--dx, 1) * -70px), calc(var(--dy, 0) * -70px)); opacity: 0.85; }
+  to { transform: translate(calc(var(--dx, 1) * 70px), calc(var(--dy, 0) * 70px)); opacity: 1; }
 }
 /* Sombra de cada nube sobre el mapa, desplazada a sotavento */
 .mc-nubederiva::after {

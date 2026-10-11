@@ -100,8 +100,8 @@ function sembrarCielo() {
         lng: lng0 + rnd() * (lng1 - lng0),
         w: 260 + rnd() * 180, // px a zoom 14; escala con 2^(z-14)
         h: 90 + rnd() * 70,
-        opacity: 0.36 + rnd() * 0.14,
-        duration: `${55 + rnd() * 25}s`,
+        opacity: 0.42 + rnd() * 0.13,
+        duration: `${20 + rnd() * 12}s`,
         delay: `${-rnd() * 20}s`,
         lobulos: Array.from({ length: lobulos }, () => ({
           l: `${8 + rnd() * 55}%`,

@@ -33,7 +33,7 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
   Leaflet `nubes` z450 bajo marcadores, 8 nubes fijas con lat/lng y semilla
   `cielo-cabrera`, se recolocan en move/zoom/viewreset y escalan 2^(z-14);
   3–5 lóbulos c/u; viento real Open-Meteo sobre Cabrera, deriva + insignia +
-  sombra a sotavento), `react-router` NO (navegación por
+  sombra a sotavento; deriva visible ±70px en 20–32 s con respiro de opacidad), `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - **Tema día/noche**: `data-theme` en `<html>` (`oscuro` por defecto = imagen
   actual), variables en `App.css` + bloque `html[data-theme="claro"]` consolidado

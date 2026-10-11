@@ -118,7 +118,6 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 
 /* ── Acciones del head (social + switch) ── */
 .nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; order: 3; margin-left: auto; }
-.nav-social { order: 2; }
 .social-btn {
   display: inline-flex; align-items: center; justify-content: center;
   width: 40px; height: 40px; border-radius: 50%;
