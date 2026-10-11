@@ -33,8 +33,9 @@
 .mc-nubes { position: absolute; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; }
 .mc-nube {
   position: absolute; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%);
-  filter: blur(14px); pointer-events: none;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 72%);
+  filter: blur(6px) drop-shadow(0 14px 16px rgba(11,19,43,0.35));
+  pointer-events: none;
   animation: mc-deriva linear infinite alternate;
 }
 @keyframes mc-deriva { from { transform: translateX(-24px); } to { transform: translateX(36px); } }

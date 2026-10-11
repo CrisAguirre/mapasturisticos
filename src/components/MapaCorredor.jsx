@@ -73,10 +73,10 @@ function crearNubes() {
   return [0, 1, 2].map((i) => ({
     id: i + Math.random(),
     top: `${2 + Math.random() * 13}%`,
-    left: `${3 + Math.random() * 62}%`,
-    width: `${240 + Math.random() * 160}px`,
-    height: `${75 + Math.random() * 55}px`,
-    opacity: 0.2 + Math.random() * 0.1,
+    left: `${3 + Math.random() * 60}%`,
+    width: `${280 + Math.random() * 160}px`,
+    height: `${90 + Math.random() * 60}px`,
+    opacity: 0.38 + Math.random() * 0.14,
     duration: `${55 + Math.random() * 25}s`,
     delay: `${-Math.random() * 20}s`,
   }));
