@@ -84,16 +84,16 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   order: 1; min-width: 0;
 }
 .tabs {
-  position: relative; display: flex; gap: 4px; flex-wrap: wrap;
+  position: relative; display: flex; gap: 4px; flex-wrap: nowrap;
   flex: 1 1 auto; justify-content: flex-end; order: 1;
-  max-width: 1400px; max-height: 200px; overflow: hidden; visibility: visible;
-  transition: max-width 0.45s ease, max-height 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s;
+  max-width: 1400px; overflow: hidden; visibility: visible;
+  transition: max-width 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s;
 }
 .tabs.closed {
-  max-width: 0; max-height: 42px; flex-wrap: nowrap;
+  max-width: 0;
   opacity: 0; transform: translateX(30px);
   pointer-events: none; visibility: hidden;
-  transition: max-width 0.45s ease, max-height 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s 0.45s;
+  transition: max-width 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s 0.45s;
 }
 .tab {
   position: relative; z-index: 1;
