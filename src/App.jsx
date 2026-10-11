@@ -32,6 +32,12 @@ function routeFromHash() {
 
 function App() {
   const [route, setRoute] = useState(routeFromHash);
+  // Tema día/noche: oscuro por defecto (imagen actual), se guarda local
+  const [tema, setTema] = useState(() => localStorage.getItem('cfp_tema') || 'oscuro');
+  useEffect(() => {
+    document.documentElement.dataset.theme = tema;
+    localStorage.setItem('cfp_tema', tema);
+  }, [tema]);
   // Menú retráctil: abierto por defecto en escritorio, cerrado en móvil
   const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 721px)').matches);
   const tabsRef = useRef(null);
@@ -158,6 +164,15 @@ function App() {
           </a>
         </div>
         <div className="nav-actions">
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={() => setTema((t) => (t === 'oscuro' ? 'claro' : 'oscuro'))}
+            aria-pressed={tema === 'claro'}
+            aria-label={tema === 'oscuro' ? 'Cambiar a modo día' : 'Cambiar a modo noche'}
+          >
+            <span aria-hidden="true">{tema === 'oscuro' ? '☀️' : '🌙'}</span>
+          </button>
           <button
             type="button"
             className={`menu-toggle${menuOpen ? ' open' : ''}`}

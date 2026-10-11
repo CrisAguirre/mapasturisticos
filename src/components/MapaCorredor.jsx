@@ -121,7 +121,7 @@ export default function MapaCorredor() {
   const flechasRef = useRef([]);
   const rafRef = useRef(0);
   const [puntoId, setPuntoId] = useState(1);
-  const [tema, setTema] = useState('claro');
+  const [tema, setTema] = useState('satelital');
   const [mapaListo, setMapaListo] = useState(false);
   const [zoom, setZoom] = useState(14);
   // Viento actual de la zona (Open-Meteo, gratis sin clave). x/y = vector
@@ -135,13 +135,14 @@ export default function MapaCorredor() {
   useEffect(() => {
     if (mapRef.current || !mapEl.current) return;
     const map = L.map(mapEl.current, { scrollWheelZoom: false }).setView([1.2098, -77.2103], 14);
-    capaRef.current = L.tileLayer(CAPAS.claro.url, {
-      maxZoom: CAPAS.claro.maxZoom,
-      attribution: CAPAS.claro.attribution,
+    // Satelital por defecto (pedido de la usuaria); el toggle cambia a claro.
+    capaRef.current = L.tileLayer(CAPAS.satelital.url, {
+      maxZoom: CAPAS.satelital.maxZoom,
+      attribution: CAPAS.satelital.attribution,
     }).addTo(map);
 
     lineaRef.current = L.polyline(TRAZO.pts, {
-      color: CAPAS.claro.ruta,
+      color: CAPAS.satelital.ruta,
       weight: 4,
       dashArray: '8 6',
       className: 'mc-flujo',
