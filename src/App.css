@@ -128,9 +128,8 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 .social-btn svg { font-size: 1.15rem; }
 .social-btn:hover { background: rgba(0,170,221,0.3); border-color: rgba(0,200,255,0.6); color: var(--texto); }
 
-/* Instagram y tema viven al final de las pestañas (desktop y desplegable móvil) */
-.tabs .nav-social { margin-left: 6px; flex-shrink: 0; }
-.tabs .theme-toggle { width: 38px; height: 38px; flex-shrink: 0; }
+/* Instagram y tema van fuera del desplegable, junto a la hamburguesa */
+
 /* ── Botón switch del menú (hamburguesa → X) ── */
 .menu-toggle {
   flex-shrink: 0;
@@ -277,10 +276,10 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   .brand-line1 { font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; }
   .brand-line2 { font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis; }
   .brand-logo { height: 40px; max-width: 40vw; }
-  /* Solo la hamburguesa a la derecha */
+  /* Social + tema + hamburguesa a la derecha, como en escritorio */
   .tabs-wrap { display: contents; }
   .nav-actions { order: 2; gap: 8px; }
-  /* Instagram y tema van dentro del desplegable, al final de los submenús */
+  .nav-actions .social-btn, .nav-actions .theme-toggle { width: 38px; height: 38px; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
      partan en varias filas y desfasan la píldora animada */
   .tabs {

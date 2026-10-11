@@ -77,11 +77,10 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 ## 5. Detalles de implementación que no son obvios
 
 - **Nav** (`App.jsx`): brand = logo2 + 2 líneas (`Caminos de Fogón y Palabra` /
-  `Mujeres que Guían el Territorio`). Estructura: `brand | .tabs(tabs + social +
-  tema) | .nav-actions(hamburguesa)`. Instagram y tema van DENTRO de `.tabs` al
-  final (desktop pegados, móvil al final del desplegable). En móvil `.tabs-wrap
-  { display: contents }`: marca-izq con títulos escalados visibles,
-  hamburguesa-der.
+  `Mujeres que Guían el Territorio`). Estructura: `brand | .tabs | .nav-actions
+  (social + tema + hamburguesa)` en las 3 vistas. En móvil `.tabs-wrap
+  { display: contents }`: marca-izq con títulos escalados visibles, iconos +
+  hamburguesa-der, submenús en desplegable.
 - **Subrayado sobrio**: el indicador `.tabs-indicator` es una línea dorada de 2px
   que se desliza con `cubic-bezier(0.22,1,0.36,1)` (sin rebotes; el jelly se
   retiró por pedido de imagen seria). Respetar `prefers-reduced-motion`.
