@@ -1,7 +1,7 @@
-# AGENTS.md — Caminos de Fogón y Palabra (front web)
+# AGENTS.md — Caminos de Fogón y Palabra (front web + backend)
 
 > Contexto técnico para retomar el trabajo en opencode sin perder el hilo.
-> Actualizado: 2026-10-09. Repo limpio y sincronizado con `origin/main` a esta fecha.
+> Actualizado: 2026-10-11. Describe el estado REAL verificado del código.
 
 ## 1. Qué es esta app
 
@@ -9,7 +9,7 @@ Web del proyecto comunitario **"Caminos de Fogón y Palabra: Mujeres que Guían 
 Territorio"** — Fundación Quiero Desarrollo Humano, Banco de Iniciativas para las
 Comunidades 2025 (MinInterior) + FINDETER. 15 mujeres del corredor oriental de
 Pasto (Cabrera, San Pedro de la Laguna y veredas): cocina tradicional + turismo
-comunitario. UI en español (con tildes: Fogón, Guían). Tema oscuro `#0b132b`.
+comunitario. UI en español (con tildes: Fogón, Guían).
 
 ## 2. Dónde vive cada cosa
 
@@ -24,154 +24,177 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 
 ## 3. Stack y comandos (front)
 
-- Node v22, Vite 8, React 19, `react-icons` 5, `leaflet` (mapa real OSM en
-  `MapaCorredor.jsx`, sin `react-leaflet`; toggle claro/OSM ↔ satélite/Esri,
-  SATELITAL por defecto; trazado fiel en `src/config/ruta.json` (OSRM foot,
-  388 pts, no cerrar loop); controles zoom abajo-der + escala, minZoom 11,
-  límites Nariño con rebote, botones ⤢ encuadre y 📍 mi ubicación;
-  3 flechas rAF 1→6 + nubes adorno con interruptor (ANCLADAS al mapa: pane
-  Leaflet `nubes` z450 bajo marcadores, 8 nubes fijas con lat/lng y semilla
-  `cielo-cabrera`, se recolocan en move/zoom/viewreset y escalan 2^(z-14);
-  3–5 lóbulos c/u; viento real Open-Meteo sobre Cabrera, deriva + insignia +
-  sombra a sotavento; deriva visible ±70px en 20–32 s con respiro de opacidad), `react-router` NO (navegación por
-  hash `#/ruta` con `routeFromHash()` en `App.jsx`).
-- **Tema día/noche**: `data-theme` en `<html>` (`oscuro` por defecto = imagen
-  actual), variables en `App.css` + bloque `html[data-theme="claro"]` consolidado
-  (lo de fotos/gradientes/mapa se deja igual); toggle ☀️/🌙 en `.nav-actions`
-  con `localStorage['cfp_tema']`; `color-scheme` en `index.css`.
-- `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
-  Auditoría diseño: `npx impeccable detect src/` (código) y contra dev
-  (`http://127.0.0.1:5173/`, no `localhost`, el browser del detector no lo resuelve).
-  Quedan solo hallazgos de identidad (gradient-text, glows, cyan-on-dark):
-  no "corregir" la paleta ni el easing.
+- Node v22, Vite 8, React 19 (+ StrictMode: en dev los efectos corren 2 veces,
+  por eso los guards con refs), `react-icons` 5, `leaflet` (mapa, SIN
+  `react-leaflet`), `react-router` NO (navegación por hash `#/ruta` con
+  `routeFromHash()` en `App.jsx`).
+- `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`,
+  solo 2 warnings viejos en `bits.jsx`) / `npm run preview`.
+- Servicios externos SIN clave: tiles OSM + Esri satelital, Open-Meteo (viento),
+  OSRM (solo en build-time para generar `ruta.json`, no en runtime).
+- Auditoría diseño: `npx impeccable detect src/` (código) y contra dev en
+  `http://127.0.0.1:5173/` (NO `localhost`: el browser del detector no lo
+  resuelve). Quedan solo hallazgos de identidad (gradient-text, glows,
+  cyan-on-dark): NO "corregir" la paleta ni el easing.
 - PowerShell 5.1: encadenar con `; if ($?) { ... }`, no `&&`. No usar bash para
-  leer/editar archivos (herramientas `read`/`edit`/`write`).
+  leer/editar archivos (herramientas `read`/`edit`/`write`). Temp fuera del
+  workspace: `C:\Users\USUARIO\AppData\Local\Temp\opencode`.
 
 ## 4. Estructura del front
 
 ```
 src/
-  App.jsx / App.css          Nav + tabs + footer + WhatsAppFloat
-  index.css / main.jsx
+  App.jsx / App.css          Nav + tema día/noche + preload + footer + WhatsAppFloat
+  index.css / main.jsx       color-scheme por tema + StrictMode
   pages/                     Inicio, Proyecto, Mujeres, MapaTuristico,
-                             Experiencias, Voces, Entrar, Contacto
+                             Experiencias, Voces, Entrar, Contacto, Cuenta
   components/
-    BannerCarousel.jsx/.css  Home (1 banner real + placeholders + video pendiente)
-    TextCarousel.jsx/.css    Carrusel de tarjetas (propósitos, fogón/palabra, historia)
-    GallerySlider.jsx/.css   Slider fotográfico con Ken Burns y barra de progreso
-    bits.jsx/.css            Efectos propios estilo React Bits (Reveal, SplitText,
-                             Spotlight) — sin dependencias
-    WhatsAppFloat.jsx/.css   Botón flotante en degradado violeta
-    CicloConsolidado.jsx/.css Contenido embebido en la página Mapa
-  config/api.js              `API_URL` (de `VITE_API_URL`) + helper `api()`
-  assets/logo.png            Logo vertical anterior (aún lo usa el login)
-  assets/logo2.png           Logo horizontal actual (3300×1875, ~1MB): nav + favicon
-  assets/banner.jpg / hero.png
-  assets/media/2proyecto/    19 fotos ORIGINALES (65MB, no tocar)
-  assets/media/2proyecto-web/19 fotos optimizadas 1600px q78 (~5.6MB, las que usa la web)
+    BannerCarousel.jsx/.css  Home (1 banner real + 6 placeholders + video pendiente)
+    GallerySlider.jsx/.css   Slider head Proyecto (Ken Burns, progreso, botón ❚❚/▶)
+    TextCarousel.jsx/.css    EN DESUSO (nadie lo importa; no pesa en el bundle)
+    ProcesoAnimado.jsx/.css  5 ejes auto + LineaTiempo 9 pasos + estilos proj-*
+    PiezasProyecto.jsx/.css  PropositosGrid (3×2 fija) + DueloFogon (sin autoplay)
+    bits.jsx/.css            Reveal, SplitText, Spotlight, useInView (sin dependencias)
+    MapaCorredor.jsx/.css    Mapa real Leaflet (ver §7)
+    Preload.jsx/.css         Splash inicial (logo + barra, mín 900 ms + fundido)
+    BackendStatus.jsx/.css   Visor GET /api/health (línea/DB/latencia, refresh 30 s)
+    WhatsAppFloat.jsx/.css   Botón flotante AZUL (36px, wa.me/573196822133)
+    CicloConsolidado.jsx/.css+sim EN DESUSO (simulacro ciclo del agua, no tocar)
+  config/api.js              API_URL + api() + fotoUrl() (absolutiza /uploads)
+  config/recorrido.js        GOOGLE_MAPS_URL + RECORRIDO (6 pts verificados 1×1
+                             contra el link; x/y viejos ya no se usan) + mapsUrlPunto()
+  config/ruta.json           Trazado fiel OSRM foot: 388 pts [lat,lng], ~7.4 km
+  assets/logo0.png           Emblema circular (1580×1554): nav + login
+  assets/logo2.png           Horizontal (981 KB): solo preload
+  assets/logo.png            EN DESUSO (login anterior)
+  assets/banner.jpg          Banner nuevo optimizado 1920px (~372 KB)
+  assets/banner0.jpg         Backup del banner anterior
+  assets/hero.png / landscape-aerial.png (este último, del muerto CicloConsolidado)
+  assets/media/2proyecto/    19 fotos ORIGINALES (65 MB, no tocar)
+  assets/media/2proyecto-web/19 fotos optimizadas 1600px q78 (~5.6 MB, las que usa la web)
   assets/docs/               Fuentes de contenido (.docx/.pdf)
-public/favicon.png           Favicon circular 180px generado de logo2 (sin franjas blancas)
+public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a logo0)
 .env                         `VITE_API_URL=https://mapasturisticosbknd.onrender.com`
-                             (SÍ está commiteado: solo tiene la URL pública, no secretos)
+                             (SÍ está commiteado: solo la URL pública, no secretos)
 ```
 
-## 5. Detalles de implementación que no son obvios
+## 5. Nav, tema y preload (`App.jsx` / `App.css`)
 
-- **Nav** (`App.jsx`): brand = logo2 + 2 líneas (`Caminos de Fogón y Palabra` /
-  `Mujeres que Guían el Territorio`). Estructura: `brand | .tabs | .nav-actions
-  (tema + social + hamburguesa, en ese orden)` en las 3 vistas. En tablet/móvil
-  (≤1024px) el nav es grid 2 filas: marca-izq con títulos escalados y elipsis
-  (sin solape) + acciones-der, submenús en desplegable a todo lo ancho
-  (`.tabs-wrap { display: contents }`); hamburguesa cerrada por defecto
-  (`matchMedia(min-width:1025px)`); `.tabs` con `min-width:0` para no empujar.
-- **Subrayado sobrio**: el indicador `.tabs-indicator` es una línea dorada de 2px
-  que se desliza con `cubic-bezier(0.22,1,0.36,1)` (sin rebotes; el jelly se
-  retiró por pedido de imagen seria). Respetar `prefers-reduced-motion`.
-- **SplitText** (`bits.jsx`): los espacios entre palabras van como nodo de texto
-  FUERA del span animado (dentro de un `inline-block` el navegador los recorta y
-  las palabras se pegan); en modo `chars` los espacios son `\u00A0`. Verificado.
-- **Proyecto** (`pages/Proyecto.jsx`): contenido del docx
-  `PUNTO DOS WEB CAMINOS DE FOGON Y PALABRA.docx`. Galería del header con
-  `import.meta.glob('../assets/media/2proyecto-web/*.jpg', { eager:true,
-  query:'?url', import:'default' })` + orden natural `localeCompare(...,{numeric:true})`:
-  agregar fotos a esa carpeta las incluye solas. Cifras (15/9/5/1), 3 carruseles,
-  tarjeta invitación con borde cónico animado (`@property --ia`), blobs y shimmer.
-- **Entrar** (`pages/Entrar.jsx`): login real contra `POST /api/auth/login`
-  (acepta `user|username|email` + `password`), guarda JWT en
-  `localStorage['cfp_token']`, valida con `GET /api/auth/me` al cargar. Con
-  sesión muestra `pages/Cuenta.jsx` (sección ancha `Cuenta.css`, no la card del
-  login): avatar (foto o inicial), badge de rol, form nombre + subida de foto
-  desde el dispositivo (`POST /api/auth/foto`, preview + quitar) y cambio de
-  clave contra `PATCH /api/auth/me`. Email y rol solo lectura; admin bloqueado
-  (vive en el servidor). Sin recuperación de clave.
-- **Instagram**: `https://www.instagram.com/caminosdefogonypalabra/` solo-icono en
-  nav y footer (con `aria-label`).
-- **Logo**: nav = `logo0.png` (emblema circular 1580×1554, se ajusta por ALTO:
-  `.brand-logo` 64px desktop / 40px móvil, nunca forzar cuadrado); login también
-  con `logo0.png`; preload con `logo2.png`.
-- **Preload** (`components/Preload.jsx/.css`): pantalla inicial con logo + barra,
-  mínimo 900 ms, fundido 350 ms antes de desmontar (`App.jsx`: `listo`/`fuera`).
-- **BackendStatus** (`components/BackendStatus.jsx/.css`): visor de
-  `GET /api/health` (línea/DB/latencia, refresh 30 s + reintentar). Visible en
-  login (`Entrar`) y en home solo sin sesión (`App.jsx` pasa `user` a las páginas).
+- Brand = logo0 + 2 líneas (`Caminos de Fogón y Palabra` / dorado
+  `Mujeres que Guían el Territorio`, var `--dorado`: `#ffd479` noche, `#8a4a08` día).
+- Estructura: `brand | .tabs | .nav-actions(tema + social + hamburguesa, en ese
+  orden)`. Subrayado dorado 2px que se desliza (`cubic-bezier(0.22,1,0.36,1)`,
+  SIN rebotes: el jelly se retiró). Sesión: pestaña muestra `Cuenta`.
+- **Tema día/noche**: `data-theme` en `<html>` (`oscuro` por defecto),
+  variables en `App.css` + bloque `html[data-theme="claro"]` consolidado (lo de
+  fotos/gradientes/mapa se deja igual); toggle ☀️/🌙 con
+  `localStorage['cfp_tema']`; día = blanco metalizado frío (NO beige).
+- Breakpoint tablet/móvil 1024px: nav en grid 2 filas (marca-izq con elipsis +
+  acciones-der ancladas con `margin-left:auto`, sin wrap ni solapes),
+  hamburguesa cerrada por defecto (`matchMedia(min-width:1025px)`), `.tabs` con
+  `min-width:0`. La fila del menú es altura fija (una sola línea, sin saltos).
+- `.topnav` casi opaco (`rgba(5,10,23,0.96)` + sombra) para no mezclar texto al scroll.
+- Preload: mínimo 900 ms + fundido 350 ms (`listo`/`fuera`). `App.jsx` pasa
+  `user` a las páginas (`<Page user={user} />`); sesión vía `GET /api/auth/me` +
+  evento `cfp-auth` + `localStorage['cfp_token']`.
 
-## 6. Recetas de assets (repetir igual cuando toque)
+## 6. Páginas
+
+- **Inicio**: hero + `BannerCarousel` + `BackendStatus` SOLO sin sesión.
+- **Proyecto**: galería header (`GallerySlider` con botón pausa/play, progreso
+  sincronizado, Ken Burns congelable, arranca pausado con reduced-motion) +
+  cifras (15/9/5/1) + cards resumen con `<details>` (NO muros de texto) +
+  `PropositosGrid` + cita + chips territorio + `DueloFogon` +
+  `ProcesoAnimado` (5 ejes) + `LineaTiempo` (9 pasos con "Ver más") + invitación.
+- **Entrar**: sin sesión = card login (`logo0` + título marca, sin la palabra
+  "Entrar") + `BackendStatus`; con sesión = `<Cuenta/>` (sección ancha propia).
+- **Cuenta** (`Cuenta.jsx/.css`): avatar (foto o inicial), badge de rol
+  (admin|mujer|visitante + descripción, SOLO lectura igual que el email),
+  form nombre + subida de foto desde el dispositivo (JPG/PNG/WebP 2 MB, preview,
+  subir/quitar) + cambio de clave (actual+nueva+confirmar) contra `PATCH /me` y
+  `POST /foto`. Admin bloqueado (vive en el servidor).
+- Mujeres / Experiencias / Voces / Contacto: contenido real pendiente (placeholders).
+
+## 7. Mapa en detalle (`MapaCorredor.jsx/.css`)
+
+- Leaflet real OSM(claro)/Esri(satelital, **POR DEFECTO**), `scrollWheelZoom`
+  solo con foco/clic, zoom abajo-der (40px en táctil), escala abajo-izq,
+  minZoom 11 / maxZoom 19, límites Nariño con rebote (`maxBoundsViscosity: 0.8`),
+  botones ⤢ encuadre (`flyToBounds`) y 📍 mi ubicación (punto azul + precisión,
+  `geoMsg` si falla). Táctil: pellizco + arrastre + toque nativos.
+- Ruta fiel `ruta.json` (punteada marrón en claro / amarilla en satélite +
+  hormigas en marcha 1→6) + 6 marcadores numerados (clic/tooltip → ficha,
+  `flyTo` 16, botón "Centrar") + 3 flechas `➤` rAF a velocidad constante
+  (~90 s el circuito, orientadas por rumbo, reinician en 1, sin clics).
+- **Nubes de adorno ANCLADAS al mapa**: pane Leaflet `nubes` (z450, bajo
+  marcadores), 8 fijas con lat/lng y semilla `cielo-cabrera` (4 ruta + 4
+  Nariño), 3–5 lóbulos c/u + sombra a sotavento; se recolocan en
+  move/zoom/viewreset y escalan `2^(z-14)`; deriva visible ±70px en 20–32 s con
+  respiro + viento real Open-Meteo (badge `🌬️ dir · km/h`, fallback E);
+  interruptor ☁️ sí/no; `prefers-reduced-motion` = fijas. Nada meteorológico.
+- Panel lateral: ficha activa (foto pendiente hasta que lleguen fichas),
+  lista 1–6 (clic vuela al punto), links Google Maps + circuito completo.
+
+## 8. Backend en detalle (`../mapasturisticosbknd/`)
+
+- Express 4 + Mongoose 8 + JWT + multer. `npm run dev` (`node --watch`) /
+  `npm start` / `npm run lint` (`eslint .` flat config, limpio).
+- Estructura: `src/index.js` (app + CORS + `/api/health` + `/uploads` estático +
+  handler global JSON), `src/config/db.js` (`connectDB`), `src/models/User.js`
+  (name, email unique, passwordHash, role admin|mujer|visitante, foto URL|null),
+  `src/middleware/requireAuth.js` (firma JWT 7 días, exige Bearer),
+  `src/routes/auth.js`, más `Dockerfile` (Node 22-alpine, `mkdir uploads`,
+  `npm ci --omit=dev`), `.dockerignore` + `.gitignore` (ignoran `uploads`),
+  `.env` (gitignored, con secretos) y `.env.example` (placeholders).
+- Endpoints: `GET /api/health` → `{ ok, service, db, front, time }`;
+  `POST /api/auth/login` (`user|username|email` + `password`) → `{ token, user }`
+  (con `foto`); `GET /api/auth/me` → `{ user }` (con `foto`, `createdAt`);
+  `PATCH /api/auth/me` (name 2–80, foto https|vacía ≤500, clave con
+  currentPassword + mín 6; borra archivo local reemplazado; admin → 403);
+  `POST /api/auth/foto` (multer JPG/PNG/WebP 2 MB, guarda
+  `uploads/<id>-<ts>.ext`, borra anterior local, errores en 400 español);
+  `POST /api/auth/register` → 403 siempre. Email y rol NO editables.
+- **Admin único**: `ADMIN_USER` (case-insensitive) + `bcrypt.compare` contra
+  `ADMIN_PASSWORD_HASH`; `/me` con `sub==='admin'` responde perfil fijo.
+- Env en Render: `PORT=4000`, `MONGODB_URI`, `FRONTEND_URL` (coma-separadas),
+  `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASSWORD_HASH`.
+- Reglas CORS ya aplicadas en `src/index.js` (no romper): normalizar orígenes
+  sin `/` final; origin no listado → `cb(null, false)`; JAMÁS `cb(Error)`;
+  handler global JSON, nunca HTML.
+- Deploy Render Docker: health path `/api/health`; push a `main` redespliega
+  (~1-2 min); plan free se duerme (cold start). OJO: disco efímero → las fotos
+  de `uploads/` se pierden al redesplegar (futuro: Render Disk o S3).
+- Incidentes ya resueltos (no repetir): preflight 500 por `cb(Error)`, login 401
+  por falta de `ADMIN_*`, login 500 por falta de `JWT_SECRET`/hash, CORS por
+  trailing slash, multer 500 → ahora 400 con mensaje.
+- Probar sin dejar basura: arrancar con `Start-Process node`, `GET /health`,
+  login admin (solo firma JWT), `PATCH` sin token → 401, `Stop-Process` por
+  puerto (`Get-NetTCPConnection -LocalPort 4000`). La subida se probó punta a
+  punta con usuario temporal (casos 200/400/401/404) y se borró todo.
+
+## 9. Recetas de assets (repetir igual cuando toque)
 
 - Optimizar fotos: PIL `thumbnail((1600,1600))`, `quality=78, optimize, progressive`;
   guardar en carpeta `-web` con mismo nombre en minúsculas y espacios→`-`.
-- Favicon desde logo2: recortar franjas blancas (detectar filas con >90% píxeles
-  blancos en bordes), crop cuadrado centrado, resize 180, máscara circular con alpha.
+- Banner: 1920px q82 progresivo. Favicon: pendiente regenerar desde `logo0`
+  (hoy es de `logo2`: crop cuadrado, resize 180, máscara circular).
+- NO commitear `uploads/` (fotos de usuarios).
 
-## 7. Backend en detalle (`../mapasturisticosbknd/`)
+## 10. Pendientes conocidos
 
-- Express 4 + Mongoose 8 + JWT. `npm run dev` (`node --watch`) / `npm start` /
-  `npm run lint` (`eslint .`, flat config `eslint.config.js`, cero warnings).
-- Estructura: `src/index.js` (app + CORS + `/api/health` + handler global JSON),
-  `src/config/db.js` (`connectDB`), `src/models/User.js`
-  (name, email unique, passwordHash, role admin|mujer|visitante, foto URL|null),
-  `src/middleware/requireAuth.js` (firma JWT 7 días, exige Bearer),
-  `src/routes/auth.js`, más `Dockerfile` (Node 22-alpine, `npm ci --omit=dev`),
-  `.dockerignore`, `.env` (gitignored, con secretos) y `.env.example` (placeholders).
-- Endpoints: `GET /api/health` → `{ ok, service, db, front, time }` (`front` =
-  origins CORS efectivos, útil para debug); `POST /api/auth/login` con
-  `{ user|username|email, password }` → `{ token, user }`;
-  `GET /api/auth/me` (Bearer) → `{ user }` (con `foto` y `createdAt`);
-  `PATCH /api/auth/me` (name, foto https|vacía, cambio de clave con currentPassword;
-  admin → 403, email/rol no editables); `POST /api/auth/foto` (multer, JPG/PNG/WebP
-  2 MB, guarda en `uploads/` servido en `/uploads`, borra la anterior local);
-  `POST /api/auth/register` → 403 siempre. OJO Render free: disco efímero, las
-  fotos se pierden al redesplegar (a futuro: Render Disk o S3).
-- **Admin único**: se compara `ADMIN_USER` (case-insensitive) y
-  `bcrypt.compare` contra `ADMIN_PASSWORD_HASH`; si no coincide, busca en Mongo
-  por email. `/me` con `sub==='admin'` responde perfil fijo sin tocar DB.
-- Env en Render (dashboard → Environment): `PORT=4000`, `MONGODB_URI`,
-  `FRONTEND_URL` (coma-separadas; hoy `http://localhost:5173` + vercel),
-  `JWT_SECRET`, `ADMIN_USER`, `ADMIN_PASSWORD_HASH`.
-- Reglas CORS ya aplicadas en `src/index.js` (no romper): normalizar orígenes
-  quitando `/` final en ambos lados; origin no listado → `cb(null, false)`
-  (sin cabeceras, el navegador bloquea); JAMÁS `cb(Error)` (Express responde
-  500 al preflight OPTIONS); handler global de errores en JSON, nunca HTML.
-- Deploy Render Docker: health path `/api/health`; cada push a `main`
-  redespliega solo (~1-2 min); cambiar env vars reinicia solo; plan free se
-  duerme (cold start lento). Debug: pestaña Logs + campo `front` del health.
-- Incidentes ya resueltos (no repetir): preflight 500 por `cb(Error)`, login 401
-  por falta de `ADMIN_*` en Render, login 500 por falta de `JWT_SECRET` o hash
-  mal copiado, CORS bloqueado por trailing slash en `FRONTEND_URL`.
-- Probar login local sin dejar basura: arrancar con
-  `Start-Process node -ArgumentList "src/index.js"`, `POST /api/auth/login`
-  como admin (solo firma JWT, no escribe nada), `Stop-Process`.
+- Mujeres / Experiencias / Voces / Contacto: contenido real.
+- BannerCarousel: reemplazar 6 placeholders + video de bienvenida.
+- `logo2.png` (981 KB, solo preload): optimizar o retirar.
+- Favicon desde `logo0`; borrar muertos (`TextCarousel.*`, `CicloConsolidado.*`,
+  `logo.png`, `landscape-aerial.png`) cuando se apruebe.
+- Persistencia de fotos (Disk/S3). Sin recuperación de clave (no hay endpoint).
 
-## 8. Pendientes conocidos
-
-- Mujeres / Experiencias / Voces / Contacto: contenido real (hoy placeholders).
-- BannerCarousel: reemplazar placeholders por banners y video de bienvenida.
-- `logo2.png` (~1MB) y `banner.jpg` (533KB): optimizar peso cuando se pueda.
-- Decidir si el login también usa logo2 (hoy usa `logo.png`).
-
-## 9. Reglas de trabajo con la usuaria
+## 11. Reglas de trabajo con la usuaria
 
 - Responder en español, corto y directo. Ella escribe rápido e informal.
-- Verificar con `npm run build` (front) y prueba de login (back) antes de dar por hecho.
-- Commits/push del back solo cuando lo pide explícito; del front igual.
-- NUNCA escribir secretos (claves, URIs con password, hashes) en el chat salvo el
-  hash/valor puntual que ella necesite pegar en Render, ni en archivos commiteados.
+- Verificar con `npm run build` + `lint` (front) y `eslint` + sintaxis (back)
+  antes de dar por hecho; prueba viva del back sin dejar basura.
+- Commits/push (front o back) SOLO cuando lo pide explícito.
+- NUNCA escribir secretos (claves, URIs con password, hashes, tokens) en el
+  chat salvo el valor puntual que ella necesite pegar en Render, ni en archivos
+  commiteados. Cuidado PowerShell: `$t` y `$T` son la MISMA variable.
