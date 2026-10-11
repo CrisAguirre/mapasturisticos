@@ -11,6 +11,7 @@ import Experiencias from './pages/Experiencias.jsx';
 import Voces from './pages/Voces.jsx';
 import Entrar from './pages/Entrar.jsx';
 import WhatsAppFloat from './components/WhatsAppFloat.jsx';
+import Preload from './components/Preload.jsx';
 import './App.css';
 
 const TABS = [
@@ -36,9 +37,16 @@ function App() {
   const tabsRef = useRef(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
   const [user, setUser] = useState(null);
+  const [listo, setListo] = useState(false);
+  const [fuera, setFuera] = useState(false);
 
-  // Sesión: Entrar avisa con el evento 'cfp-auth' al ingresar/salir
+  // Sesión: Entrar avisa con el evento 'cfp-auth' al ingresar/salir.
+  // El preload se queda mínimo 900 ms y hasta terminar el primer chequeo.
   useEffect(() => {
+    const t0 = Date.now();
+    const terminar = () => {
+      setTimeout(() => setListo(true), Math.max(0, 900 - (Date.now() - t0)));
+    };
     const refresh = () => {
       const token = localStorage.getItem('cfp_token');
       if (!token) {
@@ -56,6 +64,7 @@ function App() {
         });
     };
     refresh();
+    terminar();
     window.addEventListener('cfp-auth', refresh);
     window.addEventListener('storage', refresh);
     return () => {
@@ -63,6 +72,13 @@ function App() {
       window.removeEventListener('storage', refresh);
     };
   }, []);
+
+  // Fundido del preload antes de desmontarlo
+  useEffect(() => {
+    if (!listo) return;
+    const t = setTimeout(() => setFuera(true), 350);
+    return () => clearTimeout(t);
+  }, [listo]);
 
   useEffect(() => {
     const onChange = () => {
@@ -100,6 +116,7 @@ function App() {
 
   return (
     <>
+      {!fuera && <Preload visible={!listo} />}
       <nav className="topnav">
         <a href="#/inicio" className="brand">
           <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="brand-logo" />
@@ -154,7 +171,7 @@ function App() {
       </nav>
 
       <main key={route} className="page-enter">
-        <Page />
+        <Page user={user} />
       </main>
 
       <footer className="footer">

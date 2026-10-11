@@ -1,0 +1,22 @@
+/* ── Visor del estado del backend ── */
+.bk-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.8rem; color: #cbd5e1;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  padding: 7px 13px; border-radius: 999px;
+}
+.bk-dot { width: 9px; height: 9px; border-radius: 50%; background: #9fb3c8; flex: none; }
+.bk-status.cargando .bk-dot { animation: bk-parpadeo 1s ease-in-out infinite; }
+.bk-status.ok .bk-dot { background: #22c55e; box-shadow: 0 0 8px rgba(34,197,94,0.7); }
+.bk-status.degradado .bk-dot { background: #f59e0b; box-shadow: 0 0 8px rgba(245,158,11,0.7); }
+.bk-status.error { color: #ffb4b4; border-color: rgba(255,120,120,0.4); }
+.bk-status.error .bk-dot { background: #ef4444; box-shadow: 0 0 8px rgba(239,68,68,0.7); }
+.bk-reintentar {
+  border: 1px solid rgba(255,255,255,0.25); background: transparent; color: #fff;
+  font-size: 0.75rem; font-weight: 700; border-radius: 999px; padding: 3px 10px; cursor: pointer;
+}
+.bk-reintentar:hover { background: rgba(255,255,255,0.1); }
+@keyframes bk-parpadeo { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) {
+  .bk-status.cargando .bk-dot { animation: none; }
+}

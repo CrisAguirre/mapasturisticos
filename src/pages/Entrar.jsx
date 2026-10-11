@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import logoImg from '../assets/logo.png';
 import { API_URL } from '../config/api.js';
 import Cuenta from './Cuenta.jsx';
+import BackendStatus from '../components/BackendStatus.jsx';
 
 const TOKEN_KEY = 'cfp_token';
 
@@ -96,6 +97,9 @@ export default function Entrar() {
               {loading ? 'Ingresando…' : 'Ingresar'}
             </button>
         </form>
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 16 }}>
+          <BackendStatus />
+        </div>
 
         {notice && (
           <p className="login-notice" style={notice.type === 'ok' ? { color: '#9ff0c0', borderColor: 'rgba(0,200,120,0.4)', background: 'rgba(0,200,120,0.08)' } : undefined}>

@@ -2,12 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import './GallerySlider.css';
 
 // Slider fotográfico para encabezados de sección.
-// images: [{ src, alt }]. Incluye autoplay, flechas, swipe, contador y Ken Burns.
+// images: [{ src, alt }]. Autoplay con botón pausa/play, flechas, swipe,
+// contador, Ken Burns y pausa en hover/foco.
 export default function GallerySlider({ images = [], interval = 5000, label = 'Galería de fotos' }) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
+  const [auto, setAuto] = useState(
+    () => !(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)
+  );
+  const [hover, setHover] = useState(false);
   const touchX = useRef(null);
   const n = images.length;
+  const paused = !auto || hover;
 
   const next = useCallback(() => setIndex((i) => (i + 1) % n), [n]);
   const prev = useCallback(() => setIndex((i) => (i - 1 + n) % n), [n]);
@@ -34,14 +39,14 @@ export default function GallerySlider({ images = [], interval = 5000, label = 'G
 
   return (
     <div
-      className="gal"
+      className={`gal${paused ? ' gal-pausado' : ''}`}
       role="region"
       aria-roledescription="carrusel"
       aria-label={label}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -65,12 +70,25 @@ export default function GallerySlider({ images = [], interval = 5000, label = 'G
             <p className="gal-kicker">Galería · El proyecto</p>
             <p className="gal-title">Encuentros, talleres y recorridos en el corredor oriental de Pasto</p>
           </div>
-          <span className="gal-count" aria-live="polite">
-            {index + 1} / {n}
+          <span className="gal-tools">
+            <span className="gal-count" aria-live="polite">
+              {index + 1} / {n}
+            </span>
+            <button
+              type="button"
+              className="gal-play"
+              onClick={() => setAuto((a) => !a)}
+              aria-pressed={!auto}
+              aria-label={auto ? 'Pausar galería' : 'Reproducir galería'}
+            >
+              {auto ? '❚❚' : '▶'}
+            </button>
           </span>
         </div>
-        {/* Barra de progreso del autoplay */}
-        <span className="gal-progress" key={index} style={{ animationDuration: `${interval}ms` }} aria-hidden="true" />
+        {/* Barra de progreso del autoplay (solo cuando avanza) */}
+        {!paused && (
+          <span className="gal-progress" key={index} style={{ animationDuration: `${interval}ms` }} aria-hidden="true" />
+        )}
       </div>
 
       {n > 1 && (

@@ -100,6 +100,11 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
   nav y footer (con `aria-label`).
 - **Logo**: `.brand-logo` desktop 64px alto / 320px max (se subió +40% una vez);
   móvil 44px. Si el logo cambia de formato, ajustar por ALTO, nunca forzar cuadrado.
+- **Preload** (`components/Preload.jsx/.css`): pantalla inicial con logo + barra,
+  mínimo 900 ms, fundido 350 ms antes de desmontar (`App.jsx`: `listo`/`fuera`).
+- **BackendStatus** (`components/BackendStatus.jsx/.css`): visor de
+  `GET /api/health` (línea/DB/latencia, refresh 30 s + reintentar). Visible en
+  login (`Entrar`) y en home solo sin sesión (`App.jsx` pasa `user` a las páginas).
 
 ## 6. Recetas de assets (repetir igual cuando toque)
 

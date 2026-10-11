@@ -71,8 +71,14 @@
   font-weight: 600;
 }
 
-.gal-count {
+.gal-tools {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gal-count {
   font-size: 0.8rem;
   font-weight: 700;
   color: #fff;
@@ -81,6 +87,29 @@
   padding: 4px 12px;
   border-radius: 999px;
 }
+
+.gal-play {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.gal-play:hover {
+  background: rgba(0, 170, 221, 0.65);
+  transform: scale(1.08);
+}
+
+/* En pausa se congela también el Ken Burns */
+.gal-pausado .gal-img.kb { animation-play-state: paused; }
 
 .gal-progress {
   position: absolute;
