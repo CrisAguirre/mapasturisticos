@@ -155,15 +155,6 @@ function App() {
           </div>
         </div>
         <div className="nav-actions">
-          <a
-            href="https://www.instagram.com/caminosdefogonypalabra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-btn nav-social"
-            aria-label="Instagram Caminos de Fogón y Palabra"
-          >
-            <FaInstagram aria-hidden="true" />
-          </a>
           <button
             type="button"
             className="theme-toggle"
@@ -173,6 +164,15 @@ function App() {
           >
             <span aria-hidden="true">{tema === 'oscuro' ? '☀️' : '🌙'}</span>
           </button>
+          <a
+            href="https://www.instagram.com/caminosdefogonypalabra/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="social-btn nav-social"
+            aria-label="Instagram Caminos de Fogón y Palabra"
+          >
+            <FaInstagram aria-hidden="true" />
+          </a>
           <button
             type="button"
             className={`menu-toggle${menuOpen ? ' open' : ''}`}

@@ -79,12 +79,11 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 
 - **Nav** (`App.jsx`): brand = logo2 + 2 líneas (`Caminos de Fogón y Palabra` /
   `Mujeres que Guían el Territorio`). Estructura: `brand | .tabs | .nav-actions
-  (social + tema + hamburguesa)` en las 3 vistas (`.nav-actions` con
-  `margin-left:auto`, anclado a la derecha; fila sin wrap). Breakpoint
-  tablet/móvil en 1024px: marca-izq con títulos escalados y elipsis,
-  hamburguesa cerrada por defecto (`matchMedia(min-width:1025px)`),
-  submenús en desplegable (`.tabs-wrap { display: contents }`); `.tabs` con
-  `min-width:0` para no empujar.
+  (tema + social + hamburguesa, en ese orden)` en las 3 vistas. En tablet/móvil
+  (≤1024px) el nav es grid 2 filas: marca-izq con títulos escalados y elipsis
+  (sin solape) + acciones-der, submenús en desplegable a todo lo ancho
+  (`.tabs-wrap { display: contents }`); hamburguesa cerrada por defecto
+  (`matchMedia(min-width:1025px)`); `.tabs` con `min-width:0` para no empujar.
 - **Subrayado sobrio**: el indicador `.tabs-indicator` es una línea dorada de 2px
   que se desliza con `cubic-bezier(0.22,1,0.36,1)` (sin rebotes; el jelly se
   retiró por pedido de imagen seria). Respetar `prefers-reduced-motion`.
