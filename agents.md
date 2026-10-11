@@ -29,10 +29,11 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
   SATELITAL por defecto; trazado fiel en `src/config/ruta.json` (OSRM foot,
   388 pts, no cerrar loop); controles zoom abajo-der + escala, minZoom 11,
   límites Nariño con rebote, botones ⤢ encuadre y 📍 mi ubicación;
-  3 flechas rAF 1→6 + nubes adorno con interruptor (procedurales con semilla
-  de la vista centro+zoom, 3–4 nubes de 3–5 lóbulos, sin saltos: regeneran en
-  moveend; viento real Open-Meteo sobre Cabrera, deriva + insignia + sombra a
-  sotavento; se escalan con el zoom), `react-router` NO (navegación por
+  3 flechas rAF 1→6 + nubes adorno con interruptor (ANCLADAS al mapa: pane
+  Leaflet `nubes` z450 bajo marcadores, 8 nubes fijas con lat/lng y semilla
+  `cielo-cabrera`, se recolocan en move/zoom/viewreset y escalan 2^(z-14);
+  3–5 lóbulos c/u; viento real Open-Meteo sobre Cabrera, deriva + insignia +
+  sombra a sotavento), `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - **Tema día/noche**: `data-theme` en `<html>` (`oscuro` por defecto = imagen
   actual), variables en `App.css` + bloque `html[data-theme="claro"]` consolidado
@@ -78,7 +79,8 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 
 - **Nav** (`App.jsx`): brand = logo2 + 2 líneas (`Caminos de Fogón y Palabra` /
   `Mujeres que Guían el Territorio`). Estructura: `brand | .tabs | .nav-actions
-  (social + tema + hamburguesa)` en las 3 vistas. En móvil `.tabs-wrap
+  (social + tema + hamburguesa)` en las 3 vistas (`.nav-actions` con
+  `margin-left:auto`, anclado a la derecha; móvil sin wrap). En móvil `.tabs-wrap
   { display: contents }`: marca-izq con títulos escalados visibles, iconos +
   hamburguesa-der, submenús en desplegable.
 - **Subrayado sobrio**: el indicador `.tabs-indicator` es una línea dorada de 2px

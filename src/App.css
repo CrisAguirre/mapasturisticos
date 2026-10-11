@@ -116,7 +116,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 }
 
 /* ── Acciones del head (social + switch) ── */
-.nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; order: 3; }
+.nav-actions { display: inline-flex; align-items: center; gap: 10px; flex-shrink: 0; order: 3; margin-left: auto; }
 .nav-social { order: 2; }
 .social-btn {
   display: inline-flex; align-items: center; justify-content: center;
@@ -269,7 +269,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 .login-links a:hover { color: var(--texto); text-decoration: underline; }
 
 @media (max-width: 720px) {
-  .topnav { flex-direction: row; align-items: center; }
+  .topnav { flex-direction: row; align-items: center; flex-wrap: nowrap; }
   /* Marca a la izquierda con títulos escalados como en escritorio */
   .topnav .brand { flex: 1 1 auto; order: 0; min-width: 0; justify-content: flex-start; }
   .brand-text { display: flex; min-width: 0; overflow: hidden; }

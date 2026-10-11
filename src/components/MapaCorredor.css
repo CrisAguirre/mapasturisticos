@@ -44,11 +44,12 @@
 .mc-visual { position: relative; flex: 2; min-height: 600px; overflow: hidden; background: #0b132b; }
 .mc-map { position: absolute; inset: 0; z-index: 0; background: #0b132b; }
 .mc-map .leaflet-container { font-family: inherit; }
-/* Nubes ambiente: sobre las baldosas pero sin clics ni tapar marcadores.
-   Derivan con el viento actual (--dx/--dy) y se escalan con el zoom (--zc). */
-.mc-nubes { position: absolute; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; --dx: 1; --dy: 0; }
-.mc-nube {
-  position: absolute;
+/* Nubes ancladas al mapa (pane Leaflet 'nubes', z 450, bajo los marcadores):
+   cada una vive en su lat/lng y viaja con el terreno al mover o acercar.
+   La deriva del viento (--dx/--dy) va en la capa interna. */
+.mc-nubegeo { position: absolute; pointer-events: none; }
+.mc-nubederiva {
+  position: absolute; inset: 0;
   pointer-events: none;
   animation: mc-deriva linear infinite alternate;
 }
@@ -59,11 +60,11 @@
   pointer-events: none;
 }
 @keyframes mc-deriva {
-  from { transform: translate(calc(var(--dx, 1) * -32px), calc(var(--dy, 0) * -32px)) scale(var(--zc, 1)); }
-  to { transform: translate(calc(var(--dx, 1) * 32px), calc(var(--dy, 0) * 32px)) scale(var(--zc, 1)); }
+  from { transform: translate(calc(var(--dx, 1) * -32px), calc(var(--dy, 0) * -32px)); }
+  to { transform: translate(calc(var(--dx, 1) * 32px), calc(var(--dy, 0) * 32px)); }
 }
 /* Sombra de cada nube sobre el mapa, desplazada a sotavento */
-.mc-nube::after {
+.mc-nubederiva::after {
   content: ''; position: absolute;
   left: calc(var(--dx, 1) * 55px); top: calc(72px + var(--dy, 0) * 36px);
   width: 82%; height: 68%; border-radius: 50%;
@@ -149,6 +150,6 @@
   .mc-tools button { width: 44px; height: 44px; font-size: 1.2rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mc-nube { animation: none; transform: scale(var(--zc, 1)); }
+  .mc-nubederiva { animation: none; }
   .mc-flujo { animation: none; }
 }

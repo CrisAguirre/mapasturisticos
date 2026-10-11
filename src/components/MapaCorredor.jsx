@@ -87,29 +87,35 @@ function mulberry32(a) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-function crearNubes(semilla = 'cielo') {
-  const rnd = mulberry32(hashStr(String(semilla)));
-  const total = 3 + Math.floor(rnd() * 2); // 3–4 nubes por vista
-  return Array.from({ length: total }, (_, i) => {
-    const lobulos = 3 + Math.floor(rnd() * 3); // 3–5 lóbulos por nube
-    return {
-      id: `${semilla}-${i}`,
-      top: `${2 + rnd() * 38}%`,
-      left: `${rnd() * 72}%`,
-      width: `${260 + rnd() * 180}px`,
-      height: `${90 + rnd() * 70}px`,
-      opacity: 0.36 + rnd() * 0.14,
-      duration: `${55 + rnd() * 25}s`,
-      delay: `${-rnd() * 20}s`,
-      lobulos: Array.from({ length: lobulos }, () => ({
-        l: `${8 + rnd() * 55}%`,
-        t: `${10 + rnd() * 45}%`,
-        w: `${28 + rnd() * 30}%`,
-        h: `${45 + rnd() * 45}%`,
-        o: 0.7 + rnd() * 0.3,
-      })),
-    };
-  });
+// Cielo fijo y anclado: 8 nubes con coordenadas reales (4 cerca de la ruta,
+// 4 por Nariño), misma semilla siempre. Al mover o acercar, viajan con el mapa
+// como parte del terreno — no van pegadas a la pantalla.
+function sembrarCielo() {
+  const rnd = mulberry32(hashStr('cielo-cabrera'));
+  const caja = (lat0, lat1, lng0, lng1, n) =>
+    Array.from({ length: n }, () => {
+      const lobulos = 3 + Math.floor(rnd() * 3);
+      return {
+        lat: lat0 + rnd() * (lat1 - lat0),
+        lng: lng0 + rnd() * (lng1 - lng0),
+        w: 260 + rnd() * 180, // px a zoom 14; escala con 2^(z-14)
+        h: 90 + rnd() * 70,
+        opacity: 0.36 + rnd() * 0.14,
+        duration: `${55 + rnd() * 25}s`,
+        delay: `${-rnd() * 20}s`,
+        lobulos: Array.from({ length: lobulos }, () => ({
+          l: `${8 + rnd() * 55}%`,
+          t: `${10 + rnd() * 45}%`,
+          w: `${28 + rnd() * 30}%`,
+          h: `${45 + rnd() * 45}%`,
+          o: 0.7 + rnd() * 0.3,
+        })),
+      };
+    });
+  return [
+    ...caja(1.17, 1.25, -77.25, -77.16, 4),
+    ...caja(1.05, 1.35, -77.45, -77.0, 4),
+  ];
 }
 
 export default function MapaCorredor() {
@@ -125,13 +131,12 @@ export default function MapaCorredor() {
   const [puntoId, setPuntoId] = useState(1);
   const [tema, setTema] = useState('satelital');
   const [mapaListo, setMapaListo] = useState(false);
-  const [zoom, setZoom] = useState(14);
   const [geoMsg, setGeoMsg] = useState(null);
   // Viento actual de la zona (Open-Meteo, gratis sin clave). x/y = vector
   // pantalla hacia donde SE MUEVEN las nubes. Fallback: alisios del este.
   const [viento, setViento] = useState({ dir: 'E', x: 1, y: 0, kmh: null });
-  const [nubes, setNubes] = useState(() => crearNubes('vista-inicial'));
   const [nubesOn, setNubesOn] = useState(true);
+  const nubesRef = useRef([]);
   const punto = RECORRIDO.find((p) => p.id === puntoId) ?? RECORRIDO[0];
 
   // Mapa real una sola vez: capa base + ruta + 6 marcadores + 3 flechas
@@ -202,14 +207,48 @@ export default function MapaCorredor() {
     map.on('locationerror', () => {
       setGeoMsg('No se pudo obtener tu ubicación.');
     });
-    // Cielo sembrado por la vista + zoom para las nubes (sin saltos aleatorios)
-    const sembrar = () => {
-      const c = map.getCenter();
-      setNubes(crearNubes(`${c.lat.toFixed(3)},${c.lng.toFixed(3)},${map.getZoom()}`));
-      setZoom(map.getZoom());
+    // Cielo anclado al mapa: pane propio bajo los marcadores; cada nube vive
+    // en su lat/lng y se recoloca en cada movimiento/zoom (viaja con el terreno).
+    const pane = map.createPane('nubes');
+    pane.style.zIndex = 450;
+    pane.style.pointerEvents = 'none';
+    const colocarNubes = () => {
+      const s = Math.min(2, Math.max(0.5, Math.pow(2, map.getZoom() - 14)));
+      nubesRef.current.forEach((n) => {
+        const p = map.latLngToLayerPoint([n.lat, n.lng]);
+        const w = n.w * s;
+        const h = n.h * s;
+        n.el.style.left = `${p.x - w / 2}px`;
+        n.el.style.top = `${p.y - h / 2}px`;
+        n.el.style.width = `${w}px`;
+        n.el.style.height = `${h}px`;
+      });
     };
-    sembrar();
-    map.on('moveend', sembrar);
+    nubesRef.current = sembrarCielo().map((n) => {
+      const el = document.createElement('div');
+      el.className = 'mc-nubegeo';
+      el.style.opacity = n.opacity;
+      el.setAttribute('aria-hidden', 'true');
+      const deriva = document.createElement('div');
+      deriva.className = 'mc-nubederiva';
+      deriva.style.animationDuration = n.duration;
+      deriva.style.animationDelay = n.delay;
+      n.lobulos.forEach((b) => {
+        const lob = document.createElement('span');
+        lob.className = 'mc-lob';
+        lob.style.left = b.l;
+        lob.style.top = b.t;
+        lob.style.width = b.w;
+        lob.style.height = b.h;
+        lob.style.opacity = b.o;
+        deriva.appendChild(lob);
+      });
+      el.appendChild(deriva);
+      pane.appendChild(el);
+      return { ...n, el };
+    });
+    colocarNubes();
+    map.on('move zoom viewreset', colocarNubes);
     // No atrapar el scroll de la página: el zoom con rueda solo al tocar el mapa
     map.on('focus', () => map.scrollWheelZoom.enable());
     map.on('blur', () => map.scrollWheelZoom.disable());
@@ -222,6 +261,7 @@ export default function MapaCorredor() {
       mapRef.current = null;
       marksRef.current = [];
       flechasRef.current = [];
+      nubesRef.current = [];
       capaRef.current = null;
       lineaRef.current = null;
     };
@@ -291,9 +331,14 @@ export default function MapaCorredor() {
       .catch(() => {});
   }, []);
 
-  // Las nubes se adecúan al zoom: crecen al acercar, se atenúan al alejar
-  const zc = Math.min(1.6, Math.max(0.6, 1 + (zoom - 14) * 0.15));
-  const opF = Math.min(1, Math.max(0.7, 1.1 - (zoom - 14) * 0.05));
+  // Nubes: mostrar/ocultar + dirección del viento sobre el pane anclado
+  useEffect(() => {
+    const pane = mapRef.current?.getPane('nubes');
+    if (!pane || !mapaListo) return;
+    pane.style.display = nubesOn ? '' : 'none';
+    pane.style.setProperty('--dx', viento.x.toFixed(2));
+    pane.style.setProperty('--dy', viento.y.toFixed(2));
+  }, [nubesOn, viento, mapaListo]);
 
   const verPunto = () => {
     const m = marksRef.current[puntoId - 1];
@@ -360,38 +405,6 @@ export default function MapaCorredor() {
             <button type="button" onClick={encuadrarRuta} title="Ver recorrido completo" aria-label="Ver recorrido completo">⤢</button>
             <button type="button" onClick={irAMiUbicacion} title="Dónde estoy" aria-label="Mostrar mi ubicación">📍</button>
           </div>
-          {nubesOn && (
-            <div
-              className="mc-nubes"
-              aria-hidden="true"
-              style={{ '--dx': viento.x.toFixed(2), '--dy': viento.y.toFixed(2) }}
-            >
-              {nubes.map((n) => (
-                <div
-                  key={n.id}
-                  className="mc-nube"
-                  style={{
-                    top: n.top,
-                    left: n.left,
-                    width: n.width,
-                    height: n.height,
-                    opacity: n.opacity * opF,
-                    animationDuration: n.duration,
-                    animationDelay: n.delay,
-                    '--zc': zc.toFixed(2),
-                  }}
-                >
-                  {n.lobulos.map((b, j) => (
-                    <span
-                      key={j}
-                      className="mc-lob"
-                      style={{ left: b.l, top: b.t, width: b.w, height: b.h, opacity: b.o }}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          )}
           <div className="mc-viento" aria-hidden="true">
             🌬️ {viento.dir}{viento.kmh != null ? ` · ${Math.round(viento.kmh)} km/h` : ''}
           </div>
