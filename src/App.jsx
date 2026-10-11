@@ -38,8 +38,8 @@ function App() {
     document.documentElement.dataset.theme = tema;
     localStorage.setItem('cfp_tema', tema);
   }, [tema]);
-  // Menú retráctil: abierto por defecto en escritorio, cerrado en móvil
-  const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 721px)').matches);
+  // Menú retráctil: abierto por defecto en escritorio (>1024px), cerrado en tablet/móvil
+  const [menuOpen, setMenuOpen] = useState(() => window.matchMedia('(min-width: 1025px)').matches);
   const tabsRef = useRef(null);
   const [indicator, setIndicator] = useState({ left: 0, width: 0, visible: false });
   const [user, setUser] = useState(null);

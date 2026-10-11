@@ -87,6 +87,7 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
   position: relative; display: flex; gap: 4px; flex-wrap: nowrap;
   align-items: center;
   flex: 1 1 auto; justify-content: flex-end; order: 1;
+  min-width: 0;
   max-width: 1400px; overflow: hidden; visibility: visible;
   transition: max-width 0.45s ease, opacity 0.3s ease, transform 0.35s ease, visibility 0s;
 }
@@ -268,17 +269,17 @@ body { margin: 0; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; backgr
 .login-links a { color: var(--acento2); font-size: 0.82rem; text-decoration: none; }
 .login-links a:hover { color: var(--texto); text-decoration: underline; }
 
-@media (max-width: 720px) {
+@media (max-width: 1024px) {
   .topnav { flex-direction: row; align-items: center; flex-wrap: nowrap; }
   /* Marca a la izquierda con títulos escalados como en escritorio */
   .topnav .brand { flex: 1 1 auto; order: 0; min-width: 0; justify-content: flex-start; }
   .brand-text { display: flex; min-width: 0; overflow: hidden; }
   .brand-line1 { font-size: 0.78rem; overflow: hidden; text-overflow: ellipsis; }
   .brand-line2 { font-size: 0.6rem; overflow: hidden; text-overflow: ellipsis; }
-  .brand-logo { height: 40px; max-width: 40vw; }
-  /* Social + tema + hamburguesa a la derecha, como en escritorio */
+  .brand-logo { height: 44px; max-width: min(38vw, 220px); }
+  /* Social + tema + hamburguesa anclados a la derecha */
   .tabs-wrap { display: contents; }
-  .nav-actions { order: 2; gap: 8px; }
+  .nav-actions { order: 2; gap: 8px; margin-left: auto; flex-shrink: 0; }
   .nav-actions .social-btn, .nav-actions .theme-toggle { width: 38px; height: 38px; }
   /* Fila única deslizable y colapsable: evita que las pestañas se
      partan en varias filas y desfasan la píldora animada */
