@@ -1,0 +1,70 @@
+/* ── Secuencia animada: 5 ejes + línea de 9 momentos ── */
+.pa { border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; overflow: hidden; background: rgba(0,0,0,0.35); }
+.pa-progress { height: 6px; background: rgba(255,255,255,0.08); }
+.pa-progress-fill { height: 100%; background: linear-gradient(90deg, #f59e0b, #ec4899, #7c3aed, #22d3ee); transition: width 0.6s cubic-bezier(0.22,1,0.36,1); }
+.pa-grid { display: grid; grid-template-columns: 250px 1fr; gap: 0; }
+.pa-rail { position: relative; list-style: none; margin: 0; padding: 18px 14px; display: flex; flex-direction: column; gap: 6px; background: rgba(255,255,255,0.03); }
+.pa-rail-line { position: absolute; left: 31px; top: 24px; bottom: 24px; width: 3px; border-radius: 3px; background: rgba(255,255,255,0.1); }
+.pa-rail-fill { position: absolute; left: 31px; top: 24px; width: 3px; border-radius: 3px; background: linear-gradient(180deg, #f59e0b, #ec4899, #7c3aed); transition: height 0.6s ease; max-height: calc(100% - 48px); }
+.pa-step button { position: relative; display: flex; gap: 10px; align-items: center; width: 100%; background: transparent; border: 0; color: #cbd5e1; cursor: pointer; padding: 8px 6px; border-radius: 10px; text-align: left; font-size: 0.86rem; }
+.pa-step button:hover { background: rgba(255,255,255,0.06); }
+.pa-step.activo button { color: #fff; background: rgba(255,255,255,0.07); }
+.pa-dot { position: relative; z-index: 1; width: 38px; height: 38px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 800; color: #fff; background: var(--g); border: 2px solid rgba(255,255,255,0.25); }
+.pa-step.activo .pa-dot { border-color: #fff; animation: paPulse 1.6s ease-out infinite; }
+.pa-step.visto .pa-dot { border-color: #22d3ee; }
+@keyframes paPulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); } 100% { box-shadow: 0 0 0 12px rgba(255,255,255,0); } }
+.pa-stage { padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+.pa-card { position: relative; overflow: hidden; border-radius: 14px; padding: 22px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); animation: paIn 0.55s cubic-bezier(0.22,1,0.36,1); }
+@keyframes paIn { from { opacity: 0; transform: translateY(14px) scale(0.98); } to { opacity: 1; transform: none; } }
+.pa-orb { position: absolute; width: 220px; height: 220px; right: -60px; top: -60px; border-radius: 50%; background: var(--g); opacity: 0.35; filter: blur(60px); pointer-events: none; animation: paOrb 6s ease-in-out infinite alternate; }
+@keyframes paOrb { to { transform: translate(-24px, 24px) scale(1.15); } }
+.pa-kicker { font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #9fd8ff; margin: 0 0 6px; }
+.pa-card h4 { margin: 0 0 8px; font-size: 1.25rem; color: #fff; }
+.pa-texto { margin: 0 0 8px; color: #e5e7eb; line-height: 1.6; }
+.pa-dato { display: inline-block; margin: 0; font-size: 0.8rem; font-weight: 700; color: #ffd479; background: rgba(255,180,0,0.1); border: 1px dashed rgba(255,180,0,0.5); padding: 4px 12px; border-radius: 999px; }
+.pa-bars { display: flex; gap: 8px; margin-top: 16px; align-items: flex-end; height: 44px; }
+.pa-bar { flex: 1; height: 12px; border-radius: 6px; background: rgba(255,255,255,0.1); }
+.pa-bar.on { background: var(--g); animation: paGrow 0.5s cubic-bezier(0.22,1,0.36,1) backwards; height: 100%; }
+.pa-bar.on:nth-child(2n) { height: 70%; } .pa-bar.on:nth-child(3n) { height: 88%; }
+@keyframes paGrow { from { transform: scaleY(0); transform-origin: bottom; opacity: 0; } to { transform: none; opacity: 1; } }
+.pa-nav { display: flex; align-items: center; justify-content: center; gap: 14px; color: #9fb3c8; }
+.pa-nav button { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); color: #fff; font-size: 1.2rem; cursor: pointer; }
+.pa-nav button:hover { background: rgba(0,170,221,0.3); }
+
+/* ── Línea de tiempo 9 momentos ── */
+.lt { margin-top: 6px; opacity: 0.4; transition: opacity 0.6s ease; }
+.lt.on { opacity: 1; }
+.lt-top { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.lt-progress { flex: 1; height: 6px; border-radius: 6px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.lt-progress span { display: block; height: 100%; background: linear-gradient(90deg, #16a34a, #0891b2, #7c3aed); transition: width 0.25s ease; }
+.lt-btns { display: flex; gap: 8px; }
+.lt-btns button { width: 34px; height: 34px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.06); color: #fff; cursor: pointer; font-size: 1.1rem; }
+.lt-track { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(230px, 280px); gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 12px; margin: 0; list-style: none; scrollbar-width: thin; }
+.lt-item { scroll-snap-align: start; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-top: 4px solid transparent; border-image: var(--g) 1; border-radius: 12px; padding: 14px; }
+.lt-nodo { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--g); color: #fff; font-size: 1.1rem; margin-bottom: 8px; }
+.lt-kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; color: #9fd8ff; margin: 0 0 4px; }
+.lt-titulo { font-weight: 700; color: #fff; margin: 0 0 6px; font-size: 0.95rem; line-height: 1.4; }
+.lt-det summary { cursor: pointer; color: #ffd479; font-size: 0.82rem; font-weight: 700; }
+.lt-det p { color: #cbd5e1; font-size: 0.86rem; line-height: 1.6; }
+
+@media (max-width: 760px) {
+  .pa-grid { grid-template-columns: 1fr; }
+  .pa-rail { flex-direction: row; overflow-x: auto; padding: 12px; }
+  .pa-rail-line, .pa-rail-fill { display: none; }
+  .pa-step button { flex-direction: column; min-width: 86px; text-align: center; font-size: 0.72rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pa-card, .pa-step.activo .pa-dot, .pa-orb, .pa-bar.on, .pa-progress-fill, .pa-rail-fill { animation: none !important; transition: none !important; }
+}
+
+/* ── Maquetación Proyecto compacta ── */
+.proj-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 16px 0; }
+.proj-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 16px; }
+.proj-card h4 { margin: 0 0 6px; color: #fff; font-size: 1rem; }
+.proj-card p { margin: 0; color: #cbd5e1; font-size: 0.9rem; line-height: 1.6; }
+.proj-cita { border-left: 4px solid #ffd479; margin: 14px 0; padding: 10px 16px; color: #fff; font-size: 1.05rem; font-style: italic; background: rgba(255,212,121,0.06); border-radius: 0 12px 12px 0; }
+.proj-chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.proj-chips span { font-size: 0.82rem; color: #fff; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); padding: 6px 12px; border-radius: 999px; }
+.proj-mas { margin: 10px 0 6px; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 14px; background: rgba(255,255,255,0.03); }
+.proj-mas summary { cursor: pointer; color: #9fd8ff; font-weight: 700; font-size: 0.88rem; }
+.proj-mas p { color: #cbd5e1; line-height: 1.7; font-size: 0.92rem; }

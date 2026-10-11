@@ -12,6 +12,7 @@ import {
 import TextCarousel from '../components/TextCarousel.jsx';
 import GallerySlider from '../components/GallerySlider.jsx';
 import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
+import { ProcesoAnimado, LineaTiempo } from '../components/ProcesoAnimado.jsx';
 
 const PROPOSITOS = [
   {
@@ -201,48 +202,43 @@ export default function Proyecto() {
         <h3>Una iniciativa que nace de las mujeres y camina con el territorio</h3>
       </Reveal>
       <p className="drop">
-        En el corredor oriental de Pasto, entre montañas, caminos rurales, cocinas
-        tradicionales y emprendimientos que guardan historias, existe una riqueza que
-        merece ser reconocida y compartida: los saberes de las mujeres, la memoria de
-        las comunidades y las formas de vida que mantienen viva la identidad de este
-        territorio.
+        En el corredor oriental de Pasto, entre cocinas tradicionales y emprendimientos
+        con historia, vive una riqueza por compartir: los saberes de las mujeres y la
+        memoria de sus comunidades.
       </p>
-      <p>
-        De ese reconocimiento nace <strong>Caminos de Fogón y Palabra: Mujeres que Guían
-        el Territorio</strong>, una iniciativa de la Fundación Quiero Desarrollo Humano,
-        desarrollada en el marco del Banco de Iniciativas para las Comunidades 2025, del
-        Ministerio del Interior, con el acompañamiento de FINDETER.
-      </p>
-      <p>
-        El proyecto se propuso fortalecer las capacidades de 15 mujeres del corredor
-        oriental de Pasto vinculadas a emprendimientos de cocina tradicional y turismo
-        comunitario, promoviendo su liderazgo, autonomía económica, participación y
-        articulación con otras iniciativas locales.
-      </p>
-      <p>
-        La apuesta parte de una convicción: detrás de cada emprendimiento hay mucho más
-        que un producto o un servicio. Hay una historia familiar, un conocimiento
-        construido con los años, una relación con la tierra y una mujer que aporta al
-        bienestar de su familia y su comunidad.
-      </p>
-      <p>
-        Por eso, Caminos de Fogón y Palabra busca que estos saberes sean reconocidos, que
-        las iniciativas encuentren nuevas posibilidades de colaboración y que las mujeres
-        puedan construir, desde sus propias voces, oportunidades para el presente y el
-        futuro de sus territorios.
-      </p>
-      <p>
-        No se trata de inventar una identidad para mostrarla a quienes nos visitan. Se
-        trata de reconocer la que ya existe, cuidarla y encontrar maneras de compartirla
-        con orgullo, respeto y autenticidad.
-      </p>
+      <div className="proj-grid">
+        <div className="proj-card">
+          <h4>🌄 Territorio</h4>
+          <p>Cabrera, San Pedro de la Laguna y veredas: montañas, caminos rurales y cocina que guarda identidad.</p>
+        </div>
+        <div className="proj-card">
+          <h4>🤝 Impulso</h4>
+          <p>Fundación Quiero Desarrollo Humano · Banco de Iniciativas 2025 (MinInterior) + FINDETER.</p>
+        </div>
+        <div className="proj-card">
+          <h4>🔥 Apuesta</h4>
+          <p>15 mujeres de cocina tradicional y turismo comunitario: liderazgo, autonomía y trabajo en red.</p>
+        </div>
+      </div>
+      <details className="proj-mas">
+        <summary>Leer el contexto completo</summary>
+        <p>
+          De ese reconocimiento nace <strong>Caminos de Fogón y Palabra: Mujeres que Guían
+          el Territorio</strong>. La apuesta parte de una convicción: detrás de cada
+          emprendimiento hay una historia familiar, un conocimiento de años y una mujer que
+          aporta al bienestar de su familia y su comunidad.
+        </p>
+        <p>
+          No se trata de inventar una identidad para mostrarla. Se trata de reconocer la que
+          ya existe, cuidarla y compartirla con orgullo, respeto y autenticidad.
+        </p>
+      </details>
 
       <Reveal>
         <h3>¿Qué busca Caminos de Fogón y Palabra?</h3>
       </Reveal>
       <p>
-        El proyecto articula diferentes propósitos que se complementan y dan sentido al
-        proceso comunitario. Desliza y descubre cada uno:
+        Seis propósitos que se complementan. Desliza y descubre cada uno:
       </p>
       <Reveal>
         <TextCarousel slides={PROPOSITOS} interval={5500} label="Propósitos del proyecto" />
@@ -251,39 +247,29 @@ export default function Proyecto() {
       <Reveal>
         <h3>¿Por qué las mujeres?</h3>
       </Reveal>
+      <blockquote className="proj-cita">
+        “Cuando una mujer reconoce el valor de lo que sabe y encuentra apoyo en otras
+        mujeres, su crecimiento se vuelve oportunidad para toda la comunidad.”
+      </blockquote>
       <p>
-        Porque las mujeres son portadoras de conocimientos, memorias y prácticas que forman
-        parte de la identidad de sus comunidades. En sus cocinas, huertas, emprendimientos
-        y espacios cotidianos se conservan recetas, técnicas, historias y formas de
-        relacionarse con el territorio que merecen ser valoradas.
+        Son portadoras de recetas, técnicas e historias que sostienen la identidad del
+        territorio — y protagonistas de las decisiones sobre su futuro.
       </p>
-      <p>
-        Sin embargo, el trabajo de las mujeres rurales no siempre recibe el reconocimiento
-        ni las oportunidades que merece.
-      </p>
-      <p>
-        Caminos de Fogón y Palabra busca contribuir a transformar esa realidad, creando
-        espacios donde las participantes puedan reconocer sus capacidades, fortalecer sus
-        emprendimientos, intercambiar experiencias y encontrar nuevas formas de trabajar
-        juntas.
-      </p>
-      <p>
-        Aquí, las mujeres no son solamente anfitrionas que reciben visitantes. Son
-        emprendedoras, creadoras, portadoras de memoria, conocedoras del territorio y
-        protagonistas de las decisiones sobre su futuro.
-      </p>
-      <p>
-        Cuando una mujer reconoce el valor de lo que sabe y encuentra apoyo en otras
-        mujeres, su crecimiento puede convertirse también en una oportunidad para toda la
-        comunidad.
-      </p>
+      <details className="proj-mas">
+        <summary>Por qué este enfoque</summary>
+        <p>
+          El trabajo de las mujeres rurales no siempre recibe el reconocimiento ni las
+          oportunidades que merece. Aquí no son solo anfitrionas: son emprendedoras,
+          creadoras y conocedoras del territorio.
+        </p>
+      </details>
 
       <Reveal>
         <h3>El fogón y la palabra: el corazón de nuestra identidad</h3>
       </Reveal>
       <p>
-        Dos símbolos, una misma esencia: reconocer lo que las mujeres saben, fortalecer lo
-        que hacen y abrir caminos para que sus historias encuentren nuevas voces.
+        Dos símbolos, una misma esencia: reconocer lo que las mujeres saben y abrir
+        caminos para que sus historias encuentren nuevas voces.
       </p>
       <Reveal>
         <TextCarousel slides={FOGON_PALABRA} interval={7000} label="El fogón y la palabra" />
@@ -293,119 +279,69 @@ export default function Proyecto() {
         <h3>El corredor oriental de Pasto: un territorio por descubrir</h3>
       </Reveal>
       <p>
-        El corredor oriental de Pasto es un territorio de paisajes andinos, comunidades
-        rurales, tradiciones gastronómicas y emprendimientos que expresan la creatividad y
-        el conocimiento de quienes lo habitan.
+        Paisajes andinos, cocina tradicional y emprendimientos creativos en Cabrera, San
+        Pedro de la Laguna y sus veredas.
       </p>
-      <p>
-        En lugares como Cabrera, San Pedro de la Laguna y sus veredas, la vida comunitaria
-        se encuentra con la cocina tradicional, los productos locales, los saberes
-        campesinos y distintas iniciativas que pueden aportar a experiencias de turismo
-        comunitario.
-      </p>
-      <p>
-        Un plato de locro pastuso, unas papas con ají, la preparación artesanal de helados
-        de paila o la historia de un emprendimiento son mucho más que elementos de una
-        posible visita turística: son expresiones de una identidad construida a lo largo
-        del tiempo.
-      </p>
-      <p>
-        La invitación es a recorrer el territorio con curiosidad y respeto, escuchar las
-        historias de sus habitantes y descubrir que la riqueza de un lugar no se encuentra
-        únicamente en sus paisajes, sino también en las personas que le dan vida.
-      </p>
+      <div className="proj-chips">
+        <span>🥘 Locro pastuso</span>
+        <span>🥔 Papas con ají</span>
+        <span>🍨 Helados de paila</span>
+        <span>📖 Historias vivas</span>
+      </div>
+      <details className="proj-mas">
+        <summary>Más del territorio</summary>
+        <p>
+          Cada plato y cada emprendimiento es identidad construida en el tiempo. La
+          invitación es a recorrer con curiosidad y respeto: la riqueza está en los
+          paisajes y en las personas que les dan vida.
+        </p>
+      </details>
 
       <Reveal>
         <h3>¿Cómo se desarrolló el proceso?</h3>
       </Reveal>
       <p>
-        Caminos de Fogón y Palabra se construyó mediante una metodología participativa que
-        reconoce a las mujeres como protagonistas de su aprendizaje. Los encuentros,
-        talleres y recorridos se plantearon como espacios para compartir experiencias,
-        reconocer conocimientos, dialogar sobre los desafíos cotidianos y explorar
-        posibilidades de trabajo conjunto.
+        Metodología participativa: las mujeres como protagonistas. Toca cada eje y mira
+        cómo se encadenan — la secuencia avanza sola:
       </p>
-      <p>El proceso integró cinco grandes ejes de aprendizaje:</p>
-      <ol className="bullet">
-        <li><strong>Derechos de las mujeres y liderazgo.</strong> Reconocimiento de derechos, fortalecimiento de la participación y reflexión sobre la autonomía y la prevención de las violencias basadas en género.</li>
-        <li><strong>Cocina tradicional y saberes campesinos.</strong> Recuperación de recuerdos, recetas, ingredientes locales y prácticas que mantienen viva la memoria gastronómica.</li>
-        <li><strong>Economías populares y emprendimientos.</strong> Identificación de las iniciativas de las participantes, reconocimiento de sus características y exploración de posibilidades de articulación.</li>
-        <li><strong>Turismo comunitario y guianza turística.</strong> Reflexión sobre la hospitalidad, la atención al visitante, la interpretación territorial, el cuidado del patrimonio y la construcción de experiencias respetuosas con las comunidades.</li>
-        <li><strong>Comunicación comunitaria y trabajo en red.</strong> Fortalecimiento de las capacidades para contar las historias del territorio, visibilizar los emprendimientos y compartir los aprendizajes del proceso.</li>
-      </ol>
-      <p>
-        Cada espacio aportó herramientas para que las mujeres reconocieran el valor de sus
-        iniciativas y descubrieran nuevas formas de conectarlas. El aprendizaje no se
-        limitó a los contenidos de los talleres: también se construyó en la conversación,
-        la escucha, los ejercicios colectivos y el encuentro con otras experiencias del
-        territorio.
-      </p>
+      <Reveal>
+        <ProcesoAnimado />
+      </Reveal>
 
       <Reveal>
         <h3>La historia de nuestro camino: encuentros, talleres y recorridos</h3>
       </Reveal>
       <p>
-        Cada actividad representa un paso en la construcción de Caminos de Fogón y Palabra.
-        Recorre los 9 momentos que tejieron este proceso:
+        9 momentos que tejieron el proceso. Desliza la línea y abre cada paso:
       </p>
       <Reveal>
-        <TextCarousel slides={HISTORIA} interval={6000} label="Historia del camino" />
+        <LineaTiempo pasos={HISTORIA} />
       </Reveal>
 
       <Reveal>
         <h3>¿Qué hemos comenzado a construir?</h3>
       </Reveal>
-      <p>
-        Más allá de cada taller, el proceso ha permitido avanzar en algo esencial: reconocer
-        que las iniciativas de las mujeres pueden fortalecerse cuando dejan de verse como
-        esfuerzos aislados y comienzan a relacionarse entre sí.
-      </p>
-      <p>
-        Una preparación tradicional puede vincularse con una experiencia gastronómica. Un
-        emprendimiento puede complementar el recorrido de otra participante. Una historia
-        familiar puede convertirse en una narración para visitantes. Un conocimiento que
-        antes se compartía solamente en el entorno cercano puede encontrar nuevas formas de
-        transmitirse.
-      </p>
-      <p>
-        Así comienza a tomar forma la posibilidad de una ruta turística comunitaria de
-        Caminos de Fogón y Palabra, construida desde las capacidades, los intereses y la
-        participación de las mujeres.
-      </p>
-      <p>
-        Esta ruta es una proyección que se construye progresivamente. Su consolidación
-        requiere fortalecer la articulación entre emprendimientos, preparar experiencias,
-        construir acuerdos comunitarios y mantener la participación de quienes dan vida al
-        proceso.
-      </p>
-      <p>
-        El propósito no es solamente atraer visitantes, sino generar oportunidades que
-        reconozcan el trabajo de las mujeres, valoren los saberes locales y contribuyan al
-        bienestar de las comunidades.
-      </p>
+      <div className="proj-grid">
+        <div className="proj-card">
+          <h4>🔗 De aislado a red</h4>
+          <p>Una preparación se vincula a una experiencia; una historia familiar se vuelve narración para visitantes.</p>
+        </div>
+        <div className="proj-card">
+          <h4>🗺️ Ruta en construcción</h4>
+          <p>Una ruta turística comunitaria que nace de las capacidades e intereses de las mujeres.</p>
+        </div>
+        <div className="proj-card">
+          <h4>🌱 Más que visitantes</h4>
+          <p>Oportunidades que reconocen el trabajo de las mujeres y el bienestar de las comunidades.</p>
+        </div>
+      </div>
 
       <Reveal>
         <h3>Una red que crece con cada encuentro</h3>
       </Reveal>
       <p>
-        La fuerza de Caminos de Fogón y Palabra está en los vínculos que se construyen. Cada
-        conversación permite reconocer otras experiencias; cada actividad abre posibilidades
-        de colaboración; cada emprendimiento aporta una pieza a una historia compartida.
-      </p>
-      <p>
-        El trabajo en red significa comprender que el crecimiento de una iniciativa puede
-        acompañar el de otras, que los conocimientos se enriquecen cuando se comparten y que
-        el desarrollo comunitario necesita confianza, acuerdos y apoyo mutuo.
-      </p>
-      <p>
-        También significa promover relaciones basadas en el respeto, el reconocimiento de
-        los derechos y la participación de las mujeres en las decisiones que afectan su vida
-        y su territorio.
-      </p>
-      <p>
-        Porque una comunidad se fortalece cuando sus integrantes encuentran maneras de
-        colaborar sin perder su identidad y cuando el bienestar colectivo se convierte en
-        una tarea compartida.
+        Cada conversación abre colaboración; cada emprendimiento aporta una pieza a la
+        historia compartida. Colaborar sin perder identidad: esa es la tarea.
       </p>
 
       <Reveal>
@@ -420,20 +356,9 @@ export default function Proyecto() {
             className="invite-title"
           />
           <p>
-            Caminos de Fogón y Palabra es una iniciativa que se construye desde la comunidad y
-            mira hacia el futuro sin desprenderse de sus raíces. Su historia vive en las
-            mujeres que participan, en los emprendimientos que se fortalecen, en los saberes
-            que se comparten y en las relaciones que comienzan a tejerse.
-          </p>
-          <p>
-            Si llegaste hasta aquí, te invitamos a conocer esos caminos, descubrir las
-            historias de sus protagonistas y acercarte a un territorio que tiene mucho por
-            contar.
-          </p>
-          <p>
-            Quizás tu próxima visita sea una oportunidad para sentarte alrededor de un fogón,
-            conocer una receta, escuchar una historia y descubrir que detrás de cada
-            emprendimiento hay una mujer con saberes, sueños y mucho por compartir.
+            Si llegaste hasta aquí, te invitamos a conocer esos caminos y a sentarte
+            alrededor de un fogón: detrás de cada emprendimiento hay una mujer con
+            saberes, sueños y mucho por compartir.
           </p>
           <p>
             <strong className="shimmer-text">Caminos de Fogón y Palabra: mujeres que reconocen el valor de sus saberes,
