@@ -70,7 +70,8 @@ export default function Entrar() {
     <section className="page-section login-section">
       <div className="login-card">
         <img src={logoImg} alt="Logo Caminos de Fogón y Palabra" className="login-logo" />
-        <h2>Entrar</h2>
+        <p className="login-brand1">Caminos de Fogón y Palabra</p>
+        <p className="login-brand2">Mujeres que Guían el Territorio</p>
         <p className="login-sub">Acceso a la plataforma</p>
 
         <form onSubmit={onSubmit} className="login-form">
