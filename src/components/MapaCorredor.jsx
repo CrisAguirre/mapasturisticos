@@ -169,7 +169,7 @@ export default function MapaCorredor() {
   useEffect(() => {
     if (!mapaListo) return;
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const vel = TRAZO.total / 45; // recorrido completo en ~45 s
+    const vel = TRAZO.total / 90; // recorrido completo en ~90 s
     let t0 = performance.now();
     const paso = (ahora) => {
       const dt = Math.min((ahora - t0) / 1000, 1);
