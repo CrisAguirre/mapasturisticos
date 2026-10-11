@@ -152,27 +152,27 @@ function App() {
               {t.id === 'entrar' && user ? 'Cuenta' : t.label}
             </a>
             ))}
+            <a
+              href="https://www.instagram.com/caminosdefogonypalabra/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="social-btn nav-social"
+              aria-label="Instagram Caminos de Fogón y Palabra"
+            >
+              <FaInstagram aria-hidden="true" />
+            </a>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={() => setTema((t) => (t === 'oscuro' ? 'claro' : 'oscuro'))}
+              aria-pressed={tema === 'claro'}
+              aria-label={tema === 'oscuro' ? 'Cambiar a modo día' : 'Cambiar a modo noche'}
+            >
+              <span aria-hidden="true">{tema === 'oscuro' ? '☀️' : '🌙'}</span>
+            </button>
           </div>
-          <a
-            href="https://www.instagram.com/caminosdefogonypalabra/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="social-btn nav-social"
-            aria-label="Instagram Caminos de Fogón y Palabra"
-          >
-            <FaInstagram aria-hidden="true" />
-          </a>
         </div>
         <div className="nav-actions">
-          <button
-            type="button"
-            className="theme-toggle"
-            onClick={() => setTema((t) => (t === 'oscuro' ? 'claro' : 'oscuro'))}
-            aria-pressed={tema === 'claro'}
-            aria-label={tema === 'oscuro' ? 'Cambiar a modo día' : 'Cambiar a modo noche'}
-          >
-            <span aria-hidden="true">{tema === 'oscuro' ? '☀️' : '🌙'}</span>
-          </button>
           <button
             type="button"
             className={`menu-toggle${menuOpen ? ' open' : ''}`}
