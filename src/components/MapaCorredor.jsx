@@ -67,19 +67,49 @@ function flechaIcon() {
   });
 }
 
-// Nubes de adorno: realzan el mapa con deriva suave, tenues y sin clics.
-// Banda alta para no tapar los marcadores. Nada meteorológico.
-function crearNubes() {
-  return [0, 1, 2].map((i) => ({
-    id: i + Math.random(),
-    top: `${2 + Math.random() * 13}%`,
-    left: `${3 + Math.random() * 60}%`,
-    width: `${280 + Math.random() * 160}px`,
-    height: `${90 + Math.random() * 60}px`,
-    opacity: 0.38 + Math.random() * 0.14,
-    duration: `${55 + Math.random() * 25}s`,
-    delay: `${-Math.random() * 20}s`,
-  }));
+// Nubes procedurales: cada vista del mapa (centro+zoom) siembra su propio
+// cielo — misma vista, mismas nubes; al explorar, cielo nuevo sin saltos.
+// De adorno: deriva con el viento, escala con el zoom. Nada meteorológico.
+function hashStr(s) {
+  let h = 2166136261;
+  for (let k = 0; k < s.length; k++) {
+    h ^= s.charCodeAt(k);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function crearNubes(semilla = 'cielo') {
+  const rnd = mulberry32(hashStr(String(semilla)));
+  const total = 3 + Math.floor(rnd() * 2); // 3–4 nubes por vista
+  return Array.from({ length: total }, (_, i) => {
+    const lobulos = 3 + Math.floor(rnd() * 3); // 3–5 lóbulos por nube
+    return {
+      id: `${semilla}-${i}`,
+      top: `${2 + rnd() * 38}%`,
+      left: `${rnd() * 72}%`,
+      width: `${260 + rnd() * 180}px`,
+      height: `${90 + rnd() * 70}px`,
+      opacity: 0.36 + rnd() * 0.14,
+      duration: `${55 + rnd() * 25}s`,
+      delay: `${-rnd() * 20}s`,
+      lobulos: Array.from({ length: lobulos }, () => ({
+        l: `${8 + rnd() * 55}%`,
+        t: `${10 + rnd() * 45}%`,
+        w: `${28 + rnd() * 30}%`,
+        h: `${45 + rnd() * 45}%`,
+        o: 0.7 + rnd() * 0.3,
+      })),
+    };
+  });
 }
 
 export default function MapaCorredor() {
@@ -97,7 +127,7 @@ export default function MapaCorredor() {
   // Viento actual de la zona (Open-Meteo, gratis sin clave). x/y = vector
   // pantalla hacia donde SE MUEVEN las nubes. Fallback: alisios del este.
   const [viento, setViento] = useState({ dir: 'E', x: 1, y: 0, kmh: null });
-  const [nubes, setNubes] = useState(crearNubes);
+  const [nubes, setNubes] = useState(() => crearNubes('vista-inicial'));
   const [nubesOn, setNubesOn] = useState(true);
   const punto = RECORRIDO.find((p) => p.id === puntoId) ?? RECORRIDO[0];
 
@@ -138,9 +168,14 @@ export default function MapaCorredor() {
     });
 
     map.fitBounds(L.latLngBounds(TRAZO.pts).pad(0.18));
-    // Las nubes se adecúan al zoom: se escala su tamaño con el nivel del mapa
-    setZoom(map.getZoom());
-    map.on('zoomend', () => setZoom(map.getZoom()));
+    // Cielo sembrado por la vista + zoom para las nubes (sin saltos aleatorios)
+    const sembrar = () => {
+      const c = map.getCenter();
+      setNubes(crearNubes(`${c.lat.toFixed(3)},${c.lng.toFixed(3)},${map.getZoom()}`));
+      setZoom(map.getZoom());
+    };
+    sembrar();
+    map.on('moveend', sembrar);
     // No atrapar el scroll de la página: el zoom con rueda solo al tocar el mapa
     map.on('focus', () => map.scrollWheelZoom.enable());
     map.on('blur', () => map.scrollWheelZoom.disable());
@@ -201,14 +236,6 @@ export default function MapaCorredor() {
       m.setIcon(numIcon(RECORRIDO[k].id, RECORRIDO[k].id === puntoId));
     });
   }, [puntoId]);
-
-  // Nubes: deriva aleatoria, quietas si el usuario prefiere sin movimiento
-  useEffect(() => {
-    if (!nubesOn) return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const t = setInterval(() => setNubes(crearNubes()), 9000);
-    return () => clearInterval(t);
-  }, [nubesOn]);
 
   // Viento actual sobre Cabrera (Open-Meteo). Si falla la red, queda el este.
   useEffect(() => {
@@ -295,7 +322,15 @@ export default function MapaCorredor() {
                     animationDelay: n.delay,
                     '--zc': zc.toFixed(2),
                   }}
-                />
+                >
+                  {n.lobulos.map((b, j) => (
+                    <span
+                      key={j}
+                      className="mc-lob"
+                      style={{ left: b.l, top: b.t, width: b.w, height: b.h, opacity: b.o }}
+                    />
+                  ))}
+                </div>
               ))}
             </div>
           )}

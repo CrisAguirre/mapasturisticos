@@ -33,11 +33,15 @@
    Derivan con el viento actual (--dx/--dy) y se escalan con el zoom (--zc). */
 .mc-nubes { position: absolute; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; --dx: 1; --dy: 0; }
 .mc-nube {
-  position: absolute; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 72%);
-  filter: blur(6px) drop-shadow(0 14px 16px rgba(11,19,43,0.35));
+  position: absolute;
   pointer-events: none;
   animation: mc-deriva linear infinite alternate;
+}
+.mc-lob {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 72%);
+  filter: blur(7px) drop-shadow(0 12px 14px rgba(11,19,43,0.32));
+  pointer-events: none;
 }
 @keyframes mc-deriva {
   from { transform: translate(calc(var(--dx, 1) * -32px), calc(var(--dy, 0) * -32px)) scale(var(--zc, 1)); }

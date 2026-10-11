@@ -27,8 +27,10 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 - Node v22, Vite 8, React 19, `react-icons` 5, `leaflet` (mapa real OSM en
   `MapaCorredor.jsx`, sin `react-leaflet`; toggle claro/OSM ↔ satélite/Esri,
   trazado fiel en `src/config/ruta.json` (OSRM foot, 388 pts, no cerrar loop),
-  3 flechas rAF 1→6 + nubes adorno con interruptor (viento real Open-Meteo
-  sobre Cabrera, deriva + insignia + sombra a sotavento; se escalan con el zoom),
+  3 flechas rAF 1→6 + nubes adorno con interruptor (procedurales con semilla
+  de la vista centro+zoom, 3–4 nubes de 3–5 lóbulos, sin saltos: regeneran en
+  moveend; viento real Open-Meteo sobre Cabrera, deriva + insignia + sombra a
+  sotavento; se escalan con el zoom),
   `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
