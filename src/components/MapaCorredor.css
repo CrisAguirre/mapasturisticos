@@ -29,8 +29,9 @@
 .mc-visual { position: relative; flex: 2; min-height: 600px; overflow: hidden; background: #0b132b; }
 .mc-map { position: absolute; inset: 0; z-index: 0; background: #0b132b; }
 .mc-map .leaflet-container { font-family: inherit; }
-/* Nubes ambiente: sobre las baldosas pero sin clics ni tapar marcadores */
-.mc-nubes { position: absolute; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; }
+/* Nubes ambiente: sobre las baldosas pero sin clics ni tapar marcadores.
+   Derivan con el viento actual (--dx/--dy) y se escalan con el zoom (--zc). */
+.mc-nubes { position: absolute; inset: 0; z-index: 400; pointer-events: none; overflow: hidden; --dx: 1; --dy: 0; }
 .mc-nube {
   position: absolute; border-radius: 50%;
   background: radial-gradient(ellipse, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 55%, rgba(255,255,255,0) 72%);
@@ -38,7 +39,24 @@
   pointer-events: none;
   animation: mc-deriva linear infinite alternate;
 }
-@keyframes mc-deriva { from { transform: translateX(-24px); } to { transform: translateX(36px); } }
+@keyframes mc-deriva {
+  from { transform: translate(calc(var(--dx, 1) * -32px), calc(var(--dy, 0) * -32px)) scale(var(--zc, 1)); }
+  to { transform: translate(calc(var(--dx, 1) * 32px), calc(var(--dy, 0) * 32px)) scale(var(--zc, 1)); }
+}
+/* Sombra de cada nube sobre el mapa, desplazada a sotavento */
+.mc-nube::after {
+  content: ''; position: absolute;
+  left: calc(var(--dx, 1) * 55px); top: calc(72px + var(--dy, 0) * 36px);
+  width: 82%; height: 68%; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(11,19,43,0.32), rgba(11,19,43,0) 70%);
+  filter: blur(9px); pointer-events: none;
+}
+.mc-viento {
+  position: absolute; top: 14px; right: 14px; z-index: 500;
+  background: rgba(11,19,43,0.75); border: 1px solid rgba(255,255,255,0.25);
+  padding: 6px 12px; border-radius: 999px; font-size: 0.78rem; font-weight: 700;
+  color: #fff; pointer-events: none;
+}
 .mc-leaf { background: transparent; border: 0; }
 .mc-leaf-num {
   width: 38px; height: 38px; border-radius: 50%;
@@ -111,6 +129,6 @@
   .mc-chip { font-size: 0.8rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mc-nube { animation: none; }
+  .mc-nube { animation: none; transform: scale(var(--zc, 1)); }
   .mc-flujo { animation: none; }
 }

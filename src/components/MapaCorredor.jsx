@@ -93,6 +93,10 @@ export default function MapaCorredor() {
   const [puntoId, setPuntoId] = useState(1);
   const [tema, setTema] = useState('claro');
   const [mapaListo, setMapaListo] = useState(false);
+  const [zoom, setZoom] = useState(14);
+  // Viento actual de la zona (Open-Meteo, gratis sin clave). x/y = vector
+  // pantalla hacia donde SE MUEVEN las nubes. Fallback: alisios del este.
+  const [viento, setViento] = useState({ dir: 'E', x: 1, y: 0, kmh: null });
   const [nubes, setNubes] = useState(crearNubes);
   const [nubesOn, setNubesOn] = useState(true);
   const punto = RECORRIDO.find((p) => p.id === puntoId) ?? RECORRIDO[0];
@@ -134,6 +138,9 @@ export default function MapaCorredor() {
     });
 
     map.fitBounds(L.latLngBounds(TRAZO.pts).pad(0.18));
+    // Las nubes se adecúan al zoom: se escala su tamaño con el nivel del mapa
+    setZoom(map.getZoom());
+    map.on('zoomend', () => setZoom(map.getZoom()));
     // No atrapar el scroll de la página: el zoom con rueda solo al tocar el mapa
     map.on('focus', () => map.scrollWheelZoom.enable());
     map.on('blur', () => map.scrollWheelZoom.disable());
@@ -203,6 +210,30 @@ export default function MapaCorredor() {
     return () => clearInterval(t);
   }, [nubesOn]);
 
+  // Viento actual sobre Cabrera (Open-Meteo). Si falla la red, queda el este.
+  useEffect(() => {
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=1.2098&longitude=-77.2103&current=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('viento'))))
+      .then((d) => {
+        const g = d?.current?.wind_direction_10m;
+        const kmh = d?.current?.wind_speed_10m;
+        if (g == null) return;
+        const dirs = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+        const hacia = ((g + 180) % 360) * (Math.PI / 180); // hacia dónde va
+        setViento({
+          dir: dirs[Math.round(g / 45) % 8],
+          x: Math.sin(hacia),
+          y: -Math.cos(hacia),
+          kmh: kmh ?? null,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  // Las nubes se adecúan al zoom: crecen al acercar, se atenúan al alejar
+  const zc = Math.min(1.6, Math.max(0.6, 1 + (zoom - 14) * 0.15));
+  const opF = Math.min(1, Math.max(0.7, 1.1 - (zoom - 14) * 0.05));
+
   const verPunto = () => {
     const m = marksRef.current[puntoId - 1];
     if (m && mapRef.current) mapRef.current.flyTo(m.getLatLng(), 16, { duration: 0.8 });
@@ -245,7 +276,11 @@ export default function MapaCorredor() {
         <div className="mc-visual">
           <div ref={mapEl} className="mc-map" role="application" aria-label="Mapa del recorrido con 6 paradas" />
           {nubesOn && (
-            <div className="mc-nubes" aria-hidden="true">
+            <div
+              className="mc-nubes"
+              aria-hidden="true"
+              style={{ '--dx': viento.x.toFixed(2), '--dy': viento.y.toFixed(2) }}
+            >
               {nubes.map((n) => (
                 <div
                   key={n.id}
@@ -255,14 +290,18 @@ export default function MapaCorredor() {
                     left: n.left,
                     width: n.width,
                     height: n.height,
-                    opacity: n.opacity,
+                    opacity: n.opacity * opF,
                     animationDuration: n.duration,
                     animationDelay: n.delay,
+                    '--zc': zc.toFixed(2),
                   }}
                 />
               ))}
             </div>
           )}
+          <div className="mc-viento" aria-hidden="true">
+            🌬️ {viento.dir}{viento.kmh != null ? ` · ${Math.round(viento.kmh)} km/h` : ''}
+          </div>
           <div className="mc-chip">{punto.titulo}</div>
         </div>
 

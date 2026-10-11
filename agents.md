@@ -27,7 +27,9 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 - Node v22, Vite 8, React 19, `react-icons` 5, `leaflet` (mapa real OSM en
   `MapaCorredor.jsx`, sin `react-leaflet`; toggle claro/OSM ↔ satélite/Esri,
   trazado fiel en `src/config/ruta.json` (OSRM foot, 388 pts, no cerrar loop),
-  3 flechas rAF 1→6 + nubes adorno con interruptor), `react-router` NO (navegación por
+  3 flechas rAF 1→6 + nubes adorno con interruptor (viento real Open-Meteo
+  sobre Cabrera, deriva + insignia + sombra a sotavento; se escalan con el zoom),
+  `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
 - PowerShell 5.1: encadenar con `; if ($?) { ... }`, no `&&`. No usar bash para
@@ -83,8 +85,11 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
   tarjeta invitación con borde cónico animado (`@property --ia`), blobs y shimmer.
 - **Entrar** (`pages/Entrar.jsx`): login real contra `POST /api/auth/login`
   (acepta `user|username|email` + `password`), guarda JWT en
-  `localStorage['cfp_token']`, valida con `GET /api/auth/me` al cargar, vista de
-  sesión + cerrar sesión. Sin recuperación de clave (no existe endpoint).
+  `localStorage['cfp_token']`, valida con `GET /api/auth/me` al cargar. Con
+  sesión muestra `pages/Cuenta.jsx` (sección ancha `Cuenta.css`, no la card del
+  login): avatar (foto o inicial), badge de rol, form nombre + foto (URL https,
+  con preview) y cambio de clave contra `PATCH /api/auth/me`. Email y rol solo
+  lectura; admin bloqueado (vive en el servidor). Sin recuperación de clave.
 - **Instagram**: `https://www.instagram.com/caminosdefogonypalabra/` solo-icono en
   nav y footer (con `aria-label`).
 - **Logo**: `.brand-logo` desktop 64px alto / 320px max (se subió +40% una vez);
@@ -102,14 +107,16 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 - Express 4 + Mongoose 8 + JWT. `npm run dev` (`node --watch`) / `npm start`.
 - Estructura: `src/index.js` (app + CORS + `/api/health` + handler global JSON),
   `src/config/db.js` (`connectDB`), `src/models/User.js`
-  (name, email unique, passwordHash, role admin|mujer|visitante),
+  (name, email unique, passwordHash, role admin|mujer|visitante, foto URL|null),
   `src/middleware/requireAuth.js` (firma JWT 7 días, exige Bearer),
   `src/routes/auth.js`, más `Dockerfile` (Node 22-alpine, `npm ci --omit=dev`),
   `.dockerignore`, `.env` (gitignored, con secretos) y `.env.example` (placeholders).
 - Endpoints: `GET /api/health` → `{ ok, service, db, front, time }` (`front` =
   origins CORS efectivos, útil para debug); `POST /api/auth/login` con
   `{ user|username|email, password }` → `{ token, user }`;
-  `GET /api/auth/me` (Bearer) → `{ user }`; `POST /api/auth/register` → 403 siempre.
+  `GET /api/auth/me` (Bearer) → `{ user }` (con `foto` y `createdAt`);
+  `PATCH /api/auth/me` (name, foto https|vacía, cambio de clave con currentPassword;
+  admin → 403, email/rol no editables); `POST /api/auth/register` → 403 siempre.
 - **Admin único**: se compara `ADMIN_USER` (case-insensitive) y
   `bcrypt.compare` contra `ADMIN_PASSWORD_HASH`; si no coincide, busca en Mongo
   por email. `/me` con `sub==='admin'` responde perfil fijo sin tocar DB.

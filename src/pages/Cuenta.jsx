@@ -17,6 +17,7 @@ function authHeaders() {
 export default function Cuenta({ session, onLogout }) {
   const [perfil, setPerfil] = useState(session);
   const [nombre, setNombre] = useState(session?.name ?? '');
+  const [foto, setFoto] = useState(session?.foto ?? '');
   const [actual, setActual] = useState('');
   const [nueva, setNueva] = useState('');
   const [confirmar, setConfirmar] = useState('');
@@ -35,6 +36,7 @@ export default function Cuenta({ session, onLogout }) {
       .then((d) => {
         setPerfil(d.user);
         setNombre(d.user.name);
+        setFoto(d.user.foto ?? '');
       })
       .catch(() => onLogout())
       .finally(() => setCargando(false));
@@ -56,6 +58,7 @@ export default function Cuenta({ session, onLogout }) {
     try {
       const body = {};
       if (nombre.trim() !== perfil.name) body.name = nombre.trim();
+      if ((foto.trim() || null) !== (perfil.foto ?? null)) body.foto = foto.trim();
       if (nueva) {
         body.currentPassword = actual;
         body.newPassword = nueva;
@@ -73,6 +76,7 @@ export default function Cuenta({ session, onLogout }) {
       if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
       setPerfil(data.user);
       setNombre(data.user.name);
+      setFoto(data.user.foto ?? '');
       setActual('');
       setNueva('');
       setConfirmar('');
@@ -103,7 +107,11 @@ export default function Cuenta({ session, onLogout }) {
       <p className="eyebrow cuenta-eyebrow">Mi cuenta</p>
 
       <header className="cuenta-head">
-        <span className="cuenta-avatar" aria-hidden="true">{inicial}</span>
+        {perfil.foto ? (
+          <img src={perfil.foto} alt={`Foto de ${perfil.name}`} className="cuenta-avatar-img" />
+        ) : (
+          <span className="cuenta-avatar" aria-hidden="true">{inicial}</span>
+        )}
         <div>
           <h2>{perfil.name}</h2>
           <p className="cuenta-email">{perfil.email}</p>
@@ -134,6 +142,27 @@ export default function Cuenta({ session, onLogout }) {
               autoComplete="name"
             />
           </label>
+          <label className="field">
+            Foto de perfil <small className="solo-lectura">(URL https; vacía para quitarla)</small>
+            <input
+              type="url"
+              value={foto}
+              onChange={(e) => setFoto(e.target.value)}
+              disabled={esAdmin}
+              placeholder="https://…"
+              autoComplete="photo"
+            />
+          </label>
+          {foto.trim() ? (
+            <img
+              src={foto.trim()}
+              alt="Vista previa de la foto de perfil"
+              className="cuenta-foto-prev"
+              onError={(e) => { e.currentTarget.style.display = 'none'; }}
+            />
+          ) : (
+            <div className="cuenta-foto-ph">Sin foto — se muestra tu inicial</div>
+          )}
           <label className="field">
             Correo <small className="solo-lectura">(solo lectura: es tu usuario de ingreso)</small>
             <input type="email" value={perfil.email} readOnly disabled aria-readonly="true" />
