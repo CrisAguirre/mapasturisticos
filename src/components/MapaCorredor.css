@@ -1,0 +1,118 @@
+/* Mapa cultural — reutiliza plantilla sim-main, sin meteorología.
+   Nubes solo ambiente (z 1, banda alta, sin clics) para no tapar puntos (z 20). */
+
+.mc-clon { background: #050a17; color: #fff; }
+.mc-head { padding: 22px 22px 0; max-width: 900px; }
+.mc-eyebrow {
+  display: inline-block; font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: #9fd8ff;
+  background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.35);
+  padding: 4px 12px; border-radius: 999px; margin-bottom: 10px;
+}
+.mc-head h3 { margin: 0 0 8px; font-size: 1.4rem; color: #ffd479; }
+.mc-head p { margin: 0 0 12px; color: #cbd5e1; line-height: 1.6; }
+.mc-acciones { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.mc-meta { color: #9fb3c8; font-size: 0.85rem; }
+
+.mc-btn {
+  display: inline-block; padding: 10px 16px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.25); color: #fff; text-decoration: none;
+  background: rgba(255,255,255,0.06); font-weight: 700; font-size: 0.9rem;
+}
+.mc-btn.primario { background: #00aadd; border-color: #00aadd; }
+.mc-btn.chico { padding: 8px 12px; font-size: 0.82rem; }
+.mc-btn.fantasma { background: transparent; }
+
+.mc-main { display: flex; min-height: 620px; background: #050a17; }
+
+/* ── Visual con foto de la zona ── */
+.mc-visual { position: relative; flex: 2; min-height: 600px; overflow: hidden; }
+.mc-fondo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.mc-nubes { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.mc-nube {
+  position: absolute; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.9), rgba(255,255,255,0) 70%);
+  filter: blur(14px); pointer-events: none;
+  animation: mc-deriva linear infinite alternate;
+}
+@keyframes mc-deriva { from { transform: translateX(-24px); } to { transform: translateX(36px); } }
+.mc-overlay {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg, rgba(11,19,43,0.45), rgba(11,19,43,0.72));
+}
+.mc-ruta { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 5; pointer-events: none; }
+.mc-ruta-linea {
+  fill: none; stroke: #ffd479; stroke-width: 3;
+  stroke-dasharray: 8 6; stroke-linecap: round;
+  opacity: 0.95; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+.mc-parada {
+  position: absolute; transform: translate(-50%, -50%); z-index: 20;
+  width: 42px; height: 42px; border-radius: 50%;
+  background: #0b132b; border: 2px solid #ffd479; color: #fff;
+  font-weight: 800; font-size: 1rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.55);
+}
+.mc-parada.activo { background: #ffd479; color: #0b132b; transform: translate(-50%, -50%) scale(1.15); }
+.mc-parada-num { pointer-events: none; }
+.mc-norte {
+  position: absolute; top: 14px; left: 14px; z-index: 15;
+  background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.2);
+  padding: 6px 12px; border-radius: 999px; font-weight: 800; font-size: 0.8rem;
+}
+.mc-chip {
+  position: absolute; left: 14px; bottom: 14px; z-index: 15; max-width: 70%;
+  background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,212,121,0.4); padding: 8px 14px; border-radius: 10px;
+  font-size: 0.88rem; font-weight: 700; color: #ffd479;
+}
+
+/* ── Panel cultural ── */
+.mc-panel {
+  flex: 1; min-width: 320px; max-width: 380px; z-index: 10;
+  padding: 20px; display: flex; flex-direction: column; gap: 14px;
+  background: rgba(0,0,0,0.6); backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(255,255,255,0.1); overflow-y: auto;
+}
+.mc-ficha { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 14px; }
+.mc-ficha.activa { border-color: rgba(255,212,121,0.5); background: rgba(255,180,0,0.07); }
+.mc-kicker { font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #9fd8ff; }
+.mc-ficha h4 { margin: 6px 0 4px; color: #fff; font-size: 1.02rem; }
+.mc-sub { margin: 0 0 10px; color: #9fb3c8; font-size: 0.85rem; }
+.mc-foto { width: 100%; height: 160px; object-fit: cover; border-radius: 8px; }
+.mc-foto-ph {
+  height: 110px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.06); border: 1px dashed rgba(255,255,255,0.3);
+  color: #9fb3c8; font-size: 0.85rem; text-align: center; padding: 0 12px;
+}
+.mc-desc { color: #cbd5e1; line-height: 1.6; font-size: 0.92rem; }
+.mc-coords { color: #64748b; font-size: 0.8rem; }
+.mc-ficha-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.mc-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mc-item {
+  width: 100%; display: flex; gap: 10px; align-items: center; text-align: left;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; padding: 10px 12px; color: #fff; cursor: pointer;
+}
+.mc-item.activo { border-color: #ffd479; background: rgba(255,212,121,0.1); }
+.mc-item-num {
+  width: 28px; height: 28px; border-radius: 50%; flex: none;
+  background: #0b132b; border: 2px solid #ffd479;
+  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem;
+}
+.mc-item-txt { display: flex; flex-direction: column; gap: 2px; }
+.mc-item-txt strong { font-size: 0.88rem; }
+.mc-item-txt small { color: #9fb3c8; font-size: 0.78rem; }
+
+@media screen and (max-width: 800px) {
+  .mc-main { flex-direction: column; }
+  .mc-visual { min-height: 420px; }
+  .mc-panel { max-width: 100%; min-width: 0; border-left: none; border-top: 2px solid #00aadd; }
+  .mc-parada { width: 36px; height: 36px; }
+  .mc-chip { font-size: 0.8rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mc-nube { animation: none; }
+}
