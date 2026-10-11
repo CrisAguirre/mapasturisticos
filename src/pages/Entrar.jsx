@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import logoImg from '../assets/logo.png';
+import logoImg from '../assets/logo0.png';
 import { API_URL } from '../config/api.js';
 import Cuenta from './Cuenta.jsx';
 import BackendStatus from '../components/BackendStatus.jsx';

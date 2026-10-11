@@ -105,8 +105,8 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 - **Instagram**: `https://www.instagram.com/caminosdefogonypalabra/` solo-icono en
   nav y footer (con `aria-label`).
 - **Logo**: nav = `logo0.png` (emblema circular 1580×1554, se ajusta por ALTO:
-  `.brand-logo` 64px desktop / 40px móvil, nunca forzar cuadrado); login sigue
-  con `logo.png`; preload con `logo2.png`.
+  `.brand-logo` 64px desktop / 40px móvil, nunca forzar cuadrado); login también
+  con `logo0.png`; preload con `logo2.png`.
 - **Preload** (`components/Preload.jsx/.css`): pantalla inicial con logo + barra,
   mínimo 900 ms, fundido 350 ms antes de desmontar (`App.jsx`: `listo`/`fuera`).
 - **BackendStatus** (`components/BackendStatus.jsx/.css`): visor de
