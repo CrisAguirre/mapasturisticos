@@ -1,0 +1,37 @@
+/* ── Rejilla de propósitos (fija, sin auto-play) ── */
+.pg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+.pg-card { position: relative; height: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 18px 16px; cursor: pointer; overflow: hidden; transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+.pg-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.3); box-shadow: 0 14px 34px rgba(0,0,0,0.4); }
+.pg-bar { position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--g); }
+.pg-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--g); color: #fff; font-size: 1.2rem; margin-bottom: 10px; }
+.pg-kicker { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase; color: #9fd8ff; margin: 0 0 4px; }
+.pg-card h4 { margin: 0 0 6px; color: #fff; font-size: 0.98rem; line-height: 1.35; }
+.pg-texto { margin: 0; color: #cbd5e1; font-size: 0.86rem; line-height: 1.6; }
+
+/* ── Duelo fogón / palabra ── */
+.duelo-wrap { margin-top: 14px; }
+.duelo-toggle { display: inline-flex; gap: 4px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 4px; margin-bottom: 12px; }
+.duelo-toggle button { border: 0; background: transparent; color: #cbd5e1; font-weight: 700; font-size: 0.85rem; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: background 0.3s ease, color 0.3s ease; }
+.duelo-toggle button.activo { background: #fff; color: #0b132b; }
+.duelo { position: relative; display: flex; gap: 10px; align-items: stretch; }
+.duelo-mitad { position: relative; flex: 1; overflow: hidden; text-align: left; border-radius: 14px; border: 1px solid rgba(255,255,255,0.14); padding: 22px 20px; cursor: pointer; color: #fff; background: rgba(255,255,255,0.04); transition: flex-grow 0.5s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease; display: flex; flex-direction: column; gap: 8px; font-family: inherit; }
+.duelo-mitad.activa { flex-grow: 1.7; border-color: rgba(255,255,255,0.45); }
+.duelo-fondo { position: absolute; inset: 0; background: var(--g); opacity: 0.28; transition: opacity 0.4s ease; pointer-events: none; }
+.duelo-mitad.activa .duelo-fondo { opacity: 0.55; }
+.duelo-icon { position: relative; font-size: 2rem; }
+.duelo-kicker { position: relative; font-size: 0.72rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #ffe9b8; }
+.duelo-titulo { position: relative; font-size: 1.1rem; font-weight: 800; line-height: 1.35; }
+.duelo-texto { position: relative; color: #f1f5f9; font-size: 0.9rem; line-height: 1.65; margin: 0; }
+.duelo-mitad:not(.activa) .duelo-texto { opacity: 0.75; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.duelo-vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; width: 40px; height: 40px; border-radius: 50%; background: #0b132b; border: 2px solid #ffd479; color: #ffd479; display: flex; align-items: center; justify-content: center; font-size: 1rem; pointer-events: none; }
+
+@media (max-width: 900px) { .pg-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 640px) {
+  .pg-grid { grid-template-columns: 1fr; }
+  .duelo { flex-direction: column; }
+  .duelo-mitad:not(.activa) .duelo-texto { display: none; }
+  .duelo-vs { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pg-card, .duelo-mitad, .duelo-fondo, .duelo-toggle button { transition: none !important; }
+}

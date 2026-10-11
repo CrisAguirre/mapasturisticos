@@ -9,10 +9,10 @@ import {
   FaUsers,
   FaUtensils,
 } from 'react-icons/fa';
-import TextCarousel from '../components/TextCarousel.jsx';
 import GallerySlider from '../components/GallerySlider.jsx';
 import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
 import { ProcesoAnimado, LineaTiempo } from '../components/ProcesoAnimado.jsx';
+import { PropositosGrid, DueloFogon } from '../components/PiezasProyecto.jsx';
 
 const PROPOSITOS = [
   {
@@ -238,11 +238,9 @@ export default function Proyecto() {
         <h3>¿Qué busca Caminos de Fogón y Palabra?</h3>
       </Reveal>
       <p>
-        Seis propósitos que se complementan. Desliza y descubre cada uno:
+        Seis propósitos que se complementan, todos visibles de un vistazo:
       </p>
-      <Reveal>
-        <TextCarousel slides={PROPOSITOS} interval={5500} label="Propósitos del proyecto" />
-      </Reveal>
+      <PropositosGrid items={PROPOSITOS} />
 
       <Reveal>
         <h3>¿Por qué las mujeres?</h3>
@@ -271,9 +269,7 @@ export default function Proyecto() {
         Dos símbolos, una misma esencia: reconocer lo que las mujeres saben y abrir
         caminos para que sus historias encuentren nuevas voces.
       </p>
-      <Reveal>
-        <TextCarousel slides={FOGON_PALABRA} interval={7000} label="El fogón y la palabra" />
-      </Reveal>
+      <DueloFogon items={FOGON_PALABRA} />
 
       <Reveal>
         <h3>El corredor oriental de Pasto: un territorio por descubrir</h3>
