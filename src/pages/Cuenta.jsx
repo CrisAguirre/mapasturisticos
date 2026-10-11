@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API_URL } from '../config/api.js';
+import { API_URL, fotoUrl } from '../config/api.js';
 import './Cuenta.css';
 
 const TOKEN_KEY = 'cfp_token';
@@ -17,7 +17,8 @@ function authHeaders() {
 export default function Cuenta({ session, onLogout }) {
   const [perfil, setPerfil] = useState(session);
   const [nombre, setNombre] = useState(session?.name ?? '');
-  const [foto, setFoto] = useState(session?.foto ?? '');
+  const [archivo, setArchivo] = useState(null);
+  const [vistaPrevia, setVistaPrevia] = useState(null);
   const [actual, setActual] = useState('');
   const [nueva, setNueva] = useState('');
   const [confirmar, setConfirmar] = useState('');
@@ -36,7 +37,6 @@ export default function Cuenta({ session, onLogout }) {
       .then((d) => {
         setPerfil(d.user);
         setNombre(d.user.name);
-        setFoto(d.user.foto ?? '');
       })
       .catch(() => onLogout())
       .finally(() => setCargando(false));
@@ -58,7 +58,6 @@ export default function Cuenta({ session, onLogout }) {
     try {
       const body = {};
       if (nombre.trim() !== perfil.name) body.name = nombre.trim();
-      if ((foto.trim() || null) !== (perfil.foto ?? null)) body.foto = foto.trim();
       if (nueva) {
         body.currentPassword = actual;
         body.newPassword = nueva;
@@ -76,12 +75,76 @@ export default function Cuenta({ session, onLogout }) {
       if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
       setPerfil(data.user);
       setNombre(data.user.name);
-      setFoto(data.user.foto ?? '');
       setActual('');
       setNueva('');
       setConfirmar('');
       window.dispatchEvent(new Event('cfp-auth'));
       setNotice({ type: 'ok', text: 'Cuenta actualizada.' });
+    } catch (err) {
+      setNotice({ type: 'error', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onElegirFoto = (e) => {
+    const f = e.target.files?.[0];
+    setNotice(null);
+    if (!f) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(f.type)) {
+      setNotice({ type: 'error', text: 'Solo JPG, PNG o WebP.' });
+      return;
+    }
+    if (f.size > 2 * 1024 * 1024) {
+      setNotice({ type: 'error', text: 'La foto debe pesar máximo 2 MB.' });
+      return;
+    }
+    if (vistaPrevia) URL.revokeObjectURL(vistaPrevia);
+    setArchivo(f);
+    setVistaPrevia(URL.createObjectURL(f));
+  };
+
+  const onSubirFoto = async () => {
+    if (!archivo) return;
+    setLoading(true);
+    setNotice(null);
+    try {
+      const form = new FormData();
+      form.append('foto', archivo);
+      const res = await fetch(`${API_URL}/api/auth/foto`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}` },
+        body: form,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+      setPerfil(data.user);
+      setArchivo(null);
+      if (vistaPrevia) URL.revokeObjectURL(vistaPrevia);
+      setVistaPrevia(null);
+      window.dispatchEvent(new Event('cfp-auth'));
+      setNotice({ type: 'ok', text: 'Foto actualizada.' });
+    } catch (err) {
+      setNotice({ type: 'error', text: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onQuitarFoto = async () => {
+    setLoading(true);
+    setNotice(null);
+    try {
+      const res = await fetch(`${API_URL}/api/auth/me`, {
+        method: 'PATCH',
+        headers: authHeaders(),
+        body: JSON.stringify({ foto: '' }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `Error ${res.status}`);
+      setPerfil(data.user);
+      window.dispatchEvent(new Event('cfp-auth'));
+      setNotice({ type: 'ok', text: 'Foto eliminada.' });
     } catch (err) {
       setNotice({ type: 'error', text: err.message });
     } finally {
@@ -107,8 +170,8 @@ export default function Cuenta({ session, onLogout }) {
       <p className="eyebrow cuenta-eyebrow">Mi cuenta</p>
 
       <header className="cuenta-head">
-        {perfil.foto ? (
-          <img src={perfil.foto} alt={`Foto de ${perfil.name}`} className="cuenta-avatar-img" />
+        {fotoUrl(perfil.foto) ? (
+          <img src={fotoUrl(perfil.foto)} alt={`Foto de ${perfil.name}`} className="cuenta-avatar-img" />
         ) : (
           <span className="cuenta-avatar" aria-hidden="true">{inicial}</span>
         )}
@@ -143,26 +206,35 @@ export default function Cuenta({ session, onLogout }) {
             />
           </label>
           <label className="field">
-            Foto de perfil <small className="solo-lectura">(URL https; vacía para quitarla)</small>
+            Foto de perfil <small className="solo-lectura">(JPG, PNG o WebP, máx 2 MB)</small>
             <input
-              type="url"
-              value={foto}
-              onChange={(e) => setFoto(e.target.value)}
-              disabled={esAdmin}
-              placeholder="https://…"
-              autoComplete="photo"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={onElegirFoto}
+              disabled={esAdmin || loading}
             />
           </label>
-          {foto.trim() ? (
+          {(vistaPrevia || fotoUrl(perfil.foto)) && (
             <img
-              src={foto.trim()}
-              alt="Vista previa de la foto de perfil"
+              src={vistaPrevia ?? fotoUrl(perfil.foto)}
+              alt="Foto de perfil"
               className="cuenta-foto-prev"
               onError={(e) => { e.currentTarget.style.display = 'none'; }}
             />
-          ) : (
+          )}
+          {!fotoUrl(perfil.foto) && !vistaPrevia && (
             <div className="cuenta-foto-ph">Sin foto — se muestra tu inicial</div>
           )}
+          <div className="cuenta-foto-btns">
+            <button type="button" className="btn" onClick={onSubirFoto} disabled={esAdmin || loading || !archivo}>
+              {loading ? 'Subiendo…' : 'Subir foto'}
+            </button>
+            {fotoUrl(perfil.foto) && (
+              <button type="button" className="btn cuenta-quitar" onClick={onQuitarFoto} disabled={esAdmin || loading}>
+                Quitar
+              </button>
+            )}
+          </div>
           <label className="field">
             Correo <small className="solo-lectura">(solo lectura: es tu usuario de ingreso)</small>
             <input type="email" value={perfil.email} readOnly disabled aria-readonly="true" />

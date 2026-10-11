@@ -92,9 +92,10 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
   (acepta `user|username|email` + `password`), guarda JWT en
   `localStorage['cfp_token']`, valida con `GET /api/auth/me` al cargar. Con
   sesión muestra `pages/Cuenta.jsx` (sección ancha `Cuenta.css`, no la card del
-  login): avatar (foto o inicial), badge de rol, form nombre + foto (URL https,
-  con preview) y cambio de clave contra `PATCH /api/auth/me`. Email y rol solo
-  lectura; admin bloqueado (vive en el servidor). Sin recuperación de clave.
+  login): avatar (foto o inicial), badge de rol, form nombre + subida de foto
+  desde el dispositivo (`POST /api/auth/foto`, preview + quitar) y cambio de
+  clave contra `PATCH /api/auth/me`. Email y rol solo lectura; admin bloqueado
+  (vive en el servidor). Sin recuperación de clave.
 - **Instagram**: `https://www.instagram.com/caminosdefogonypalabra/` solo-icono en
   nav y footer (con `aria-label`).
 - **Logo**: `.brand-logo` desktop 64px alto / 320px max (se subió +40% una vez);
@@ -122,7 +123,10 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
   `{ user|username|email, password }` → `{ token, user }`;
   `GET /api/auth/me` (Bearer) → `{ user }` (con `foto` y `createdAt`);
   `PATCH /api/auth/me` (name, foto https|vacía, cambio de clave con currentPassword;
-  admin → 403, email/rol no editables); `POST /api/auth/register` → 403 siempre.
+  admin → 403, email/rol no editables); `POST /api/auth/foto` (multer, JPG/PNG/WebP
+  2 MB, guarda en `uploads/` servido en `/uploads`, borra la anterior local);
+  `POST /api/auth/register` → 403 siempre. OJO Render free: disco efímero, las
+  fotos se pierden al redesplegar (a futuro: Render Disk o S3).
 - **Admin único**: se compara `ADMIN_USER` (case-insensitive) y
   `bcrypt.compare` contra `ADMIN_PASSWORD_HASH`; si no coincide, busca en Mongo
   por email. `/me` con `sub==='admin'` responde perfil fijo sin tocar DB.

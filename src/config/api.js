@@ -3,6 +3,13 @@
 export const API_URL =
   import.meta.env.VITE_API_URL?.replace(/\/$/, '') || 'http://localhost:4000';
 
+// La foto puede ser URL externa o ruta /uploads del backend: absolutizar.
+export function fotoUrl(foto) {
+  if (!foto) return null;
+  if (/^(https?:\/\/|data:image\/)/.test(foto)) return foto;
+  return `${API_URL}${foto.startsWith('/') ? foto : `/${foto}`}`;
+}
+
 export async function api(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
     headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },

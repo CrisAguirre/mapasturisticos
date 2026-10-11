@@ -30,6 +30,11 @@
   color: #9fb3c8; font-size: 0.82rem; text-align: center;
   padding: 12px; margin: -6px 0 14px;
 }
+.cuenta-foto-btns { display: flex; gap: 8px; flex-wrap: wrap; margin: -2px 0 14px; }
+.cuenta-foto-btns .btn { padding: 8px 14px; font-size: 0.85rem; }
+.cuenta-quitar { border-color: rgba(255,120,120,0.4); color: #ffb4b4; }
+.cuenta-card input[type="file"] { padding: 10px; cursor: pointer; }
+.cuenta-card input[type="file"]:disabled { cursor: not-allowed; }
 .cuenta-rol {
   margin-left: auto; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.5px;
   text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
