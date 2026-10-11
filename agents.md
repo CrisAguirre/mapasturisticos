@@ -36,7 +36,7 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
   Auditoría diseño: `npx impeccable detect src/` (código) y contra dev
   (`http://127.0.0.1:5173/`, no `localhost`, el browser del detector no lo resuelve).
-  Quedan solo hallazgos de identidad (jelly, gradient-text, glows, cyan-on-dark):
+  Quedan solo hallazgos de identidad (gradient-text, glows, cyan-on-dark):
   no "corregir" la paleta ni el easing.
 - PowerShell 5.1: encadenar con `; if ($?) { ... }`, no `&&`. No usar bash para
   leer/editar archivos (herramientas `read`/`edit`/`write`).
@@ -76,10 +76,9 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
   .nav-actions(toggle)`. El social va pegado a las pestañas en desktop; en móvil
   `.tabs-wrap { display: contents }` y el orden es social-izq, logo-centro, menú-der.
   En móvil `.brand-text` se oculta.
-- **Píldora Jelly Radio**: el indicador `.tabs-indicator` se desliza con
-  `cubic-bezier(0.34,1.45,0.64,1)` y dentro lleva `.tabs-jelly` con `key={route}`
-  que re-monta y hace squash & stretch (`@keyframes jelly`). Respetar
-  `prefers-reduced-motion`.
+- **Subrayado sobrio**: el indicador `.tabs-indicator` es una línea dorada de 2px
+  que se desliza con `cubic-bezier(0.22,1,0.36,1)` (sin rebotes; el jelly se
+  retiró por pedido de imagen seria). Respetar `prefers-reduced-motion`.
 - **SplitText** (`bits.jsx`): los espacios entre palabras van como nodo de texto
   FUERA del span animado (dentro de un `inline-block` el navegador los recorta y
   las palabras se pegan); en modo `chars` los espacios son `\u00A0`. Verificado.

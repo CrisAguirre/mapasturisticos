@@ -117,10 +117,8 @@ function App() {
               width: `${indicator.width}px`,
               transform: `translateX(${indicator.left}px)`,
             }}
-          >
-            {/* Efecto jelly: se re-monta en cada ruta y rebota como gelatina */}
-            <span className="tabs-jelly" key={route} aria-hidden="true" />
-          </span>
+            aria-hidden="true"
+          />
             {TABS.map((t) => (
               <a
                 key={t.id}
