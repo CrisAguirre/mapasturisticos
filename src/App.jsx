@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa';
-import logoImg from './assets/logo2.png';
+import logoImg from './assets/logo0.png';
 import { API_URL } from './config/api.js';
 import Inicio from './pages/Inicio.jsx';
 import Proyecto from './pages/Proyecto.jsx';
