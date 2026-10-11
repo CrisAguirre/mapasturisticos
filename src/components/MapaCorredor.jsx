@@ -5,12 +5,65 @@ import { GOOGLE_MAPS_URL, RECORRIDO, mapsUrlPunto } from '../config/recorrido.js
 import RUTA from '../config/ruta.json';
 import './MapaCorredor.css';
 
+const CAPAS = {
+  claro: {
+    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+    ruta: '#b45309',
+  },
+  satelital: {
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+    maxZoom: 19,
+    ruta: '#ffd479',
+  },
+};
+
+// Geometría del trazado para las flechas: distancia acumulada por tramo.
+// RUTA.coords viene como [lat, lng] (388 pts por caminos, del punto 1 al 6).
+const TRAZO = (() => {
+  const pts = RUTA.coords?.length ? RUTA.coords : RECORRIDO.map((p) => [p.lat, p.lng]);
+  const acum = [0];
+  for (let k = 1; k < pts.length; k++) {
+    const [la1, ln1] = pts[k - 1];
+    const [la2, ln2] = pts[k];
+    const x = ((ln2 - ln1) * Math.cos(((la1 + la2) / 2) * Math.PI / 180) * 111320);
+    const y = (la2 - la1) * 110540;
+    acum.push(acum[k - 1] + Math.hypot(x, y));
+  }
+  return { pts, acum, total: acum[acum.length - 1] };
+})();
+
+// Posición + rumbo (grados pantalla, 0° = este) a una distancia d del inicio.
+function puntoEn(d) {
+  const { pts, acum, total } = TRAZO;
+  const dd = Math.min(Math.max(d, 0), total - 0.001);
+  let k = 1;
+  while (k < acum.length - 1 && acum[k] < dd) k++;
+  const [la1, ln1] = pts[k - 1];
+  const [la2, ln2] = pts[k];
+  const t = (dd - acum[k - 1]) / Math.max(acum[k] - acum[k - 1], 0.001);
+  const dx = (ln2 - ln1) * Math.cos((la1 * Math.PI) / 180);
+  const dy = -(la2 - la1);
+  return { lat: la1 + (la2 - la1) * t, lng: ln1 + (ln2 - ln1) * t, ang: (Math.atan2(dy, dx) * 180) / Math.PI };
+}
+
 function numIcon(n, activo) {
   return L.divIcon({
     className: 'mc-leaf',
     html: `<span class="mc-leaf-num${activo ? ' activo' : ''}">${n}</span>`,
     iconSize: [38, 38],
     iconAnchor: [19, 19],
+  });
+}
+
+function flechaIcon() {
+  return L.divIcon({
+    className: 'mc-flecha-wrap',
+    html: '<span class="mc-flecha">➤</span>',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
   });
 }
 
@@ -33,29 +86,31 @@ export default function MapaCorredor() {
   const mapEl = useRef(null);
   const mapRef = useRef(null);
   const marksRef = useRef([]);
+  const capaRef = useRef(null);
+  const lineaRef = useRef(null);
+  const flechasRef = useRef([]);
+  const rafRef = useRef(0);
   const [puntoId, setPuntoId] = useState(1);
+  const [tema, setTema] = useState('claro');
+  const [mapaListo, setMapaListo] = useState(false);
   const [nubes, setNubes] = useState(crearNubes);
   const [nubesOn, setNubesOn] = useState(true);
   const punto = RECORRIDO.find((p) => p.id === puntoId) ?? RECORRIDO[0];
 
-  // Mapa real una sola vez: OSM + ruta + 6 marcadores numerados
+  // Mapa real una sola vez: capa base + ruta + 6 marcadores + 3 flechas
   useEffect(() => {
     if (mapRef.current || !mapEl.current) return;
     const map = L.map(mapEl.current, { scrollWheelZoom: false }).setView([1.2098, -77.2103], 14);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    capaRef.current = L.tileLayer(CAPAS.claro.url, {
+      maxZoom: CAPAS.claro.maxZoom,
+      attribution: CAPAS.claro.attribution,
     }).addTo(map);
 
-    // Trazado real por caminos (ruta.json, 5 tramos a pie). Sin cerrar el
-    // circuito: el recorrido original termina en el punto 6.
-    const latlngs = RUTA.coords?.length
-      ? RUTA.coords
-      : RECORRIDO.map((p) => [p.lat, p.lng]);
-    L.polyline(latlngs, {
-      color: '#b45309',
+    lineaRef.current = L.polyline(TRAZO.pts, {
+      color: CAPAS.claro.ruta,
       weight: 4,
       dashArray: '8 6',
+      className: 'mc-flujo',
     }).addTo(map);
 
     marksRef.current = RECORRIDO.map((p) => {
@@ -65,18 +120,73 @@ export default function MapaCorredor() {
       return m;
     });
 
-    map.fitBounds(L.latLngBounds(latlngs).pad(0.18));
+    // 3 flechas del flujo de la caminata (1 → 6)
+    flechasRef.current = [0.05, 0.38, 0.71].map((f) => {
+      const pos = puntoEn(f * TRAZO.total);
+      const m = L.marker([pos.lat, pos.lng], {
+        icon: flechaIcon(),
+        interactive: false,
+        keyboard: false,
+      }).addTo(map);
+      const el = m.getElement()?.querySelector('.mc-flecha');
+      if (el) el.style.transform = `rotate(${pos.ang}deg)`;
+      return { m, frac: f };
+    });
+
+    map.fitBounds(L.latLngBounds(TRAZO.pts).pad(0.18));
     // No atrapar el scroll de la página: el zoom con rueda solo al tocar el mapa
     map.on('focus', () => map.scrollWheelZoom.enable());
     map.on('blur', () => map.scrollWheelZoom.disable());
     map.on('click', () => map.scrollWheelZoom.enable());
     mapRef.current = map;
+    setMapaListo(true);
     return () => {
+      cancelAnimationFrame(rafRef.current);
       map.remove();
       mapRef.current = null;
       marksRef.current = [];
+      flechasRef.current = [];
+      capaRef.current = null;
+      lineaRef.current = null;
     };
   }, []);
+
+  // Tema claro ↔ oscuro: cambia baldosas y color de la ruta
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !capaRef.current) return;
+    map.removeLayer(capaRef.current);
+    capaRef.current = L.tileLayer(CAPAS[tema].url, {
+      maxZoom: CAPAS[tema].maxZoom,
+      attribution: CAPAS[tema].attribution,
+    }).addTo(map);
+    capaRef.current.bringToBack();
+    lineaRef.current?.setStyle({ color: CAPAS[tema].ruta });
+  }, [tema]);
+
+  // Flechas en marcha: avanzan 1 → 6 a velocidad constante y reinician.
+  // Con reduced-motion quedan fijas (las del init ya están orientadas).
+  useEffect(() => {
+    if (!mapaListo) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    const vel = TRAZO.total / 45; // recorrido completo en ~45 s
+    let t0 = performance.now();
+    const paso = (ahora) => {
+      const dt = Math.min((ahora - t0) / 1000, 1);
+      t0 = ahora;
+      flechasRef.current.forEach((f) => {
+        f.frac += (vel * dt) / TRAZO.total;
+        if (f.frac > 0.995) f.frac = 0.005;
+        const pos = puntoEn(f.frac * TRAZO.total);
+        f.m.setLatLng([pos.lat, pos.lng]);
+        const el = f.m.getElement()?.querySelector('.mc-flecha');
+        if (el) el.style.transform = `rotate(${pos.ang}deg)`;
+      });
+      rafRef.current = requestAnimationFrame(paso);
+    };
+    rafRef.current = requestAnimationFrame(paso);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [mapaListo]);
 
   // Resaltar el marcador activo al cambiar de ficha
   useEffect(() => {
@@ -104,13 +214,21 @@ export default function MapaCorredor() {
         <span className="mc-eyebrow">Mapa cultural · Cabrera — San Pedro de la Laguna</span>
         <h3>Circuito a pie · 6 paradas</h3>
         <p>
-          Mapa real del corredor oriental. Toca un número para ver su ficha, o abre el
-          recorrido en Google Maps para caminarlo.
+          Mapa real del corredor oriental. Las flechas marcan el sentido de la caminata:
+          toca un número para ver su ficha, o abre el recorrido en Google Maps para caminarlo.
         </p>
         <div className="mc-acciones">
           <a className="mc-btn primario" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
             Abrir recorrido en Google Maps
           </a>
+          <button
+            type="button"
+            className="mc-btn chico"
+            onClick={() => setTema((t) => (t === 'claro' ? 'satelital' : 'claro'))}
+            aria-pressed={tema === 'satelital'}
+          >
+            {tema === 'claro' ? '🛰️ Vista satélite' : '🗺️ Mapa claro'}
+          </button>
           <button
             type="button"
             className="mc-btn chico"
@@ -123,7 +241,7 @@ export default function MapaCorredor() {
         </div>
       </div>
 
-      <div className="mc-main">
+      <div className={`mc-main tema-${tema}`}>
         <div className="mc-visual">
           <div ref={mapEl} className="mc-map" role="application" aria-label="Mapa del recorrido con 6 paradas" />
           {nubesOn && (

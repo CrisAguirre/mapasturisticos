@@ -1,0 +1,68 @@
+/* ── Mi cuenta: sección ancha, nada que ver con la card angosta del login ── */
+.cuenta-section { max-width: 960px; }
+.cuenta-eyebrow {
+  display: inline-block; font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;
+  text-transform: uppercase; color: #9fd8ff;
+  background: rgba(0,200,255,0.1); border: 1px solid rgba(0,200,255,0.35);
+  padding: 4px 12px; border-radius: 999px; margin: 0 0 14px;
+}
+.cuenta-cargando { color: #9fb3c8; }
+
+.cuenta-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.cuenta-head h2 { margin: 0; font-size: 1.7rem; color: #fff; }
+.cuenta-email { margin: 2px 0 0; color: #9fb3c8; font-size: 0.9rem; }
+.cuenta-avatar {
+  width: 64px; height: 64px; border-radius: 50%; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.7rem; font-weight: 800; color: #0b132b;
+  background: linear-gradient(135deg, #ffd479, #f0abfc);
+}
+.cuenta-rol {
+  margin-left: auto; font-size: 0.78rem; font-weight: 800; letter-spacing: 0.5px;
+  text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.25); color: #fff; background: rgba(255,255,255,0.07);
+}
+.cuenta-rol.rol-admin { border-color: #ffd479; color: #ffd479; background: rgba(255,180,0,0.1); }
+.cuenta-rol.rol-mujer { border-color: #f0abfc; color: #f0abfc; background: rgba(240,171,252,0.1); }
+.cuenta-rol.rol-visitante { border-color: #9fd8ff; color: #9fd8ff; background: rgba(0,200,255,0.1); }
+.cuenta-rol-desc { color: #cbd5e1; margin: 10px 0 0; }
+.cuenta-nota-admin {
+  margin: 14px 0 0; font-size: 0.88rem; color: #ffd479;
+  background: rgba(255,180,0,0.08); border: 1px solid rgba(255,180,0,0.3);
+  padding: 10px 14px; border-radius: 10px;
+}
+
+.cuenta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }
+.cuenta-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 22px;
+}
+.cuenta-card h3 { margin: 0 0 14px; color: #ffd479; font-size: 1.05rem; }
+.cuenta-card .field { display: flex; flex-direction: column; gap: 7px; font-size: 0.85rem; font-weight: 600; color: #cbd5e1; margin-bottom: 14px; }
+.cuenta-card .field:last-child { margin-bottom: 0; }
+.cuenta-card input {
+  width: 100%; padding: 12px 14px; border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.35);
+  color: #fff; font-size: 0.95rem; outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.cuenta-card input:focus { border-color: #00c8ff; box-shadow: 0 0 0 3px rgba(0,200,255,0.2); }
+.cuenta-card input:disabled { opacity: 0.65; cursor: not-allowed; }
+.cuenta-card input[readonly] { border-style: dashed; }
+.solo-lectura { font-weight: 400; color: #9fb3c8; }
+
+.cuenta-acciones { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.cuenta-salir { border-color: rgba(255,120,120,0.4); color: #ffb4b4; }
+
+.cuenta-notice {
+  margin: 16px 0 0; font-size: 0.88rem; line-height: 1.5;
+  padding: 10px 14px; border-radius: 10px;
+  color: #ffd479; background: rgba(255,180,0,0.08); border: 1px solid rgba(255,180,0,0.3);
+}
+.cuenta-notice.ok { color: #9ff0c0; border-color: rgba(0,200,120,0.4); background: rgba(0,200,120,0.08); }
+
+@media (max-width: 720px) {
+  .cuenta-grid { grid-template-columns: 1fr; }
+  .cuenta-rol { margin-left: 0; }
+}

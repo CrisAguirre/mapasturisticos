@@ -47,6 +47,17 @@
   box-shadow: 0 4px 14px rgba(0,0,0,0.5);
 }
 .mc-leaf-num.activo { background: #ffd479; border-color: #0b132b; color: #0b132b; transform: scale(1.15); }
+/* Hormigas en marcha: los guiones avanzan en el sentido de la caminata (1 → 6) */
+.mc-flujo { animation: mc-march 1.4s linear infinite; }
+@keyframes mc-march { to { stroke-dashoffset: -28; } }
+/* Flechas del flujo: viajan sobre la ruta, sin capturar clics */
+.mc-flecha-wrap { background: transparent; border: 0; }
+.mc-flecha {
+  display: flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px; font-size: 1.05rem; line-height: 1;
+  color: #ffd479; text-shadow: 0 0 4px #0b132b, 0 0 4px #0b132b, 0 2px 6px rgba(0,0,0,0.7);
+  pointer-events: none;
+}
 .mc-chip {
   position: absolute; left: 14px; bottom: 24px; z-index: 500; max-width: 70%;
   background: rgba(11,19,43,0.85); backdrop-filter: blur(8px);
@@ -100,4 +111,5 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .mc-nube { animation: none; }
+  .mc-flujo { animation: none; }
 }

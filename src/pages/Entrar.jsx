@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import logoImg from '../assets/logo.png';
 import { API_URL } from '../config/api.js';
+import Cuenta from './Cuenta.jsx';
 
 const TOKEN_KEY = 'cfp_token';
 
@@ -60,6 +61,10 @@ export default function Entrar() {
     setNotice(null);
   };
 
+  if (session) {
+    return <Cuenta session={session} onLogout={onLogout} />;
+  }
+
   return (
     <section className="page-section login-section">
       <div className="login-card">
@@ -67,18 +72,7 @@ export default function Entrar() {
         <h2>Entrar</h2>
         <p className="login-sub">Acceso a la plataforma</p>
 
-        {session ? (
-          <>
-            <p className="login-notice" style={{ color: '#9ff0c0', borderColor: 'rgba(0,200,120,0.4)', background: 'rgba(0,200,120,0.08)' }}>
-              Sesión activa como <strong>{session.name}</strong> ({session.email})
-            </p>
-            <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-              <a className="btn primary login-btn" href="#/inicio">Ir al inicio</a>
-              <button className="btn login-btn" type="button" onClick={onLogout}>Cerrar sesión</button>
-            </div>
-          </>
-        ) : (
-          <form onSubmit={onSubmit} className="login-form">
+        <form onSubmit={onSubmit} className="login-form">
             <label className="field">
               Usuario
               <input type="text" name="user" placeholder="admin" required autoComplete="username" />
@@ -101,10 +95,9 @@ export default function Entrar() {
             <button className="btn primary login-btn" type="submit" disabled={loading}>
               {loading ? 'Ingresando…' : 'Ingresar'}
             </button>
-          </form>
-        )}
+        </form>
 
-        {notice && !session && (
+        {notice && (
           <p className="login-notice" style={notice.type === 'ok' ? { color: '#9ff0c0', borderColor: 'rgba(0,200,120,0.4)', background: 'rgba(0,200,120,0.08)' } : undefined}>
             {notice.text}
           </p>
