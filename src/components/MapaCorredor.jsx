@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { GOOGLE_MAPS_URL, RECORRIDO, mapsUrlPunto } from '../config/recorrido.js';
+import RUTA from '../config/ruta.json';
 import './MapaCorredor.css';
 
 function numIcon(n, activo) {
@@ -46,8 +47,12 @@ export default function MapaCorredor() {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map);
 
-    const latlngs = RECORRIDO.map((p) => [p.lat, p.lng]);
-    L.polyline([...latlngs, latlngs[0]], {
+    // Trazado real por caminos (ruta.json, 5 tramos a pie). Sin cerrar el
+    // circuito: el recorrido original termina en el punto 6.
+    const latlngs = RUTA.coords?.length
+      ? RUTA.coords
+      : RECORRIDO.map((p) => [p.lat, p.lng]);
+    L.polyline(latlngs, {
       color: '#b45309',
       weight: 4,
       dashArray: '8 6',
@@ -114,7 +119,7 @@ export default function MapaCorredor() {
           >
             {nubesOn ? '☁️ Nubes: sí' : '☁️ Nubes: no'}
           </button>
-          <span className="mc-meta">6 paradas · a pie · ~2 km</span>
+          <span className="mc-meta">6 paradas · a pie · ~7 km</span>
         </div>
       </div>
 
