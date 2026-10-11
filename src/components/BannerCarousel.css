@@ -46,7 +46,6 @@ a.slide:hover .slide-placeholder { filter: brightness(1.15); }
 .ph-kicker {
   font-size: 0.72rem;
   letter-spacing: 2px;
-  text-transform: uppercase;
   color: rgba(255,255,255,0.75);
   border: 1px dashed rgba(255,255,255,0.5);
   padding: 6px 14px;

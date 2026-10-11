@@ -34,6 +34,10 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
   `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
+  Auditoría diseño: `npx impeccable detect src/` (código) y contra dev
+  (`http://127.0.0.1:5173/`, no `localhost`, el browser del detector no lo resuelve).
+  Quedan solo hallazgos de identidad (jelly, gradient-text, glows, cyan-on-dark):
+  no "corregir" la paleta ni el easing.
 - PowerShell 5.1: encadenar con `; if ($?) { ... }`, no `&&`. No usar bash para
   leer/editar archivos (herramientas `read`/`edit`/`write`).
 
@@ -106,7 +110,8 @@ public/favicon.png           Favicon circular 180px generado de logo2 (sin franj
 
 ## 7. Backend en detalle (`../mapasturisticosbknd/`)
 
-- Express 4 + Mongoose 8 + JWT. `npm run dev` (`node --watch`) / `npm start`.
+- Express 4 + Mongoose 8 + JWT. `npm run dev` (`node --watch`) / `npm start` /
+  `npm run lint` (`eslint .`, flat config `eslint.config.js`, cero warnings).
 - Estructura: `src/index.js` (app + CORS + `/api/health` + handler global JSON),
   `src/config/db.js` (`connectDB`), `src/models/User.js`
   (name, email unique, passwordHash, role admin|mujer|visitante, foto URL|null),
