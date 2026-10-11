@@ -24,7 +24,8 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 
 ## 3. Stack y comandos (front)
 
-- Node v22, Vite 8, React 19, `react-icons` 5, `react-router` NO (navegación por
+- Node v22, Vite 8, React 19, `react-icons` 5, `leaflet` (mapa real OSM en
+  `MapaCorredor.jsx`, sin `react-leaflet`), `react-router` NO (navegación por
   hash `#/ruta` con `routeFromHash()` en `App.jsx`).
 - `npm run dev` / `npm run build` (verificado OK) / `npm run lint` (`oxlint`).
 - PowerShell 5.1: encadenar con `; if ($?) { ... }`, no `&&`. No usar bash para
