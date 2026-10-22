@@ -1,7 +1,7 @@
 # AGENTS.md — Caminos de Fogón y Palabra (front web + backend)
 
 > Contexto técnico para retomar el trabajo en opencode sin perder el hilo.
-> Actualizado: 2026-10-11. Describe el estado REAL verificado del código.
+> Actualizado: 2026-10-22. Describe el estado REAL verificado del código.
 
 ## 1. Qué es esta app
 
@@ -46,8 +46,9 @@ con `workdir` en la carpeta del front. El back sí tiene `.git` propio.
 src/
   App.jsx / App.css          Nav + tema día/noche + preload + footer + WhatsAppFloat
   index.css / main.jsx       color-scheme por tema + StrictMode
-  pages/                     Inicio, Proyecto, Mujeres, MapaTuristico,
-                             Experiencias, Voces, Entrar, Contacto, Cuenta
+  pages/                     Inicio, Proyecto, Mujeres (+ Mujeres.css: rejilla
+                             filtrable de 9 fichas + modal de historia),
+                             MapaTuristico, Experiencias, Voces, Entrar, Contacto, Cuenta
   components/
     BannerCarousel.jsx/.css  Home (1 banner real + 6 placeholders + video pendiente)
     GallerySlider.jsx/.css   Slider head Proyecto (Ken Burns, progreso, botón ❚❚/▶)
@@ -61,6 +62,8 @@ src/
     WhatsAppFloat.jsx/.css   Botón flotante AZUL (36px, wa.me/573196822133)
     CicloConsolidado.jsx/.css+sim EN DESUSO (simulacro ciclo del agua, no tocar)
   config/api.js              API_URL + api() + fotoUrl() (absolutiza /uploads)
+  config/emprendimientos.js  9 fichas reales de la página Mujeres (texto del
+                             docx "fichas de emprendedoras", foto, filtro, colores)
   config/recorrido.js        GOOGLE_MAPS_URL + RECORRIDO (6 pts verificados 1×1
                              contra el link; x/y viejos ya no se usan) + mapsUrlPunto()
   config/ruta.json           Trazado fiel OSRM foot: 388 pts [lat,lng], ~7.4 km
@@ -72,6 +75,8 @@ src/
   assets/hero.png / landscape-aerial.png (este último, del muerto CicloConsolidado)
   assets/media/2proyecto/    19 fotos ORIGINALES (65 MB, no tocar)
   assets/media/2proyecto-web/19 fotos optimizadas 1600px q78 (~5.6 MB, las que usa la web)
+  assets/media/3mujeres-web/ 8 fotos de emprendedoras 1400px q78 (~1.4 MB total);
+                             falta la de Tradiciones Nariñenses Marucha
   assets/docs/               Fuentes de contenido (.docx/.pdf)
 public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a logo0)
 .env                         `VITE_API_URL=https://mapasturisticosbknd.onrender.com`
@@ -113,7 +118,14 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
   form nombre + subida de foto desde el dispositivo (JPG/PNG/WebP 2 MB, preview,
   subir/quitar) + cambio de clave (actual+nueva+confirmar) contra `PATCH /me` y
   `POST /foto`. Admin bloqueado (vive en el servidor).
-- Mujeres / Experiencias / Voces / Contacto: contenido real pendiente (placeholders).
+- **Mujeres** (`Mujeres.jsx/.css` + `config/emprendimientos.js`): hero + cifras
+  (9/8/4/1) + chips de filtro por oficio (cocina, naturaleza, campo, arte,
+  dulces) + botón "Sorpréndeme" + rejilla de 9 tarjetas con foto, número,
+  categoría, lugar, resumen, propietaria y "Leer su historia" → modal con
+  relato completo, claves, cierre, navegación ←/→/Esc y enlace al mapa. La
+  ficha 06 (Tradiciones Nariñenses Marucha) queda con placeholder "Foto en
+  camino" (no hay foto ni nombre de propietaria en el docx).
+- Experiencias / Voces / Contacto: contenido real pendiente (placeholders).
 
 ## 7. Mapa en detalle (`MapaCorredor.jsx/.css`)
 
@@ -182,7 +194,8 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
 
 ## 10. Pendientes conocidos
 
-- Mujeres / Experiencias / Voces / Contacto: contenido real.
+- Experiencias / Voces / Contacto: contenido real.
+- Mujeres: foto (y nombre de la propietaria) de Tradiciones Nariñenses Marucha.
 - BannerCarousel: reemplazar 6 placeholders + video de bienvenida.
 - `logo2.png` (981 KB, solo preload): optimizar o retirar.
 - Favicon desde `logo0`; borrar muertos (`TextCarousel.*`, `CicloConsolidado.*`,
