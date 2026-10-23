@@ -1,7 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { GOOGLE_MAPS_URL, RECORRIDO, mapsUrlPunto } from '../config/recorrido.js';
+import {
+  FaArrowRight,
+  FaCameraRetro,
+  FaMapMarkerAlt,
+  FaUser,
+} from 'react-icons/fa';
+import { EMPRENDIMIENTOS } from '../config/emprendimientos.js';
+import { GOOGLE_MAPS_URL, SENDERO_BASE, mapsUrlPunto } from '../config/recorrido.js';
 import RUTA from '../config/ruta.json';
 import './MapaCorredor.css';
 
@@ -20,35 +27,7 @@ const CAPAS = {
   },
 };
 
-// Geometría del trazado para las flechas: distancia acumulada por tramo.
-// RUTA.coords viene como [lat, lng] (388 pts por caminos, del punto 1 al 6).
-const TRAZO = (() => {
-  const pts = RUTA.coords?.length ? RUTA.coords : RECORRIDO.map((p) => [p.lat, p.lng]);
-  const acum = [0];
-  for (let k = 1; k < pts.length; k++) {
-    const [la1, ln1] = pts[k - 1];
-    const [la2, ln2] = pts[k];
-    const x = ((ln2 - ln1) * Math.cos(((la1 + la2) / 2) * Math.PI / 180) * 111320);
-    const y = (la2 - la1) * 110540;
-    acum.push(acum[k - 1] + Math.hypot(x, y));
-  }
-  return { pts, acum, total: acum[acum.length - 1] };
-})();
-
-// Posición + rumbo (grados pantalla, 0° = este) a una distancia d del inicio.
-function puntoEn(d) {
-  const { pts, acum, total } = TRAZO;
-  const dd = Math.min(Math.max(d, 0), total - 0.001);
-  let k = 1;
-  while (k < acum.length - 1 && acum[k] < dd) k++;
-  const [la1, ln1] = pts[k - 1];
-  const [la2, ln2] = pts[k];
-  const t = (dd - acum[k - 1]) / Math.max(acum[k] - acum[k - 1], 0.001);
-  const dx = (ln2 - ln1) * Math.cos((la1 * Math.PI) / 180);
-  const dy = -(la2 - la1);
-  return { lat: la1 + (la2 - la1) * t, lng: ln1 + (ln2 - ln1) * t, ang: (Math.atan2(dy, dx) * 180) / Math.PI };
-}
-
+// Punto del mapa: número de la ficha, con estado activo.
 function numIcon(n, activo) {
   return L.divIcon({
     className: 'mc-leaf',
@@ -58,13 +37,23 @@ function numIcon(n, activo) {
   });
 }
 
-function flechaIcon() {
+// Grupo de puntos cercanos: al tocarlo se acerca para separarlos.
+function clusterIcon(n) {
   return L.divIcon({
-    className: 'mc-flecha-wrap',
-    html: '<span class="mc-flecha">➤</span>',
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    className: 'mc-cluster-wrap',
+    html: `<span class="mc-cluster">${n}</span>`,
+    iconSize: [46, 46],
+    iconAnchor: [23, 23],
   });
+}
+
+// Lee ?p=<id> del hash. Sirve para abrir una ficha concreta desde Mujeres.
+function idFromHash() {
+  const hash = window.location.hash || '';
+  const qi = hash.indexOf('?');
+  if (qi < 0) return null;
+  const id = new URLSearchParams(hash.slice(qi + 1)).get('p');
+  return EMPRENDIMIENTOS.some((e) => e.id === id) ? id : null;
 }
 
 // Nubes procedurales: cada vista del mapa (centro+zoom) siembra su propio
@@ -87,7 +76,7 @@ function mulberry32(a) {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-// Cielo fijo y anclado: 8 nubes con coordenadas reales (4 cerca de la ruta,
+// Cielo fijo y anclado: 8 nubes con coordenadas reales (4 cerca del corredor,
 // 4 por Nariño), misma semilla siempre. Al mover o acercar, viajan con el mapa
 // como parte del terreno — no van pegadas a la pantalla.
 function sembrarCielo() {
@@ -113,7 +102,7 @@ function sembrarCielo() {
       };
     });
   return [
-    ...caja(1.17, 1.25, -77.25, -77.16, 4),
+    ...caja(1.17, 1.25, -77.32, -77.16, 4),
     ...caja(1.05, 1.35, -77.45, -77.0, 4),
   ];
 }
@@ -121,14 +110,15 @@ function sembrarCielo() {
 export default function MapaCorredor() {
   const mapEl = useRef(null);
   const mapRef = useRef(null);
-  const marksRef = useRef([]);
+  const marksRef = useRef(new Map());
   const capaRef = useRef(null);
   const lineaRef = useRef(null);
-  const flechasRef = useRef([]);
-  const rutaBoundsRef = useRef(null);
+  const clusterLayerRef = useRef(null);
+  const boundsRef = useRef(null);
   const ubiRef = useRef(null);
-  const rafRef = useRef(0);
-  const [puntoId, setPuntoId] = useState(1);
+  const nubesRef = useRef([]);
+  const [inicialId] = useState(idFromHash);
+  const [puntoId, setPuntoId] = useState(() => inicialId ?? EMPRENDIMIENTOS[0].id);
   const [tema, setTema] = useState('satelital');
   const [mapaListo, setMapaListo] = useState(false);
   const [geoMsg, setGeoMsg] = useState(null);
@@ -136,10 +126,10 @@ export default function MapaCorredor() {
   // pantalla hacia donde SE MUEVEN las nubes. Fallback: alisios del este.
   const [viento, setViento] = useState({ dir: 'E', x: 1, y: 0, kmh: null });
   const [nubesOn, setNubesOn] = useState(true);
-  const nubesRef = useRef([]);
-  const punto = RECORRIDO.find((p) => p.id === puntoId) ?? RECORRIDO[0];
 
-  // Mapa real una sola vez: capa base + ruta + 6 marcadores + 3 flechas
+  const punto = EMPRENDIMIENTOS.find((p) => p.id === puntoId) ?? EMPRENDIMIENTOS[0];
+
+  // Mapa real una sola vez: capa base + sendero + 9 marcadores + grupos.
   useEffect(() => {
     if (mapRef.current || !mapEl.current) return;
     const map = L.map(mapEl.current, {
@@ -159,35 +149,138 @@ export default function MapaCorredor() {
       attribution: CAPAS.satelital.attribution,
     }).addTo(map);
 
-    lineaRef.current = L.polyline(TRAZO.pts, {
-      color: CAPAS.satelital.ruta,
-      weight: 4,
-      dashArray: '8 6',
-      className: 'mc-flujo',
-    }).addTo(map);
+    // El sendero base queda como contexto, sin flechas ni numeración:
+    // los números 01–09 son las fichas de las emprendedoras.
+    const rutaPts = RUTA.coords?.length ? RUTA.coords : [];
+    lineaRef.current = rutaPts.length
+      ? L.polyline(rutaPts, {
+          color: CAPAS.satelital.ruta,
+          weight: 3,
+          opacity: 0.55,
+          dashArray: '8 6',
+          className: 'mc-flujo',
+        }).addTo(map)
+      : null;
 
-    marksRef.current = RECORRIDO.map((p) => {
-      const m = L.marker([p.lat, p.lng], { icon: numIcon(p.id, p.id === 1), title: p.titulo }).addTo(map);
-      m.bindTooltip(`${p.id} · ${p.titulo}`);
-      m.on('click', () => setPuntoId(p.id));
-      return m;
-    });
-
-    // 3 flechas del flujo de la caminata (1 → 6)
-    flechasRef.current = [0.05, 0.38, 0.71].map((f) => {
-      const pos = puntoEn(f * TRAZO.total);
-      const m = L.marker([pos.lat, pos.lng], {
-        icon: flechaIcon(),
-        interactive: false,
-        keyboard: false,
+    marksRef.current = new Map();
+    EMPRENDIMIENTOS.forEach((e) => {
+      const m = L.marker([e.geo.lat, e.geo.lng], {
+        icon: numIcon(e.num, e.id === (inicialId ?? EMPRENDIMIENTOS[0].id)),
+        title: e.name,
       }).addTo(map);
-      const el = m.getElement()?.querySelector('.mc-flecha');
-      if (el) el.style.transform = `rotate(${pos.ang}deg)`;
-      return { m, frac: f };
+      m.bindTooltip(`${e.num} · ${e.name}`);
+      m.on('click', () => {
+        setPuntoId(e.id);
+        history.replaceState(null, '', `#/mapa?p=${e.id}`);
+      });
+      marksRef.current.set(e.id, m);
     });
 
-    rutaBoundsRef.current = L.latLngBounds(TRAZO.pts).pad(0.18);
-    map.fitBounds(rutaBoundsRef.current);
+    clusterLayerRef.current = L.layerGroup().addTo(map);
+
+    // Agrupa puntos que se pisan en pantalla (solo con zoom < 16). Al tocar
+    // un grupo, el mapa vuela al conjunto y los marcadores se separan.
+    const actualizarClusteres = () => {
+      const capa = clusterLayerRef.current;
+      if (!capa) return;
+      capa.clearLayers();
+      const zoom = map.getZoom();
+      const individuales = EMPRENDIMIENTOS.map((e) => ({
+        e,
+        px: map.project([e.geo.lat, e.geo.lng], zoom),
+      }));
+
+      if (zoom >= 16) {
+        individuales.forEach(({ e }) => {
+          const m = marksRef.current.get(e.id);
+          if (m && !map.hasLayer(m)) m.addTo(map);
+        });
+        return;
+      }
+
+      const usados = new Set();
+      const grupos = [];
+      for (let i = 0; i < individuales.length; i++) {
+        if (usados.has(i)) continue;
+        const grupo = [individuales[i]];
+        usados.add(i);
+        // Crece alrededor del centro del grupo: si un punto cercano al centro
+        // todavía no entró, se suma (evita que un punto quede pegado al grupo).
+        let creció = true;
+        while (creció) {
+          creció = false;
+          const cx = grupo.reduce((s, g) => s + g.px.x, 0) / grupo.length;
+          const cy = grupo.reduce((s, g) => s + g.px.y, 0) / grupo.length;
+          for (let j = i + 1; j < individuales.length; j++) {
+            if (usados.has(j)) continue;
+            const dx = individuales[j].px.x - cx;
+            const dy = individuales[j].px.y - cy;
+            if (Math.hypot(dx, dy) <= 70) {
+              grupo.push(individuales[j]);
+              usados.add(j);
+              creció = true;
+            }
+          }
+        }
+        grupos.push(grupo);
+      }
+
+      grupos.forEach((grupo) => {
+        if (grupo.length === 1) {
+          const m = marksRef.current.get(grupo[0].e.id);
+          if (m && !map.hasLayer(m)) m.addTo(map);
+          return;
+        }
+        grupo.forEach(({ e }) => {
+          const m = marksRef.current.get(e.id);
+          if (m && map.hasLayer(m)) map.removeLayer(m);
+        });
+        const lat = grupo.reduce((s, g) => s + g.e.geo.lat, 0) / grupo.length;
+        const lng = grupo.reduce((s, g) => s + g.e.geo.lng, 0) / grupo.length;
+        const cm = L.marker([lat, lng], {
+          icon: clusterIcon(grupo.length),
+          title: `${grupo.length} emprendimientos`,
+        });
+        cm.bindTooltip(`${grupo.length} emprendimientos · toca para acercar`);
+        cm.on('click', () => {
+          const b = L.latLngBounds(grupo.map(({ e }) => [e.geo.lat, e.geo.lng]));
+          map.flyToBounds(b.pad(0.25), { maxZoom: 17, duration: 0.8 });
+        });
+        cm.addTo(capa);
+      });
+    };
+
+    map.on('zoomend moveend', actualizarClusteres);
+    boundsRef.current = L.latLngBounds(
+      EMPRENDIMIENTOS.map((e) => [e.geo.lat, e.geo.lng])
+    );
+
+    // Si llega un enlace directo (#/mapa?p=...), abre esa ficha de cerca.
+    // El encuadre se aplica cuando el contenedor ya tiene su tamaño final:
+    // si se calcula antes, el mapa queda demasiado cerca y oculta puntos.
+    let vistaInicialHecha = false;
+    const inicial = EMPRENDIMIENTOS.find((e) => e.id === inicialId);
+    const aplicarVistaInicial = () => {
+      if (vistaInicialHecha) return;
+      const w = mapEl.current?.clientWidth ?? 0;
+      const h = mapEl.current?.clientHeight ?? 0;
+      if (!w || !h) return;
+      map.invalidateSize();
+      if (inicial) {
+        map.setView([inicial.geo.lat, inicial.geo.lng], 16);
+      } else {
+        map.fitBounds(boundsRef.current, { padding: [36, 36] });
+      }
+      vistaInicialHecha = true;
+      actualizarClusteres();
+    };
+    const ro = new ResizeObserver(() => {
+      map.invalidateSize();
+      if (!vistaInicialHecha) aplicarVistaInicial();
+    });
+    ro.observe(mapEl.current);
+    const tVista = setTimeout(aplicarVistaInicial, 250);
+
     // Punto azul de ubicación (geolocalización del visitante)
     map.on('locationfound', (e) => {
       if (ubiRef.current) {
@@ -207,6 +300,7 @@ export default function MapaCorredor() {
     map.on('locationerror', () => {
       setGeoMsg('No se pudo obtener tu ubicación.');
     });
+
     // Cielo anclado al mapa: pane propio bajo los marcadores; cada nube vive
     // en su lat/lng y se recoloca en cada movimiento/zoom (viaja con el terreno).
     const pane = map.createPane('nubes');
@@ -256,18 +350,22 @@ export default function MapaCorredor() {
     mapRef.current = map;
     setMapaListo(true);
     return () => {
-      cancelAnimationFrame(rafRef.current);
+      clearTimeout(tVista);
+      ro.disconnect();
+      // Detén pan/zoom animados antes de destruir: si se navega a mitad de un
+      // flyTo, Leaflet puede quedar con un frame de zoom pendiente.
+      map.stop();
       map.remove();
       mapRef.current = null;
-      marksRef.current = [];
-      flechasRef.current = [];
+      marksRef.current = new Map();
+      clusterLayerRef.current = null;
       nubesRef.current = [];
       capaRef.current = null;
       lineaRef.current = null;
     };
-  }, []);
+  }, [inicialId]); // solo montaje: el id inicial no cambia
 
-  // Tema claro ↔ oscuro: cambia baldosas y color de la ruta
+  // Tema claro ↔ oscuro: cambia baldosas y color del sendero
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !capaRef.current) return;
@@ -280,36 +378,28 @@ export default function MapaCorredor() {
     lineaRef.current?.setStyle({ color: CAPAS[tema].ruta });
   }, [tema]);
 
-  // Flechas en marcha: avanzan 1 → 6 a velocidad constante y reinician.
-  // Con reduced-motion quedan fijas (las del init ya están orientadas).
-  useEffect(() => {
-    if (!mapaListo) return;
-    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-    const vel = TRAZO.total / 90; // recorrido completo en ~90 s
-    let t0 = performance.now();
-    const paso = (ahora) => {
-      const dt = Math.min((ahora - t0) / 1000, 1);
-      t0 = ahora;
-      flechasRef.current.forEach((f) => {
-        f.frac += (vel * dt) / TRAZO.total;
-        if (f.frac > 0.995) f.frac = 0.005;
-        const pos = puntoEn(f.frac * TRAZO.total);
-        f.m.setLatLng([pos.lat, pos.lng]);
-        const el = f.m.getElement()?.querySelector('.mc-flecha');
-        if (el) el.style.transform = `rotate(${pos.ang}deg)`;
-      });
-      rafRef.current = requestAnimationFrame(paso);
-    };
-    rafRef.current = requestAnimationFrame(paso);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [mapaListo]);
-
   // Resaltar el marcador activo al cambiar de ficha
   useEffect(() => {
-    marksRef.current.forEach((m, k) => {
-      m.setIcon(numIcon(RECORRIDO[k].id, RECORRIDO[k].id === puntoId));
+    EMPRENDIMIENTOS.forEach((e) => {
+      const m = marksRef.current.get(e.id);
+      if (m) m.setIcon(numIcon(e.num, e.id === puntoId));
     });
   }, [puntoId]);
+
+  // Enlaces directos desde otra página o desde el historial.
+  useEffect(() => {
+    const onHash = () => {
+      const id = idFromHash();
+      if (!id) return;
+      setPuntoId((prev) => (prev === id ? prev : id));
+      const e = EMPRENDIMIENTOS.find((p) => p.id === id);
+      if (e && mapRef.current) {
+        mapRef.current.flyTo([e.geo.lat, e.geo.lng], 16, { duration: 0.8 });
+      }
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   // Viento actual sobre Cabrera (Open-Meteo). Si falla la red, queda el este.
   useEffect(() => {
@@ -340,15 +430,31 @@ export default function MapaCorredor() {
     pane.style.setProperty('--dy', viento.y.toFixed(2));
   }, [nubesOn, viento, mapaListo]);
 
-  const verPunto = () => {
-    const m = marksRef.current[puntoId - 1];
-    if (m && mapRef.current) mapRef.current.flyTo(m.getLatLng(), 16, { duration: 0.8 });
+  const seleccionar = (id, volar = false) => {
+    setPuntoId(id);
+    history.replaceState(null, '', `#/mapa?p=${id}`);
+    if (volar && mapRef.current) {
+      const e = EMPRENDIMIENTOS.find((p) => p.id === id);
+      if (e) mapRef.current.flyTo([e.geo.lat, e.geo.lng], 16, { duration: 0.8 });
+    }
   };
 
-  // Vuelve al encuadre del recorrido completo
-  const encuadrarRuta = () => {
-    if (mapRef.current && rutaBoundsRef.current) {
-      mapRef.current.flyToBounds(rutaBoundsRef.current, { duration: 0.8 });
+  const verPunto = () => {
+    if (mapRef.current) {
+      mapRef.current.flyTo([punto.geo.lat, punto.geo.lng], 16, { duration: 0.8 });
+    }
+  };
+
+  // Vuelve al encuadre de los 9 emprendimientos y limpia el enlace profundo
+  const encuadrarTodos = () => {
+    setPuntoId(EMPRENDIMIENTOS[0].id);
+    history.replaceState(null, '', '#/mapa');
+    if (mapRef.current && boundsRef.current) {
+      mapRef.current.flyToBounds(boundsRef.current, {
+        padding: [40, 40],
+        maxZoom: 15,
+        duration: 0.8,
+      });
     }
   };
 
@@ -364,18 +470,24 @@ export default function MapaCorredor() {
     map.locate({ setView: true, maxZoom: 16, timeout: 10000 });
   };
 
+  const exactas = EMPRENDIMIENTOS.filter((e) => e.geo.precision === 'exacta').length;
+
   return (
     <div className="mc-clon">
       <div className="mc-head">
-        <span className="mc-eyebrow">Mapa cultural · Cabrera — San Pedro de la Laguna</span>
-        <h3>Circuito a pie · 6 paradas</h3>
+        <span className="mc-eyebrow">Mapa cultural · 9 emprendimientos</span>
+        <h3>Los 9 puntos de las mujeres que guían el territorio</h3>
         <p>
-          Mapa real del corredor oriental. Las flechas marcan el sentido de la caminata:
-          toca un número para ver su ficha, o abre el recorrido en Google Maps para caminarlo.
+          Cabrera, San Pedro de la Laguna, Aguapamba, Jongovito y Cujacal Bajo en un solo
+          mapa. Toca un número o una ficha de la lista para conocer el emprendimiento; el
+          trazado punteado es el sendero base de {SENDERO_BASE.paradas} paradas.
         </p>
         <div className="mc-acciones">
-          <a className="mc-btn primario" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
-            Abrir recorrido en Google Maps
+          <button type="button" className="mc-btn primario" onClick={encuadrarTodos}>
+            Ver los 9 puntos
+          </button>
+          <a className="mc-btn chico" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
+            Sendero base en Google Maps
           </a>
           <button
             type="button"
@@ -393,65 +505,89 @@ export default function MapaCorredor() {
           >
             {nubesOn ? '☁️ Nubes: sí' : '☁️ Nubes: no'}
           </button>
-          <span className="mc-meta">6 paradas · a pie · ~7 km</span>
+          <span className="mc-meta">
+            9 puntos · {exactas} exactos · {EMPRENDIMIENTOS.length - exactas} aproximados
+          </span>
         </div>
+        <p className="mc-nota">
+          Solo <strong>Al Son de la Cuchara</strong> y <strong>Jardín de Mamá Luz</strong>{' '}
+          tienen ubicación exacta verificada. Las demás fichas se ubican a nivel de vereda
+          para no inventar direcciones; el botón <strong>Google Maps</strong> busca el
+          nombre del emprendimiento.
+        </p>
         {geoMsg && <p className="mc-geo" role="status">{geoMsg}</p>}
       </div>
 
       <div className={`mc-main tema-${tema}`}>
         <div className="mc-visual">
-          <div ref={mapEl} className="mc-map" role="application" aria-label="Mapa del recorrido con 6 paradas" />
+          <div ref={mapEl} className="mc-map" role="application" aria-label="Mapa de los 9 emprendimientos" />
           <div className="mc-tools" role="group" aria-label="Controles del mapa">
-            <button type="button" onClick={encuadrarRuta} title="Ver recorrido completo" aria-label="Ver recorrido completo">⤢</button>
+            <button type="button" onClick={encuadrarTodos} title="Ver los 9 puntos" aria-label="Ver los 9 puntos">⤢</button>
             <button type="button" onClick={irAMiUbicacion} title="Dónde estoy" aria-label="Mostrar mi ubicación">📍</button>
           </div>
           <div className="mc-viento" aria-hidden="true">
             🌬️ {viento.dir}{viento.kmh != null ? ` · ${Math.round(viento.kmh)} km/h` : ''}
           </div>
-          <div className="mc-chip">{punto.titulo}</div>
+          <div className="mc-leyenda" aria-hidden="true">
+            <span className="mc-lg-linea" /> Sendero base
+            <span className="mc-lg-punto" /> Emprendimiento
+          </div>
+          <div className="mc-chip">{punto.num} · {punto.name}</div>
         </div>
 
-        <aside className="mc-panel" aria-label="Fichas de paradas">
-          <div className="mc-ficha activa">
-            <span className="mc-kicker">Parada {punto.id} de 6</span>
-            <h4>{punto.titulo}</h4>
-            <p className="mc-sub">{punto.subtitulo}</p>
+        <aside className="mc-panel" aria-label="Fichas de los 9 emprendimientos">
+          <div className="mc-ficha activa" style={{ '--g1': punto.c1, '--g2': punto.c2 }}>
+            <span className="mc-kicker">Punto {punto.num} de {EMPRENDIMIENTOS.length} · {punto.cat}</span>
+            <h4>{punto.name}</h4>
+            <p className="mc-sub"><FaMapMarkerAlt aria-hidden="true" /> {punto.lugar}</p>
             {punto.foto ? (
-              <img src={punto.foto} alt={punto.titulo} className="mc-foto" />
+              <img src={punto.foto} alt={`${punto.owner} · ${punto.name}`} className="mc-foto" />
             ) : (
-              <div className="mc-foto-ph">Foto pendiente — llegará con la ficha</div>
+              <div className="mc-foto-ph">
+                <FaCameraRetro aria-hidden="true" />
+                <span>Foto en camino</span>
+              </div>
             )}
-            <p className="mc-desc">{punto.descripcion}</p>
-            <p className="mc-coords">{punto.lat}, {punto.lng}</p>
+            <p className="mc-owner"><FaUser aria-hidden="true" /> {punto.owner}</p>
+            <p className="mc-desc">{punto.resumen}</p>
+            <div className="mc-claves" aria-label="Productos y experiencias">
+              {punto.claves.slice(0, 4).map((c) => <span key={c}>{c}</span>)}
+            </div>
+            <span className={`mc-precision ${punto.geo.precision}`}>
+              {punto.geo.precision === 'exacta' ? 'Ubicación exacta' : 'Ubicación aproximada · nivel de vereda'}
+            </span>
             <div className="mc-ficha-btns">
               <button type="button" className="mc-btn chico" onClick={verPunto}>
                 Centrar en el mapa
               </button>
               <a className="mc-btn chico" href={mapsUrlPunto(punto)} target="_blank" rel="noopener noreferrer">
-                Ver punto en Maps
+                Google Maps
               </a>
-              <a className="mc-btn chico fantasma" href={GOOGLE_MAPS_URL} target="_blank" rel="noopener noreferrer">
-                Circuito completo
+              <a className="mc-btn chico mc-btn-historia" href={`#/mujeres?f=${punto.id}`}>
+                Ver historia completa <FaArrowRight aria-hidden="true" />
               </a>
             </div>
           </div>
 
           <ul className="mc-lista">
-            {RECORRIDO.map((p) => (
+            {EMPRENDIMIENTOS.map((p) => (
               <li key={p.id}>
                 <button
                   type="button"
                   className={`mc-item${p.id === puntoId ? ' activo' : ''}`}
-                  onClick={() => {
-                    setPuntoId(p.id);
-                    const m = marksRef.current[p.id - 1];
-                    if (m && mapRef.current) mapRef.current.flyTo(m.getLatLng(), 16, { duration: 0.8 });
-                  }}
+                  onClick={() => seleccionar(p.id, true)}
                 >
-                  <span className="mc-item-num">{p.id}</span>
+                  <span className="mc-item-num">{p.num}</span>
+                  {p.foto ? (
+                    <img className="mc-item-foto" src={p.foto} alt="" loading="lazy" />
+                  ) : (
+                    <span className="mc-item-foto mc-item-foto-ph" aria-hidden="true">
+                      <FaCameraRetro />
+                    </span>
+                  )}
                   <span className="mc-item-txt">
-                    <strong>{p.titulo}</strong>
-                    <small>{p.subtitulo}</small>
+                    <strong>{p.name}</strong>
+                    <small>{p.lugar}</small>
                   </span>
                 </button>
               </li>

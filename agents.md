@@ -62,10 +62,11 @@ src/
     WhatsAppFloat.jsx/.css   Botón flotante AZUL (36px, wa.me/573196822133)
     CicloConsolidado.jsx/.css+sim EN DESUSO (simulacro ciclo del agua, no tocar)
   config/api.js              API_URL + api() + fotoUrl() (absolutiza /uploads)
-  config/emprendimientos.js  9 fichas reales de la página Mujeres (texto del
-                             docx "fichas de emprendedoras", foto, filtro, colores)
-  config/recorrido.js        GOOGLE_MAPS_URL + RECORRIDO (6 pts verificados 1×1
-                             contra el link; x/y viejos ya no se usan) + mapsUrlPunto()
+  config/emprendimientos.js  ÚNICA fuente de verdad de los 9 emprendimientos:
+                             texto del docx, foto, filtro, colores, `geo`
+                             (lat/lng/precision) y `mapsQuery` para Google Maps
+  config/recorrido.js        GOOGLE_MAPS_URL + SENDERO_BASE (6 paradas, ~7.4 km)
+                             + mapsUrlPunto(); ya NO exporta RECORRIDO
   config/ruta.json           Trazado fiel OSRM foot: 388 pts [lat,lng], ~7.4 km
   assets/logo0.png           Emblema circular (1580×1554): nav + login
   assets/logo2.png           Horizontal (981 KB): solo preload
@@ -121,31 +122,59 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
 - **Mujeres** (`Mujeres.jsx/.css` + `config/emprendimientos.js`): hero + cifras
   (9/8/4/1) + chips de filtro por oficio (cocina, naturaleza, campo, arte,
   dulces) + botón "Sorpréndeme" + rejilla de 9 tarjetas con foto, número,
-  categoría, lugar, resumen, propietaria y "Leer su historia" → modal con
-  relato completo, claves, cierre, navegación ←/→/Esc y enlace al mapa. La
-  ficha 06 (Tradiciones Nariñenses Marucha) queda con placeholder "Foto en
-  camino" (no hay foto ni nombre de propietaria en el docx).
+  categoría, lugar, resumen, propietaria, "Leer su historia" → modal con
+  relato completo, claves, cierre, navegación ←/→/Esc y enlace al mapa. Cada
+  tarjeta tiene además un enlace directo "Mapa" a `#/mapa?p=<id>`; el modal
+  enlaza al mismo punto. La ficha 06 (Tradiciones Nariñenses Marucha) queda con
+  placeholder "Foto en camino" (no hay foto ni nombre de propietaria en el docx).
+  Deep links: `#/mujeres?f=<id>` abre la historia y `#/mapa?p=<id>` abre el
+  punto; ambos se sincronizan con `history.replaceState`.
 - Experiencias / Voces / Contacto: contenido real pendiente (placeholders).
 
 ## 7. Mapa en detalle (`MapaCorredor.jsx/.css`)
 
+- **Fuente de verdad**: los 9 `EMPRENDIMIENTOS` de `config/emprendimientos.js`
+  (no los 6 puntos viejos). Cada ficha tiene `geo: { lat, lng, precision }` y
+  `mapsQuery`; el mapa pinta los 9 con sus números 01–09.
 - Leaflet real OSM(claro)/Esri(satelital, **POR DEFECTO**), `scrollWheelZoom`
   solo con foco/clic, zoom abajo-der (40px en táctil), escala abajo-izq,
   minZoom 11 / maxZoom 19, límites Nariño con rebote (`maxBoundsViscosity: 0.8`),
-  botones ⤢ encuadre (`flyToBounds`) y 📍 mi ubicación (punto azul + precisión,
-  `geoMsg` si falla). Táctil: pellizco + arrastre + toque nativos.
-- Ruta fiel `ruta.json` (punteada marrón en claro / amarilla en satélite +
-  hormigas en marcha 1→6) + 6 marcadores numerados (clic/tooltip → ficha,
-  `flyTo` 16, botón "Centrar") + 3 flechas `➤` rAF a velocidad constante
-  (~90 s el circuito, orientadas por rumbo, reinician en 1, sin clics).
+  botones ⤢ "ver los 9 puntos" (`flyToBounds`) y 📍 mi ubicación (punto azul +
+  precisión, `geoMsg` si falla). Táctil: pellizco + arrastre + toque nativos.
+  El encuadre inicial se aplica cuando el contenedor ya tiene tamaño final
+  (`ResizeObserver` + timeout de 250 ms); sin eso el mapa quedaba demasiado
+  cerca y ocultaba puntos.
+- **Clustering sin dependencias**: con zoom < 16, los puntos a ≤70 px del
+  centroide del grupo se colapsan en un círculo con el número de fichas
+  (p. ej. "7"); al tocarlo, `flyToBounds` acerca y los separa. Con zoom ≥ 16
+  se muestran los 9 marcadores individuales. El grupo crece por centroide para
+  que ningún punto quede pegado al borde del cluster.
+- **Enlaces directos**: `#/mapa?p=<id>` abre ese punto (zoom 16) y su ficha;
+  `#/mapa` muestra el encuadre de los 9. La URL se actualiza con
+  `history.replaceState` al elegir marcador o lista. La ficha del mapa tiene
+  "Ver historia completa" → `#/mujeres?f=<id>` (ida y vuelta con Mujeres).
+- **Sendero base**: `ruta.json` (388 pts, ~7.4 km) queda como contexto, línea
+  punteada marrón/amarilla; sin flechas ni números de ruta. La prioridad visual
+  son los 9 emprendimientos: el botón principal es "Ver los 9 puntos" y el
+  sendero queda como enlace secundario (`GOOGLE_MAPS_URL`, 6 paradas de
+  `SENDERO_BASE`).
+- **Coordenadas**: solo **Al Son de la Cuchara** y **Jardín de Mamá Luz** son
+  exactas. Las otras 7 son aproximadas a nivel de vereda (Aguapamba, Cabrera,
+  Jongovito, San Luis, Alto San Pedro, Cujacal Bajo); el mapa lo advierte en el
+  encabezado y cada ficha muestra "Ubicación exacta" o "Ubicación aproximada ·
+  nivel de vereda". El botón Google Maps usa `mapsQuery` para buscar el nombre
+  real del emprendimiento.
+- **Panel lateral**: ficha activa con foto (Marucha: "Foto en camino"),
+  propietaria, resumen, hasta 4 claves, precisión, "Centrar en el mapa",
+  Google Maps y "Ver historia completa"; lista de los 9 con miniatura (clic
+  vuela al punto). En móvil el panel pasa debajo del mapa (mapa 440 px) y la
+  lista se despliega completa.
 - **Nubes de adorno ANCLADAS al mapa**: pane Leaflet `nubes` (z450, bajo
-  marcadores), 8 fijas con lat/lng y semilla `cielo-cabrera` (4 ruta + 4
+  marcadores), 8 fijas con lat/lng y semilla `cielo-cabrera` (4 corredor + 4
   Nariño), 3–5 lóbulos c/u + sombra a sotavento; se recolocan en
   move/zoom/viewreset y escalan `2^(z-14)`; deriva visible ±70px en 20–32 s con
   respiro + viento real Open-Meteo (badge `🌬️ dir · km/h`, fallback E);
   interruptor ☁️ sí/no; `prefers-reduced-motion` = fijas. Nada meteorológico.
-- Panel lateral: ficha activa (foto pendiente hasta que lleguen fichas),
-  lista 1–6 (clic vuela al punto), links Google Maps + circuito completo.
 
 ## 8. Backend en detalle (`../mapasturisticosbknd/`)
 
@@ -196,6 +225,8 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
 
 - Experiencias / Voces / Contacto: contenido real.
 - Mujeres: foto (y nombre de la propietaria) de Tradiciones Nariñenses Marucha.
+- Mapa: reemplazar las 7 coordenadas aproximadas (nivel de vereda) por exactas
+  cuando las entreguen; hoy solo Al Son y Jardín de Mamá Luz están verificadas.
 - BannerCarousel: reemplazar 6 placeholders + video de bienvenida.
 - `logo2.png` (981 KB, solo preload): optimizar o retirar.
 - Favicon desde `logo0`; borrar muertos (`TextCarousel.*`, `CicloConsolidado.*`,

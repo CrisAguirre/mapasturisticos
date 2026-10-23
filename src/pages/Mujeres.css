@@ -274,8 +274,28 @@
   font-size: 0.79rem;
   font-weight: 800;
 }
-.mj-ver svg { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-.mj-card:hover .mj-ver svg { transform: translateX(4px); }
+.mj-ver-txt { display: inline-flex; align-items: center; gap: 8px; }
+.mj-ver-txt svg { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+.mj-card:hover .mj-ver-txt svg { transform: translateX(4px); }
+.mj-map-link {
+  position: relative;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 212, 121, 0.4);
+  background: rgba(255, 212, 121, 0.08);
+  color: var(--dorado);
+  font-size: 0.71rem;
+  font-weight: 800;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.mj-map-link:hover { background: rgba(255, 212, 121, 0.2); border-color: var(--dorado); }
+.mj-map-link svg { font-size: 0.68rem; }
 
 /* Tarjeta sin foto: se nota que está prevista, no rota */
 .mj-card.sin-foto { border-color: rgba(255, 212, 121, 0.32); }
@@ -612,6 +632,12 @@ html[data-theme="claro"] .mj-body { background: #fff; }
 html[data-theme="claro"] .mj-body h3 { color: var(--texto); }
 html[data-theme="claro"] .mj-owner { color: var(--acento); }
 html[data-theme="claro"] .mj-ver { color: var(--acento2); }
+html[data-theme="claro"] .mj-map-link {
+  border-color: rgba(180, 83, 9, 0.35);
+  background: rgba(180, 83, 9, 0.06);
+  color: var(--acento);
+}
+html[data-theme="claro"] .mj-map-link:hover { background: rgba(180, 83, 9, 0.12); border-color: var(--acento); }
 html[data-theme="claro"] .mj-card.sin-foto { border-color: rgba(180, 83, 9, 0.35); }
 html[data-theme="claro"] .mj-foto-vacia {
   background:
@@ -684,7 +710,8 @@ html[data-theme="claro"] .mj-nav-cta { border-color: rgba(180, 83, 9, 0.4); back
   }
   .mj-card,
   .mj-foto img,
-  .mj-ver svg,
+  .mj-ver-txt svg,
+  .mj-map-link,
   .mj-chip,
   .mj-azar,
   .mj-cerrar {
@@ -692,5 +719,5 @@ html[data-theme="claro"] .mj-nav-cta { border-color: rgba(180, 83, 9, 0.4); back
   }
   .mj-card:hover { transform: none; }
   .mj-card:hover .mj-foto img { transform: none; }
-  .mj-card:hover .mj-ver svg { transform: none; }
+  .mj-card:hover .mj-ver-txt svg { transform: none; }
 }

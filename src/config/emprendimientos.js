@@ -30,6 +30,8 @@ export const FILTROS = [
 
 // Fichas construidas con el documento "fichas de emprendedoras.docx".
 // `foto: null` deja el espacio previsto para cuando llegue la imagen.
+// `geo` alimenta el mapa (lat/lng + precision: 'exacta' | 'aproximada');
+// `mapsQuery` es la búsqueda de Google Maps (nombre + vereda).
 export const EMPRENDIMIENTOS = [
   {
     id: 'al-son-de-la-cuchara',
@@ -45,6 +47,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#f97316',
     c2: '#7c2d12',
     foto: fotoAlSon,
+    geo: { lat: 1.214662, lng: -77.2152805, precision: 'exacta' },
+    mapsQuery: 'Mini Granja Al Son De La Cuchara, Corregimiento de Cabrera, Pasto, Nariño',
     resumen:
       'Platos típicos y una Mini-Granja con animales domésticos y exóticos: cocina, campo y familia en un mismo paseo.',
     lead:
@@ -84,6 +88,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#22c55e',
     c2: '#065f46',
     foto: fotoJardin,
+    geo: { lat: 1.2167756, lng: -77.2087216, precision: 'exacta' },
+    mapsQuery: 'Vivero El jardín de mamá luz, Pasto, Nariño',
     resumen:
       'Terrarios, huertas, flores y vivero nacidos de los saberes de su madre: un jardín para caminar, respirar y aprender.',
     lead:
@@ -124,6 +130,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#14b8a6',
     c2: '#134e4a',
     foto: fotoArrayanes,
+    geo: { lat: 1.212081, lng: -77.207487, precision: 'aproximada' },
+    mapsQuery: 'Finca Agroturística Los Arrayanes, Vereda Aguapamba, Pasto, Nariño',
     resumen:
       'Chagra, alojamiento rural y las sopas de los abuelitos: una finca que abre sus puertas para vivir el campo desde adentro.',
     lead:
@@ -163,6 +171,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#a3e635',
     c2: '#3f6212',
     foto: fotoThanysol,
+    geo: { lat: 1.2132, lng: -77.2065, precision: 'aproximada' },
+    mapsQuery: 'Thanysol, Vereda Aguapamba, Pasto, Nariño',
     resumen:
       'Flores y aromáticas transformadas en aceites, pomadas y champús, con energía solar y una apuesta por el campo.',
     lead:
@@ -202,6 +212,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#ec4899',
     c2: '#4c1d95',
     foto: fotoCasaLuna,
+    geo: { lat: 1.2153542, lng: -77.2144394, precision: 'aproximada' },
+    mapsQuery: 'Casa Luna, Vereda Centro, Cabrera, Pasto, Nariño',
     resumen:
       'Un espacio donde el carnaval no espera a enero: danza, música, trajes y pintura para vivir la fiesta todo el año.',
     lead:
@@ -241,6 +253,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#fb7185',
     c2: '#7c2d12',
     foto: null,
+    geo: { lat: 1.187753, lng: -77.2948896, precision: 'aproximada' },
+    mapsQuery: 'Tradiciones Nariñenses Marucha, Sector El Solar, Jongovito, Pasto, Nariño',
     resumen:
       'Dulces de chilacuán, mora, guayaba y calabaza; arequipe, obleas y miel con cuajada hechos sin conservantes.',
     lead:
@@ -280,6 +294,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#f59e0b',
     c2: '#78350f',
     foto: fotoSanLuis,
+    geo: { lat: 1.2066864, lng: -77.2050371, precision: 'aproximada' },
+    mapsQuery: 'Tradición San Luis, Vereda San Luis, La Laguna, Pasto, Nariño',
     resumen:
       'Tres generaciones criando cuyes criollos y exóticos: pie de cría, calidad y una tradición que sostiene a una familia.',
     lead:
@@ -319,6 +335,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#fb923c',
     c2: '#9a3412',
     foto: fotoCasita,
+    geo: { lat: 1.2144444, lng: -77.2056111, precision: 'aproximada' },
+    mapsQuery: 'Casita de los Sabores, Vereda Alto San Pedro, La Laguna, Pasto, Nariño',
     resumen:
       'Cuy asado, canchape y postres de la huerta: una casa que nació en pandemia y hoy recibe grupos de hasta diez personas.',
     lead:
@@ -358,6 +376,8 @@ export const EMPRENDIMIENTOS = [
     c1: '#fbbf24',
     c2: '#92400e',
     foto: fotoAbuela,
+    geo: { lat: 1.2230373, lng: -77.2653759, precision: 'aproximada' },
+    mapsQuery: 'Sabores y Saberes de la Abuela, Vereda Cujacal Bajo, Buesaquillo, Pasto, Nariño',
     resumen:
       'Envuelos de choclo, guiso y yuca, quimbolitos y frito pastuso: recetas que vienen del fogón de la abuela.',
     lead:

@@ -21,9 +21,18 @@ const CUENTA = FILTROS.reduce((acc, f) => {
   return acc;
 }, {});
 
+// Lee ?f=<id> del hash para abrir una ficha concreta desde el mapa.
+function fichaFromHash() {
+  const hash = window.location.hash || '';
+  const qi = hash.indexOf('?');
+  if (qi < 0) return null;
+  const id = new URLSearchParams(hash.slice(qi + 1)).get('f');
+  return EMPRENDIMIENTOS.some((e) => e.id === id) ? id : null;
+}
+
 export default function Mujeres() {
   const [filtro, setFiltro] = useState('todos');
-  const [activoId, setActivoId] = useState(null);
+  const [activoId, setActivoId] = useState(() => fichaFromHash());
   const panelRef = useRef(null);
 
   const lista = useMemo(
@@ -31,6 +40,24 @@ export default function Mujeres() {
     [filtro]
   );
   const activo = EMPRENDIMIENTOS.find((e) => e.id === activoId) ?? null;
+
+  // Mantén la URL compartible: #/mujeres?f=<id> con la ficha abierta.
+  useEffect(() => {
+    if (!window.location.hash.startsWith('#/mujeres')) return;
+    const url = activoId ? `#/mujeres?f=${activoId}` : '#/mujeres';
+    if (window.location.hash !== url) history.replaceState(null, '', url);
+  }, [activoId]);
+
+  // Si llega un enlace directo (desde el mapa o el historial), abre esa ficha.
+  useEffect(() => {
+    const onHash = () => {
+      if (!window.location.hash.startsWith('#/mujeres')) return;
+      const id = fichaFromHash();
+      setActivoId((prev) => (prev === id ? prev : id));
+    };
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
 
   // Modal: bloquea el scroll, cierra con Esc y navega con las flechas.
   useEffect(() => {
@@ -168,7 +195,17 @@ export default function Mujeres() {
               <h3>{e.name}</h3>
               <p className="mj-resumen">{e.resumen}</p>
               <span className="mj-owner">{e.owner}</span>
-              <span className="mj-ver">Leer su historia <FaArrowRight aria-hidden="true" /></span>
+              <span className="mj-ver">
+                <span className="mj-ver-txt">Leer su historia <FaArrowRight aria-hidden="true" /></span>
+                <a
+                  className="mj-map-link"
+                  href={`#/mapa?p=${e.id}`}
+                  onClick={(ev) => ev.stopPropagation()}
+                  aria-label={`Ver ${e.name} en el mapa`}
+                >
+                  <FaMapMarkerAlt aria-hidden="true" /> Mapa
+                </a>
+              </span>
             </div>
             <button
               type="button"
@@ -194,7 +231,7 @@ export default function Mujeres() {
             trabajo de las mujeres que sostienen la vida rural del corredor oriental de Pasto.
           </p>
           <div className="mj-ctas">
-            <a className="btn primary" href="#/mapa">Recorrer el mapa</a>
+            <a className="btn primary" href="#/mapa">Ver los 9 puntos en el mapa</a>
             <a className="btn" href="#/contacto">Contacto / reserva</a>
           </div>
         </Spotlight>
@@ -264,7 +301,7 @@ export default function Mujeres() {
                 <button type="button" className="mj-nav-btn" onClick={() => mover(-1)}>
                   <FaArrowLeft aria-hidden="true" /> Anterior
                 </button>
-                <a className="mj-nav-btn mj-nav-cta" href="#/mapa" onClick={() => setActivoId(null)}>
+                <a className="mj-nav-btn mj-nav-cta" href={`#/mapa?p=${activo.id}`}>
                   Ver en el mapa
                 </a>
                 <button type="button" className="mj-nav-btn" onClick={() => mover(1)}>
