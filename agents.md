@@ -1,7 +1,7 @@
 # AGENTS.md — Caminos de Fogón y Palabra (front web + backend)
 
 > Contexto técnico para retomar el trabajo en opencode sin perder el hilo.
-> Actualizado: 2026-10-22. Describe el estado REAL verificado del código.
+> Actualizado: 2026-10-23. Describe el estado REAL verificado del código.
 
 ## 1. Qué es esta app
 
@@ -55,7 +55,8 @@ src/
     TextCarousel.jsx/.css    EN DESUSO (nadie lo importa; no pesa en el bundle)
     ProcesoAnimado.jsx/.css  5 ejes auto + LineaTiempo 9 pasos + estilos proj-*
     PiezasProyecto.jsx/.css  PropositosGrid (3×2 fija) + DueloFogon (sin autoplay)
-    bits.jsx/.css            Reveal, SplitText, Spotlight, useInView (sin dependencias)
+    bits.jsx/.css            Reveal, SplitText (agrupa letras por palabra para no
+                             partir palabras al quebrar línea), Spotlight, useInView
     MapaCorredor.jsx/.css    Mapa real Leaflet (ver §7)
     Preload.jsx/.css         Splash inicial (logo + barra, mín 900 ms + fundido)
     BackendStatus.jsx/.css   Visor GET /api/health (línea/DB/latencia, refresh 30 s)
@@ -129,7 +130,13 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
   placeholder "Foto en camino" (no hay foto ni nombre de propietaria en el docx).
   Deep links: `#/mujeres?f=<id>` abre la historia y `#/mapa?p=<id>` abre el
   punto; ambos se sincronizan con `history.replaceState`.
-- Experiencias / Voces / Contacto: contenido real pendiente (placeholders).
+- **Experiencias** (`Experiencias.jsx/.css`, contenido de `punto 5 experiencias.docx`):
+  hero + cifras (4/9/4/1) + introducción con `<details>` + accesos rápidos a los
+  cuatro ejes + 4 bloques alternados (foto del proceso en `2proyecto-web`, texto
+  completo del docx, claves, cita y enlaces a Mujeres/Mapa) + cierre con cita y
+  `Spotlight` de invitación. Los botones de acceso hacen scroll suave a cada eje
+  (`scroll-margin-top` deja libre el nav fijo).
+- Voces / Contacto: contenido real pendiente (placeholders).
 
 ## 7. Mapa en detalle (`MapaCorredor.jsx/.css`)
 
@@ -223,7 +230,9 @@ public/favicon.png           Favicon circular 180px de logo2 (pendiente: pasar a
 
 ## 10. Pendientes conocidos
 
-- Experiencias / Voces / Contacto: contenido real.
+- Voces / Contacto: contenido real.
+- Experiencias: contenido del docx ya montado; si llegan fotos propias del
+  documento, reemplazar las fotos del proceso que hoy ilustran los cuatro ejes.
 - Mujeres: foto (y nombre de la propietaria) de Tradiciones Nariñenses Marucha.
 - Mapa: reemplazar las 7 coordenadas aproximadas (nivel de vereda) por exactas
   cuando las entreguen; hoy solo Al Son y Jardín de Mamá Luz están verificadas.

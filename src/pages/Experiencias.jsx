@@ -7,7 +7,7 @@ import {
   FaUtensils,
 } from 'react-icons/fa';
 import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
-import fotoSabores from '../assets/media/2proyecto-web/foto-15.1.jpg';
+import fotoSabores from '../assets/media/2proyecto-web/foto-3.jpg';
 import fotoCaminos from '../assets/media/2proyecto-web/foto-15.2.jpg';
 import fotoMesa from '../assets/media/2proyecto-web/foto-15.3.jpg';
 import fotoMujeres from '../assets/media/2proyecto-web/foto-1.jpg';
@@ -38,8 +38,8 @@ const EJES = [
     color2: '#7c2d12',
     foto: {
       src: fotoSabores,
-      alt: 'Fogón tradicional y preparaciones del corredor oriental de Pasto',
-      name: 'Fogón y cocina tradicional',
+      alt: 'Preparaciones tradicionales durante el proceso formativo',
+      name: 'Sabores y preparaciones tradicionales',
       detalle: 'Encuentro del proceso formativo',
     },
     mapaId: 'casita-de-los-sabores',
