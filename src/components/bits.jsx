@@ -53,18 +53,50 @@ export function SplitText({
   delay = 0,
 }) {
   const [ref, inView] = useInView(0.3);
-  const parts = splitBy === 'chars' ? [...text] : text.split(' ');
+  const visibleClass = inView ? ' is-visible' : '';
+  const words = text.split(' ');
+
+  // En modo letras, cada palabra va dentro de un inline-block.
+  // Así se anima letra por letra sin que el navegador parta palabras al
+  // cambiar de línea en pantallas estrechas.
+  if (splitBy === 'chars') {
+    let charIndex = 0;
+    return (
+      <Tag ref={ref} className={`split${className ? ` ${className}` : ''}`} aria-label={text}>
+        {words.map((word, wi) => (
+          <span key={`${wi}-${word}`} aria-hidden="true">
+            <span className="split-word">
+              {[...word].map((c) => {
+                const i = charIndex++;
+                return (
+                  <span
+                    key={i}
+                    className={`split-part${visibleClass}`}
+                    style={{ transitionDelay: `${delay + i * stagger}ms` }}
+                  >
+                    {c}
+                  </span>
+                );
+              })}
+            </span>
+            {wi < words.length - 1 ? ' ' : null}
+          </span>
+        ))}
+      </Tag>
+    );
+  }
+
   return (
     <Tag ref={ref} className={`split${className ? ` ${className}` : ''}`} aria-label={text}>
-      {parts.map((p, i) => (
+      {words.map((p, i) => (
         <span key={i} aria-hidden="true">
           <span
-            className={`split-part${inView ? ' is-visible' : ''}`}
+            className={`split-part${visibleClass}`}
             style={{ transitionDelay: `${delay + i * stagger}ms` }}
           >
-            {splitBy === 'chars' && p === ' ' ? ' ' : p}
+            {p}
           </span>
-          {splitBy === 'words' && i < parts.length - 1 ? ' ' : null}
+          {i < words.length - 1 ? ' ' : null}
         </span>
       ))}
     </Tag>

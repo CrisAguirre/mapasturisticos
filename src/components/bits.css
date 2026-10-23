@@ -16,6 +16,10 @@
   filter: none;
 }
 
+.split .split-word {
+  display: inline-block;
+  white-space: nowrap;
+}
 .split .split-part {
   display: inline-block;
   opacity: 0;
