@@ -7,12 +7,14 @@ import {
   FaUtensils,
 } from 'react-icons/fa';
 import { Reveal, SplitText, Spotlight } from '../components/bits.jsx';
-import { EMPRENDIMIENTOS } from '../config/emprendimientos.js';
+import fotoSabores from '../assets/media/2proyecto-web/foto-15.1.jpg';
+import fotoCaminos from '../assets/media/2proyecto-web/foto-15.2.jpg';
+import fotoMesa from '../assets/media/2proyecto-web/foto-15.3.jpg';
+import fotoMujeres from '../assets/media/2proyecto-web/foto-1.jpg';
 import './Experiencias.css';
 
-// Las fotos de los ejes se toman de emprendimientos que ya están en la web.
-// Así el contenido nuevo no depende de imágenes que todavía no existen.
-const ficha = (id) => EMPRENDIMIENTOS.find((e) => e.id === id);
+// Fotos del proceso formativo para acompañar los ejes. El docx no trae
+// imágenes propias y estas ya forman parte de la web del proyecto.
 
 const INTRO = {
   visible:
@@ -34,7 +36,13 @@ const EJES = [
     subtitle: 'La memoria que se comparte alrededor de la cocina',
     color: '#fb923c',
     color2: '#7c2d12',
-    foto: ficha('casita-de-los-sabores'),
+    foto: {
+      src: fotoSabores,
+      alt: 'Fogón tradicional y preparaciones del corredor oriental de Pasto',
+      name: 'Fogón y cocina tradicional',
+      detalle: 'Encuentro del proceso formativo',
+    },
+    mapaId: 'casita-de-los-sabores',
     intro:
       'El fogón es uno de los lugares donde las historias familiares permanecen vivas. Alrededor de él se transmiten conocimientos, se aprenden técnicas de preparación y se conservan recetas que han acompañado a distintas generaciones. En las cocinas del corredor oriental de Pasto, estos saberes forman parte de la identidad de las comunidades y expresan la relación entre la alimentación, la memoria y la vida cotidiana.',
     detalle: [
@@ -56,7 +64,13 @@ const EJES = [
     subtitle: 'Las historias que dan sentido al territorio',
     color: '#2dd4bf',
     color2: '#134e4a',
-    foto: ficha('finca-los-arrayanes'),
+    foto: {
+      src: fotoCaminos,
+      alt: 'Recorrido por los caminos y paisajes del corredor oriental de Pasto',
+      name: 'Caminos y paisajes del territorio',
+      detalle: 'Recorrido participativo',
+    },
+    mapaId: 'finca-los-arrayanes',
     intro:
       'Los caminos del corredor oriental de Pasto conectan veredas, paisajes, viviendas y espacios de encuentro, pero también conservan las memorias de quienes los han recorrido y habitado a lo largo del tiempo. Cada lugar tiene características particulares, recuerdos y significados que permiten comprender la identidad de las comunidades más allá de sus paisajes.',
     detalle: [
@@ -78,7 +92,13 @@ const EJES = [
     subtitle: 'Los productos locales como encuentro entre saberes y sabores',
     color: '#fbbf24',
     color2: '#78350f',
-    foto: ficha('tradicion-san-luis'),
+    foto: {
+      src: fotoMesa,
+      alt: 'Productos y preparaciones locales compartidos alrededor de la mesa',
+      name: 'Productos y sabores locales',
+      detalle: 'Encuentro alrededor de la mesa',
+    },
+    mapaId: 'tradicion-san-luis',
     intro:
       'Los alimentos expresan la relación entre las comunidades y el territorio que habitan. En cada ingrediente se encuentran conocimientos sobre la tierra, prácticas productivas y formas de aprovechar los recursos locales; en cada preparación convergen técnicas, experiencias familiares y tradiciones que se transmiten y transforman con el paso del tiempo.',
     detalle: [
@@ -100,7 +120,13 @@ const EJES = [
     subtitle: 'Historias que se encuentran y caminos que se construyen en colectivo',
     color: '#f472b6',
     color2: '#831843',
-    foto: ficha('jardin-de-mama-luz'),
+    foto: {
+      src: fotoMujeres,
+      alt: 'Mujeres participantes del proceso Caminos de Fogón y Palabra',
+      name: 'Mujeres que Guían el Territorio',
+      detalle: 'Encuentro del proceso formativo',
+    },
+    mapaId: 'jardin-de-mama-luz',
     intro:
       'Detrás de cada emprendimiento hay una mujer, una historia y un conjunto de conocimientos que dan sentido a su iniciativa. Algunas han encontrado en la cocina tradicional una manera de conservar las enseñanzas familiares; otras han desarrollado propuestas relacionadas con la producción, las plantas, los espacios rurales, la gastronomía o las expresiones culturales de sus comunidades. Todas aportan capacidades y experiencias que enriquecen la diversidad del corredor oriental de Pasto.',
     detalle: [
@@ -139,8 +165,8 @@ function FotoEje({ eje }) {
 
   return (
     <figure className="ex-media">
-      {foto?.foto ? (
-        <img src={foto.foto} alt={`${foto.name} · ${foto.owner}`} loading="lazy" decoding="async" />
+      {foto?.src ? (
+        <img src={foto.src} alt={foto.alt} loading="lazy" decoding="async" />
       ) : (
         <div className="ex-media-vacia">Foto en camino</div>
       )}
@@ -154,20 +180,8 @@ function FotoEje({ eje }) {
       </div>
 
       <figcaption className="ex-media-pie">
-        <span className="ex-media-nombre">{foto?.name ?? 'Emprendimiento del territorio'}</span>
-        <span className="ex-media-lugar">
-          {foto?.owner}
-          {foto?.lugar ? ` · ${foto.lugar}` : ''}
-        </span>
-        {foto && (
-          <a
-            className="ex-media-mapa"
-            href={`#/mapa?p=${foto.id}`}
-            aria-label={`Ver ${foto.name} en el mapa`}
-          >
-            <FaMapMarkerAlt aria-hidden="true" /> Ver en el mapa
-          </a>
-        )}
+        <span className="ex-media-nombre">{foto?.name ?? 'Experiencias del territorio'}</span>
+        <span className="ex-media-lugar">{foto?.detalle}</span>
       </figcaption>
     </figure>
   );
@@ -275,9 +289,9 @@ export default function Experiencias() {
                   <a className="ex-enlace" href={eje.cta.href}>
                     {eje.cta.label} <FaArrowRight aria-hidden="true" />
                   </a>
-                  {eje.foto && (
-                    <a className="ex-enlace ex-enlace-suave" href={`#/mapa?p=${eje.foto.id}`}>
-                      <FaMapMarkerAlt aria-hidden="true" /> Ubicarlo en el mapa
+                  {eje.mapaId && (
+                    <a className="ex-enlace ex-enlace-suave" href={`#/mapa?p=${eje.mapaId}`}>
+                      <FaMapMarkerAlt aria-hidden="true" /> Ver en el mapa
                     </a>
                   )}
                 </div>
